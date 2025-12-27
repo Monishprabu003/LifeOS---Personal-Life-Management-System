@@ -11,7 +11,9 @@ import {
   Plus,
   ArrowRight,
   LogOut,
-  RefreshCw
+  RefreshCw,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, kernelAPI, habitsAPI, goalsAPI, aiAPI } from './api';
@@ -33,6 +35,20 @@ function App() {
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [token, setToken] = useState<string | null>(localStorage.getItem('lifeos_token'));
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   // Auth Flow State
   const [email, setEmail] = useState('demo@lifeos.com');
@@ -107,8 +123,8 @@ function App() {
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-6 shadow-2xl">
               <span className="font-display font-bold text-white text-3xl">L</span>
             </div>
-            <h1 className="text-3xl font-display font-bold text-white mb-2">Initialize LifeOS</h1>
-            <p className="text-slate-400 text-center mb-8">System standby. Authentication required.</p>
+            <h1 className="text-3xl font-display font-bold text-foreground mb-2">Initialize LifeOS</h1>
+            <p className="text-muted text-center mb-8">System standby. Authentication required.</p>
 
             <form onSubmit={handleLogin} className="w-full space-y-4">
               <input
@@ -116,14 +132,14 @@ function App() {
                 placeholder="Terminal Email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-600"
+                className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted/50 text-foreground"
               />
               <input
                 type="password"
                 placeholder="Access Key"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-600"
+                className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted/50 text-foreground"
               />
               <button
                 type="submit"
@@ -133,7 +149,7 @@ function App() {
                 <ArrowRight size={20} />
               </button>
             </form>
-            <p className="mt-8 text-xs text-slate-600 uppercase tracking-widest font-bold">Encrypted Connection Secure</p>
+            <p className="mt-8 text-xs text-muted uppercase tracking-widest font-bold">Encrypted Connection Secure</p>
           </div>
         </motion.div>
       </div>
@@ -159,15 +175,15 @@ function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden text-slate-200">
+    <div className="flex h-screen bg-background overflow-hidden text-foreground">
       {/* Sidebar */}
-      <aside className="w-64 glass border-r border-slate-800 flex flex-col">
+      <aside className="w-64 glass border-r border-border/50 flex flex-col">
         <div className="p-6">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
               <span className="font-display font-bold text-white text-xl">L</span>
             </div>
-            <h1 className="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+            <h1 className="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               LifeOS
             </h1>
           </div>
@@ -182,7 +198,7 @@ function App() {
                 onClick={() => setActiveTab(module.id)}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group ${activeTab === module.id
                   ? 'bg-primary/20 text-primary shadow-[0_0_20px_rgba(99,102,241,0.2)]'
-                  : 'hover:bg-slate-800/50 text-slate-400 hover:text-slate-200'
+                  : 'hover:bg-surface/50 text-muted hover:text-foreground'
                   }`}
               >
                 <Icon size={20} className={activeTab === module.id ? module.color : 'group-hover:' + module.color} />
@@ -198,16 +214,16 @@ function App() {
           })}
         </nav>
 
-        <div className="p-4 mt-auto border-t border-slate-800/50">
-          <div className="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-800/50 transition-colors group">
-            <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 overflow-hidden">
+        <div className="p-4 mt-auto border-t border-border/50">
+          <div className="flex items-center space-x-3 p-3 rounded-xl hover:bg-surface/50 transition-colors group">
+            <div className="w-10 h-10 rounded-full bg-surface border border-border/50 overflow-hidden">
               <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Felix'}`} alt="User" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold truncate">{user?.name || 'Authorized'}</p>
-              <p className="text-xs text-slate-500 truncate">{user?.email || 'V1.0.0'}</p>
+              <p className="text-xs text-muted truncate">{user?.email || 'V1.0.0'}</p>
             </div>
-            <button onClick={handleLogout} className="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-slate-500 hover:text-relationships">
+            <button onClick={handleLogout} className="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-muted hover:text-relationships">
               <LogOut size={16} />
             </button>
           </div>
@@ -217,20 +233,27 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 relative overflow-y-auto">
         {/* Header */}
-        <header className="sticky top-0 z-10 glass border-b border-slate-800/50 px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center bg-slate-900/80 rounded-2xl px-4 py-2.5 border border-slate-700/50 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all w-[32rem] group">
-            <Search size={18} className="text-slate-400 group-focus-within:text-primary transition-colors" />
+        <header className="sticky top-0 z-10 glass border-b border-border/50 px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center bg-surface/50 rounded-2xl px-4 py-2.5 border border-border/50 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all w-[32rem] group">
+            <Search size={18} className="text-muted group-focus-within:text-primary transition-colors" />
             <input
               type="text"
               placeholder="Search life events, goals, or AI help..."
-              className="bg-transparent border-none focus:ring-0 ml-3 text-sm w-full outline-none text-slate-200 placeholder:text-slate-500"
+              className="bg-transparent border-none focus:ring-0 ml-3 text-sm w-full outline-none text-foreground placeholder:text-muted/50"
             />
           </div>
 
           <div className="flex items-center space-x-4">
             <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl bg-surface/50 border border-border/50 hover:bg-surface transition-all text-muted hover:text-primary shadow-sm active:scale-95"
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+            <button
               onClick={syncScores}
-              className="p-2 rounded-full hover:bg-slate-800 transition-colors text-slate-400 hover:text-primary"
+              className="p-2.5 rounded-xl bg-surface/50 border border-border/50 hover:bg-surface transition-all text-muted hover:text-primary shadow-sm active:scale-95"
             >
               <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
             </button>
@@ -305,19 +328,19 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
         <div className="md:col-span-2 glass rounded-3xl p-8 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-primary/20 transition-all"></div>
           <div className="relative z-10">
-            <h3 className="text-slate-400 font-medium flex items-center">
+            <h3 className="text-muted font-medium flex items-center">
               Global Life Score
               <Zap size={16} className="ml-2 text-wealth" />
             </h3>
             <div className="mt-4 flex items-end space-x-4">
-              <span className="text-7xl font-display font-bold text-white tracking-tighter">
-                {user?.lifeScore || 0} <span className="text-2xl text-slate-500">/ 100</span>
+              <span className="text-7xl font-display font-bold text-foreground tracking-tighter">
+                {user?.lifeScore || 0} <span className="text-2xl text-muted">/ 100</span>
               </span>
               <div className="mb-2 flex items-center text-health text-sm font-semibold bg-health/10 px-2 py-1 rounded-lg">
                 +5.2% <Plus size={12} className="ml-1" />
               </div>
             </div>
-            <p className="mt-4 text-slate-400 max-w-xs leading-relaxed">
+            <p className="mt-4 text-muted max-w-xs leading-relaxed">
               System Health: <span className="text-health">Optimal</span>. Performance index is rising.
             </p>
           </div>
@@ -328,11 +351,11 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
             <div className="w-12 h-12 rounded-2xl bg-health/10 flex items-center justify-center mb-4 transition-transform group-hover:rotate-12">
               <Heart className="text-health" />
             </div>
-            <h3 className="text-slate-400 font-medium">Health Score</h3>
+            <h3 className="text-muted font-medium">Health Score</h3>
           </div>
           <div className="mt-4">
             <span className="text-3xl font-bold">{user?.healthScore || 0}%</span>
-            <div className="w-full h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden">
+            <div className="w-full h-1.5 bg-border/20 rounded-full mt-2 overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${user?.healthScore || 0}%` }}
@@ -347,11 +370,11 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
             <div className="w-12 h-12 rounded-2xl bg-wealth/10 flex items-center justify-center mb-4 transition-transform group-hover:rotate-12">
               <Wallet className="text-wealth" />
             </div>
-            <h3 className="text-slate-400 font-medium">Wealth Score</h3>
+            <h3 className="text-muted font-medium">Wealth Score</h3>
           </div>
           <div className="mt-4">
             <span className="text-3xl font-bold">{user?.wealthScore || 0}%</span>
-            <div className="w-full h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden">
+            <div className="w-full h-1.5 bg-border/20 rounded-full mt-2 overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${user?.wealthScore || 0}%` }}
@@ -377,16 +400,16 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
                   onClick={() => completeHabit(habit._id)}
                   className="glass p-5 rounded-2xl flex items-center space-x-4 card-hover cursor-pointer group"
                 >
-                  <div className={`bg-slate-800 w-12 h-12 rounded-xl flex items-center justify-center transition-colors group-hover:bg-primary/20`}>
+                  <div className={`bg-surface w-12 h-12 rounded-xl flex items-center justify-center transition-colors group-hover:bg-primary/20 border border-border/50`}>
                     <Zap className="text-primary" size={20} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold">{habit.name}</h4>
-                    <p className="text-xs text-slate-500">{habit.streak} day streak</p>
+                    <h4 className="font-semibold text-foreground">{habit.name}</h4>
+                    <p className="text-xs text-muted">{habit.streak} day streak</p>
                   </div>
                   <div className="flex -space-x-1">
                     {[1, 2, 3, 4, 5].map(i => (
-                      <div key={i} className={`w-2 h-2 rounded-full ${i <= (habit.streak % 5 || 5) ? 'bg-primary' : 'bg-slate-800'}`}></div>
+                      <div key={i} className={`w-2 h-2 rounded-full ${i <= (habit.streak % 5 || 5) ? 'bg-primary' : 'bg-border/20'}`}></div>
                     ))}
                   </div>
                 </div>
@@ -407,15 +430,15 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
 
         <div className="space-y-8">
           <section className="glass rounded-3xl p-8">
-            <h2 className="text-xl font-bold mb-6 italic tracking-tight uppercase text-slate-500 text-xs">Mission Alignment</h2>
+            <h2 className="text-xl font-bold mb-6 italic tracking-tight uppercase text-muted text-xs">Mission Alignment</h2>
             <div className="space-y-6">
               {goals.length > 0 ? goals.map((goal: any) => (
                 <div key={goal._id} className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">{goal.title}</span>
-                    <span className="font-semibold">{goal.progress}%</span>
+                    <span className="text-muted">{goal.title}</span>
+                    <span className="font-semibold text-foreground">{goal.progress}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-border/20 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${goal.progress}%` }}
@@ -424,10 +447,10 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
                   </div>
                 </div>
               )) : (
-                <p className="text-slate-500 text-sm italic">No active missions detected.</p>
+                <p className="text-muted text-sm italic">No active missions detected.</p>
               )}
             </div>
-            <button onClick={() => setActiveTab('goals')} className="w-full mt-8 py-3 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors text-sm font-semibold">
+            <button onClick={() => setActiveTab('goals')} className="w-full mt-8 py-3 rounded-xl border border-border/50 hover:bg-surface transition-colors text-sm font-semibold text-foreground">
               Refine Life Purpose
             </button>
           </section>
@@ -438,7 +461,7 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
               AI Insight
               <MessageSquare size={16} className="ml-2 text-accent" />
             </h3>
-            <p className="text-slate-300 text-sm italic leading-relaxed">
+            <p className="text-foreground/80 text-sm italic leading-relaxed">
               "{insight || "Initializing system analysis..."}"
             </p>
           </section>

@@ -92,10 +92,10 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl glass rounded-[2.5rem] p-8 z-[101] border-white/10 shadow-2xl"
+                        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl glass rounded-[2.5rem] p-8 z-[101] border-border/10 shadow-2xl"
                     >
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-display font-bold text-white">Kernel Log Entry</h2>
+                            <h2 className="text-2xl font-display font-bold text-foreground">Kernel Log Entry</h2>
                             <button
                                 onClick={onClose}
                                 className="p-2 hover:bg-white/10 rounded-full transition-colors"
@@ -104,12 +104,12 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                             </button>
                         </div>
 
-                        <div className="flex p-1 bg-slate-900/50 rounded-2xl border border-slate-800 mb-8">
+                        <div className="flex p-1 bg-surface/50 rounded-2xl border border-border/50 mb-8">
                             {types.map(t => (
                                 <button
                                     key={t.id}
                                     onClick={() => setActiveType(t.id)}
-                                    className={`flex-1 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all ${activeType === t.id ? 'bg-slate-800 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
+                                    className={`flex-1 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all ${activeType === t.id ? 'bg-surface text-foreground shadow-lg border border-border/50' : 'text-muted hover:text-foreground'
                                         }`}
                                 >
                                     <t.icon size={16} className={activeType === t.id ? t.color : ''} />
@@ -121,42 +121,42 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {activeType === 'generic' && (
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Event Name</label>
+                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Event Name</label>
                                     <input
                                         type="text"
                                         placeholder="Identify life event..."
                                         required
                                         value={formData.title}
                                         onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-sm focus:border-accent/50 outline-none transition-all"
+                                        className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-accent/50 outline-none transition-all text-foreground placeholder:text-muted/50"
                                     />
                                 </div>
                             )}
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">
                                         {activeType === 'wealth' ? 'Amount' : 'Intensity / Value'}
                                     </label>
                                     <div className="relative">
-                                        {activeType === 'wealth' && <DollarSign size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />}
+                                        {activeType === 'wealth' && <DollarSign size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />}
                                         <input
                                             type="number"
                                             placeholder="0.00"
                                             required
                                             value={formData.value}
                                             onChange={e => setFormData({ ...formData, value: e.target.value })}
-                                            className={`w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all ${activeType === 'wealth' ? 'pl-10' : ''}`}
+                                            className={`w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all text-foreground placeholder:text-muted/50 ${activeType === 'wealth' ? 'pl-10' : ''}`}
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Category</label>
+                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Category</label>
                                     <select
                                         value={formData.category}
                                         onChange={e => setFormData({ ...formData, category: e.target.value })}
-                                        className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all appearance-none text-slate-300"
+                                        className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all appearance-none text-foreground"
                                     >
                                         <option value="">Select Category</option>
                                         {activeType === 'health' && (
@@ -205,12 +205,12 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                             )}
 
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Notes / Description</label>
+                                <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Notes / Description</label>
                                 <textarea
                                     placeholder="Record additional context..."
                                     value={formData.notes}
                                     onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                                    className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all h-24"
+                                    className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all h-24 text-foreground placeholder:text-muted/50"
                                 />
                             </div>
 

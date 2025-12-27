@@ -3,18 +3,50 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --primary: #6366f1;
+    --secondary: #0ea5e9;
+    --health: #10b981;
+    --wealth: #f59e0b;
+    --habits: #8b5cf6;
+    --goals: #3b82f6;
+    --relationships: #f43f5e;
+    --accent: #f472b6;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+  }
+
+  .dark {
+    --background: #020617;
+    --surface: #0f172a;
+    --primary: #6366f1;
+    --secondary: #0ea5e9;
+    --health: #10b981;
+    --wealth: #f59e0b;
+    --habits: #8b5cf6;
+    --goals: #3b82f6;
+    --relationships: #f43f5e;
+    --accent: #f472b6;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: #1e293b;
+  }
+
   body {
-    @apply bg-background text-slate-200 font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased transition-colors duration-300;
   }
 }
 
 @layer components {
   .glass {
-    @apply bg-surface/50 backdrop-blur-md border border-slate-800 shadow-xl;
+    @apply bg-surface/50 backdrop-blur-md border border-border/50 shadow-xl transition-all duration-300;
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:bg-surface/70;
+    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:bg-surface/70 border border-border/10;
   }
 
   .text-glow-primary {
@@ -45,9 +77,9 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-800 rounded-full;
+  @apply bg-border rounded-full transition-colors;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-700;
+  @apply bg-muted;
 }

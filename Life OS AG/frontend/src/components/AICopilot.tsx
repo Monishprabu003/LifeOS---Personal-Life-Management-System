@@ -83,10 +83,10 @@ export function AICopilot({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed bottom-24 right-8 w-[450px] h-[600px] glass rounded-[2rem] shadow-2xl z-[70] flex flex-col overflow-hidden border border-white/10"
+                        className="fixed bottom-24 right-8 w-[450px] h-[600px] glass rounded-[2rem] shadow-2xl z-[70] flex flex-col overflow-hidden border border-border/10"
                     >
                         {/* Header */}
-                        <div className="p-6 border-b border-white/5 bg-gradient-to-r from-accent/10 to-primary/10 flex items-center justify-between">
+                        <div className="p-6 border-b border-border/10 bg-gradient-to-r from-accent/10 to-primary/10 flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-lg shadow-accent/20">
                                     <Sparkles size={20} className="text-white" />
@@ -95,11 +95,11 @@ export function AICopilot({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                                     <h3 className="font-display font-bold text-lg">AI Copilot</h3>
                                     <div className="flex items-center space-x-1.5">
                                         <span className="w-1.5 h-1.5 rounded-full bg-health animate-pulse"></span>
-                                        <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500">Neural Link Active</span>
+                                        <span className="text-[10px] uppercase tracking-widest font-bold text-muted">Neural Link Active</span>
                                     </div>
                                 </div>
                             </div>
-                            <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400">
+                            <button onClick={onClose} className="p-2 hover:bg-surface/50 rounded-full transition-colors text-muted">
                                 <X size={20} />
                             </button>
                         </div>
@@ -118,7 +118,7 @@ export function AICopilot({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                                         </div>
                                         <div className={`p-4 rounded-2xl text-sm leading-relaxed ${msg.sender === 'user'
                                             ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                            : 'glass text-slate-200 border border-white/5'
+                                            : 'glass text-foreground border border-border/10'
                                             }`}>
                                             {msg.text}
                                         </div>
@@ -137,19 +137,19 @@ export function AICopilot({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                         </div>
 
                         {/* Input */}
-                        <form onSubmit={handleSend} className="p-6 border-t border-white/5 bg-slate-900/40">
+                        <form onSubmit={handleSend} className="p-6 border-t border-border/10 bg-surface/40">
                             <div className="relative">
                                 <input
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     placeholder="Ask your Copilot something..."
-                                    className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-4 pl-5 pr-14 focus:border-accent/50 outline-none transition-all placeholder:text-slate-600 focus:ring-4 focus:ring-accent/5"
+                                    className="w-full bg-surface/50 border border-border/50 rounded-xl py-4 pl-5 pr-14 focus:border-accent/50 outline-none transition-all placeholder:text-muted focus:ring-4 focus:ring-accent/5 text-foreground"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!input.trim() || isTyping}
-                                    className="absolute right-2 top-2 bottom-2 w-10 bg-accent hover:bg-accent/90 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg flex items-center justify-center transition-all shadow-lg shadow-accent/20"
+                                    className="absolute right-2 top-2 bottom-2 w-10 bg-accent hover:bg-accent/90 disabled:bg-surface disabled:text-muted text-white rounded-lg flex items-center justify-center transition-all shadow-lg shadow-accent/20"
                                 >
                                     <Send size={18} />
                                 </button>

@@ -70,8 +70,8 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
             {/* Header Section */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-display font-bold text-white">Health System</h2>
-                    <p className="text-slate-400 mt-1">Physiological and psychological status monitor.</p>
+                    <h2 className="text-3xl font-display font-bold text-foreground">Health System</h2>
+                    <p className="text-muted mt-1">Physiological and psychological status monitor.</p>
                 </div>
                 <button
                     onClick={() => setShowForm(!showForm)}
@@ -92,7 +92,7 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                             </div>
                             <h3 className="font-bold text-xl">Mood Trajectory</h3>
                         </div>
-                        <select className="bg-slate-900/50 border border-slate-800 rounded-lg px-3 py-1 text-xs font-bold text-slate-400 outline-none">
+                        <select className="bg-surface/50 border border-border/50 rounded-lg px-3 py-1 text-xs font-bold text-muted outline-none">
                             <option>Last 7 Days</option>
                             <option>Monthly</option>
                         </select>
@@ -107,19 +107,19 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                         <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                                 <XAxis
                                     dataKey="date"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fill: '#64748b', fontSize: 12 }}
+                                    tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
                                 />
                                 <YAxis
                                     hide={true}
                                     domain={[0, 10]}
                                 />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }}
+                                    contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px' }}
                                     itemStyle={{ color: '#10b981' }}
                                 />
                                 <Area
@@ -140,8 +140,8 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                     <div className="glass rounded-[2rem] p-6 flex items-center justify-between overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-health/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                         <div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Avg Sleep</p>
-                            <h4 className="text-3xl font-display font-bold mt-1">7.4h</h4>
+                            <p className="text-xs font-bold text-muted uppercase tracking-widest">Avg Sleep</p>
+                            <h4 className="text-3xl font-display font-bold mt-1 text-foreground">7.4h</h4>
                         </div>
                         <Activity className="text-health opacity-20" size={48} />
                     </div>
@@ -149,18 +149,18 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                     <div className="glass rounded-[2rem] p-6 flex items-center justify-between overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                         <div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Minutes</p>
-                            <h4 className="text-3xl font-display font-bold mt-1">142m</h4>
+                            <p className="text-xs font-bold text-muted uppercase tracking-widest">Active Minutes</p>
+                            <h4 className="text-3xl font-display font-bold mt-1 text-foreground">142m</h4>
                         </div>
                         <Activity className="text-primary opacity-20" size={48} />
                     </div>
 
                     <div className="bg-gradient-to-br from-health/20 to-primary/20 rounded-[2rem] p-8 border border-health/20">
-                        <h4 className="font-bold flex items-center">
+                        <h4 className="font-bold flex items-center text-foreground">
                             <Sun size={18} className="mr-2 text-health" />
                             Vitality Summary
                         </h4>
-                        <p className="text-sm text-slate-300 mt-4 leading-relaxed">
+                        <p className="text-sm text-foreground/80 mt-4 leading-relaxed">
                             Your physiological synchronization is balanced. Morning sunlight exposure in the last 2 nodes has improved sleep onset latency by 12%.
                         </p>
                     </div>
@@ -183,7 +183,7 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                         key={l.id}
                                         type="button"
                                         onClick={() => setType(l.id)}
-                                        className={`p-4 rounded-2xl flex flex-col items-center transition-all ${type === l.id ? 'bg-health text-white shadow-lg' : 'bg-slate-900/50 hover:bg-slate-800'
+                                        className={`p-4 rounded-2xl flex flex-col items-center transition-all ${type === l.id ? 'bg-health text-white shadow-lg' : 'bg-surface/50 hover:bg-surface border border-border/50'
                                             }`}
                                     >
                                         <l.icon size={20} />
@@ -193,7 +193,7 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                             </div>
 
                             <div className="space-y-2">
-                                <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                <div className="flex justify-between text-xs font-bold text-muted uppercase tracking-widest">
                                     <span>Intensity / Value</span>
                                     <span className="text-health">{value}</span>
                                 </div>
@@ -203,7 +203,7 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                     max={logTypes.find(t => t.id === type)?.max}
                                     value={value}
                                     onChange={e => setValue(parseInt(e.target.value))}
-                                    className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-health"
+                                    className="w-full h-1 bg-border/20 rounded-lg appearance-none cursor-pointer accent-health"
                                 />
                             </div>
 
@@ -211,7 +211,7 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                 placeholder="Log notes (e.g. Dream recall, workout intensity...)"
                                 value={notes}
                                 onChange={e => setNotes(e.target.value)}
-                                className="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-sm focus:border-health/50 outline-none h-24 transition-all"
+                                className="w-full bg-surface/50 border border-border/50 rounded-xl p-4 text-sm focus:border-health/50 outline-none h-24 transition-all text-foreground placeholder:text-muted/50"
                             />
 
                             <button className="w-full bg-health py-4 rounded-xl font-bold shadow-lg shadow-health/20 hover:shadow-health/40 transition-all active:scale-95">
@@ -241,13 +241,13 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                             <Icon className={config.color} size={20} />
                                         </div>
                                         <div className="flex-1">
-                                            <h4 className="font-semibold capitalize">{log.type}</h4>
-                                            <p className="text-xs text-slate-500">{new Date(log.timestamp).toLocaleString()}</p>
+                                            <h4 className="font-semibold capitalize text-foreground">{log.type}</h4>
+                                            <p className="text-xs text-muted">{new Date(log.timestamp).toLocaleString()}</p>
                                         </div>
                                         <div className="text-right flex items-center space-x-4">
-                                            <span className="text-lg font-display font-bold text-white">{log.value} <span className="text-xs text-slate-500 font-normal">{log.unit}</span></span>
+                                            <span className="text-lg font-display font-bold text-foreground">{log.value} <span className="text-xs text-muted font-normal">{log.unit}</span></span>
                                             {log.notes && (
-                                                <div className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-slate-500 italic max-w-xs truncate">
+                                                <div className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-muted italic max-w-xs truncate">
                                                     "{log.notes}"
                                                 </div>
                                             )}
