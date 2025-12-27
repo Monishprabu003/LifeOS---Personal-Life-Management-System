@@ -1,17 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-    TrendingUp,
-    TrendingDown,
+    Wallet,
     Plus,
-    History,
+    TrendingUp,
+    CreditCard,
+    PiggyBank,
     DollarSign,
-    PieChart as PieChartIcon,
     ArrowUpRight,
     ArrowDownLeft,
-    CreditCard
+    ChevronRight
 } from 'lucide-react';
-import { financeAPI } from '../api';
 import {
     BarChart,
     Bar,
@@ -19,279 +18,285 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell,
+    Legend
 } from 'recharts';
+import { AddTransactionModal } from './AddTransactionModal';
 
-export function WealthModule({ onUpdate }: { onUpdate?: () => void }) {
-    const [transactions, setTransactions] = useState<any[]>([]);
-    const [showForm, setShowForm] = useState(false);
+const incomeVsExpenseData = [
+    { name: 'Jul', income: 5000, expense: 3200 },
+    { name: 'Aug', income: 5200, expense: 3400 },
+    { name: 'Sep', income: 5100, expense: 3100 },
+    { name: 'Oct', income: 5500, expense: 3800 },
+    { name: 'Nov', income: 5300, expense: 3300 },
+    { name: 'Dec', income: 5800, expense: 3250 },
+];
 
-    // Form State
-    const [type, setType] = useState<'income' | 'expense'>('expense');
-    const [amount, setAmount] = useState('');
-    const [category, setCategory] = useState('');
-    const [description, setDescription] = useState('');
+const expenseBreakdownData = [
+    { name: 'Housing', value: 1200, color: '#3b82f6' },
+    { name: 'Food', value: 600, color: '#10b981' },
+    { name: 'Transport', value: 400, color: '#f59e0b' },
+    { name: 'Entertainment', value: 300, color: '#8b5cf6' },
+    { name: 'Shopping', value: 500, color: '#f43f5e' },
+    { name: 'Other', value: 250, color: '#94a3b8' },
+];
 
-    useEffect(() => {
-        fetchTransactions();
-    }, []);
+const transactions = [
+    { id: 1, title: 'Grocery Store', category: 'Food', amount: 85.50, type: 'expense', date: 'Today' },
+    { id: 2, title: 'Salary Deposit', category: 'Income', amount: 5800.00, type: 'income', date: 'Dec 1' },
+    { id: 3, title: 'Netflix', category: 'Entertainment', amount: 15.99, type: 'expense', date: 'Dec 1' },
+    { id: 4, title: 'Gas Station', category: 'Transport', amount: 45.00, type: 'expense', date: 'Nov 30' },
+    { id: 5, title: 'Coffee Shop', category: 'Food', amount: 6.50, type: 'expense', date: 'Nov 30' },
+];
 
-    const fetchTransactions = async () => {
-        try {
-            const res = await financeAPI.getTransactions();
-            setTransactions(res.data);
-        } catch (err) {
-            console.error('Failed to fetch transactions', err);
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!amount || !category) return;
-
-        try {
-            await financeAPI.createTransaction({
-                type,
-                amount: parseFloat(amount),
-                category,
-                description,
-                date: new Date()
-            });
-            setShowForm(false);
-            setAmount('');
-            setCategory('');
-            setDescription('');
-            fetchTransactions();
-            if (onUpdate) onUpdate();
-        } catch (err) {
-            alert('Failed to log transaction');
-        }
-    };
-
-    const getChartData = () => {
-        const last7Days = [...Array(7)].map((_, i) => {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            return d.toLocaleDateString('en-US', { weekday: 'short' });
-        }).reverse();
-
-        return last7Days.map(day => {
-            const dayTransactions = transactions.filter(t =>
-                new Date(t.date).toLocaleDateString('en-US', { weekday: 'short' }) === day
-            );
-
-            return {
-                name: day,
-                income: dayTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0),
-                expense: dayTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0),
-            };
-        });
-    };
-
-    const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-    const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-    const balance = totalIncome - totalExpense;
-
-    const categories = {
-        expense: ['Food', 'Transport', 'Rent', 'Entertainment', 'Shopping', 'Health', 'Other'],
-        income: ['Salary', 'Freelance', 'Investment', 'Gift', 'Other']
-    };
+const CircularProgress = ({ value, label }: any) => {
+    const size = 160;
+    const strokeWidth = 12;
+    const radius = (size - strokeWidth) / 2;
+    const circumference = radius * 2 * Math.PI;
+    const offset = circumference - (value / 100) * circumference;
 
     return (
-        <div className="space-y-8 pb-12">
-            {/* Header Section */}
+        <div className="flex flex-col items-center">
+            <div className="relative" style={{ width: size, height: size }}>
+                <svg width={size} height={size} className="transform -rotate-90">
+                    <circle
+                        cx={size / 2}
+                        cy={size / 2}
+                        r={radius}
+                        stroke="currentColor"
+                        strokeWidth={strokeWidth}
+                        fill="transparent"
+                        className="text-slate-100 dark:text-slate-800"
+                    />
+                    <motion.circle
+                        cx={size / 2}
+                        cy={size / 2}
+                        r={radius}
+                        stroke="#3b82f6"
+                        strokeWidth={strokeWidth}
+                        fill="transparent"
+                        strokeDasharray={circumference}
+                        initial={{ strokeDashoffset: circumference }}
+                        animate={{ strokeDashoffset: offset }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        strokeLinecap="round"
+                    />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{value}</span>
+                </div>
+            </div>
+            {label && <p className="mt-4 text-xs font-bold text-slate-400 text-center">{label}</p>}
+        </div>
+    );
+};
+
+export function WealthModule({ onUpdate }: { onUpdate?: () => void }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    return (
+        <div className="space-y-10 pb-20">
+            {/* Header */}
             <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-3xl font-display font-bold text-white">Wealth System</h2>
-                    <p className="text-slate-400 mt-1">Capital management and resource allocation.</p>
+                <div className="flex items-center space-x-6">
+                    <div className="w-16 h-16 rounded-2xl bg-[#3b82f6] flex items-center justify-center text-white shadow-lg shadow-blue-100">
+                        <Wallet size={32} />
+                    </div>
+                    <div>
+                        <h1 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white leading-tight">Wealth & Finances</h1>
+                        <p className="text-slate-500 font-medium mt-1">Track your income, expenses, and savings</p>
+                    </div>
                 </div>
                 <button
-                    onClick={() => setShowForm(!showForm)}
-                    className="bg-wealth hover:bg-wealth/90 text-white px-6 py-3 rounded-2xl flex items-center space-x-2 shadow-lg shadow-wealth/20 transition-all active:scale-95"
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-4 rounded-2xl font-bold flex items-center space-x-3 transition-all shadow-lg shadow-blue-100 dark:shadow-none"
                 >
                     <Plus size={20} />
-                    <span className="font-bold">Log Transaction</span>
+                    <span>Add Transaction</span>
                 </button>
             </div>
 
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="glass rounded-[2rem] p-8 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-wealth/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Net Balance</p>
-                    <h4 className={`text-4xl font-display font-bold mt-2 ${balance >= 0 ? 'text-white' : 'text-relationships'}`}>
-                        ${balance.toLocaleString()}
-                    </h4>
-                    <div className="flex items-center mt-4 text-xs font-bold">
-                        <span className="text-wealth">Capital Liquidity: Stable</span>
+            {/* Top Stat Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-3 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-start">
+                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-10">Financial Health</h3>
+                    <div className="w-full flex justify-center">
+                        <CircularProgress value={100} label="44% savings rate" />
                     </div>
                 </div>
 
-                <div className="glass rounded-[2rem] p-8 flex items-center justify-between group">
-                    <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Monthly Inflow</p>
-                        <h4 className="text-2xl font-display font-bold mt-1 text-health">${totalIncome.toLocaleString()}</h4>
+                <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-[#eff6ff] dark:bg-blue-500/10 rounded-[2.5rem] p-8 flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Monthly Income</p>
+                            <TrendingUp size={20} className="text-[#3b82f6]" />
+                        </div>
+                        <div className="mt-6">
+                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">$5,800</h4>
+                            <p className="text-[10px] font-bold text-[#10b981] mt-2">+10% vs last week</p>
+                        </div>
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-health/10 flex items-center justify-center">
-                        <ArrowUpRight className="text-health" />
-                    </div>
-                </div>
 
-                <div className="glass rounded-[2rem] p-8 flex items-center justify-between group">
-                    <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Monthly Outflow</p>
-                        <h4 className="text-2xl font-display font-bold mt-1 text-relationships">${totalExpense.toLocaleString()}</h4>
+                    <div className="bg-[#eff6ff] dark:bg-blue-500/10 rounded-[2.5rem] p-8 flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Monthly Expenses</p>
+                            <CreditCard size={20} className="text-[#3b82f6]" />
+                        </div>
+                        <div className="mt-6">
+                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">$3,250</h4>
+                            <p className="text-[10px] font-bold text-[#10b981] mt-2">5% vs last week</p>
+                        </div>
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-relationships/10 flex items-center justify-center">
-                        <ArrowDownLeft className="text-relationships" />
+
+                    <div className="bg-[#eff6ff] dark:bg-blue-500/10 rounded-[2.5rem] p-8 flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Savings</p>
+                            <PiggyBank size={20} className="text-[#3b82f6]" />
+                        </div>
+                        <div className="mt-6">
+                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">$2,550</h4>
+                            <p className="text-[10px] font-bold text-[#10b981] mt-2">+15% vs last week</p>
+                        </div>
+                    </div>
+
+                    <div className="bg-[#eff6ff] dark:bg-blue-500/10 rounded-[2.5rem] p-8 flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Savings Rate</p>
+                            <DollarSign size={20} className="text-[#3b82f6]" />
+                        </div>
+                        <div className="mt-6">
+                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">44%</h4>
+                            <p className="text-[10px] font-bold text-[#10b981] mt-2">+8% vs last week</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Cashflow Chart */}
-                <div className="lg:col-span-2 glass rounded-[2rem] p-8">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center space-x-3">
-                            <div className="p-3 bg-wealth/10 rounded-xl">
-                                <PieChartIcon size={24} className="text-wealth" />
-                            </div>
-                            <h3 className="font-bold text-xl">System Cashflow</h3>
-                        </div>
-                    </div>
+            {/* Budget Progress Bar */}
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 border border-slate-100 dark:border-slate-800 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-sm font-bold text-[#0f172a] dark:text-white">Monthly Budget</h3>
+                    <span className="text-sm font-bold text-slate-500">$3,250 / $4,000</span>
+                </div>
+                <div className="w-full h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: '81%' }}
+                        className="h-full bg-[#10b981] rounded-full"
+                    />
+                </div>
+                <div className="mt-4 flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <span>81% of budget used • $750 remaining</span>
+                </div>
+            </div>
 
-                    <div className="h-72 w-full">
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Expense Breakdown</h3>
+                    <div className="h-[300px] w-full relative">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={getChartData()}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
-                                <YAxis hide={true} />
+                            <PieChart>
+                                <Pie
+                                    data={expenseBreakdownData}
+                                    innerRadius={80}
+                                    outerRadius={110}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {expenseBreakdownData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
+                                    ))}
+                                </Pie>
                                 <Tooltip
-                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }}
+                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
                                 />
-                                <Bar dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} />
-                                <Bar dataKey="expense" fill="#f43f5e" radius={[4, 4, 0, 0]} />
-                            </BarChart>
+                                <Legend
+                                    verticalAlign="bottom"
+                                    align="center"
+                                    iconType="circle"
+                                    formatter={(value: string) => <span className="text-[10px] font-bold text-slate-500 uppercase ml-1">{value}</span>}
+                                />
+                            </PieChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
-                {/* Transaction Form / Side Card */}
-                <div className="space-y-6">
-                    {showForm ? (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="glass rounded-[2rem] p-8 border-wealth/30"
-                        >
-                            <h3 className="font-bold text-xl mb-6">Log Capital Move</h3>
-                            <form onSubmit={handleSubmit} className="space-y-5">
-                                <div className="flex bg-slate-900/50 p-1 rounded-xl border border-slate-800">
-                                    <button
-                                        type="button"
-                                        onClick={() => setType('expense')}
-                                        className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${type === 'expense' ? 'bg-relationships text-white' : 'text-slate-500'}`}
-                                    >
-                                        EXPENSE
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setType('income')}
-                                        className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${type === 'income' ? 'bg-health text-white' : 'text-slate-500'}`}
-                                    >
-                                        INCOME
-                                    </button>
-                                </div>
-
-                                <div className="relative">
-                                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                                    <input
-                                        type="number"
-                                        placeholder="0.00"
-                                        value={amount}
-                                        onChange={e => setAmount(e.target.value)}
-                                        className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-4 pl-12 pr-4 focus:border-wealth/50 outline-none transition-all font-display font-bold text-lg"
-                                    />
-                                </div>
-
-                                <select
-                                    value={category}
-                                    onChange={e => setCategory(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-sm outline-none focus:border-wealth/50 appearance-none text-slate-300"
-                                >
-                                    <option value="">Select Category</option>
-                                    {categories[type].map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
-
-                                <input
-                                    type="text"
-                                    placeholder="Reference (optional)"
-                                    value={description}
-                                    onChange={e => setDescription(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-sm outline-none focus:border-wealth/50 transition-all"
+                <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Income vs Expenses</h3>
+                    <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={incomeVsExpenseData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <XAxis
+                                    dataKey="name"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                    dy={10}
                                 />
-
-                                <button className="w-full bg-wealth py-4 rounded-xl font-bold shadow-lg shadow-wealth/20 hover:shadow-wealth/40 transition-all active:scale-95">
-                                    Execute Entry
-                                </button>
-                            </form>
-                        </motion.div>
-                    ) : (
-                        <div className="glass rounded-[2rem] p-8 border-white/5 space-y-6">
-                            <div className="flex items-center space-x-3 text-wealth">
-                                <CreditCard size={20} />
-                                <h3 className="font-bold">Resource Allocation</h3>
-                            </div>
-                            <p className="text-sm text-slate-400 italic">
-                                "Your burn rate has stabilized. Expense nodes in 'Other' have decreased by 20% this cycle."
-                            </p>
-                            <div className="pt-4 border-t border-white/5">
-                                <div className="flex justify-between text-xs mb-2">
-                                    <span className="text-slate-500">Savings Rate</span>
-                                    <span className="text-health font-bold">24%</span>
-                                </div>
-                                <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                                    <div className="w-[24%] h-full bg-health"></div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                    ticks={[0, 1500, 3000, 4500, 6000]}
+                                />
+                                <Tooltip
+                                    cursor={{ fill: '#f8fafc' }}
+                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
+                                />
+                                <Bar dataKey="income" fill="#10b981" radius={[4, 4, 4, 4]} barSize={30} />
+                                <Bar dataKey="expense" fill="#3b82f6" radius={[4, 4, 4, 4]} barSize={30} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
 
-            {/* History List */}
-            <div className="glass rounded-[2rem] p-8">
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center space-x-3">
-                        <History size={20} className="text-slate-500" />
-                        <h3 className="font-bold text-xl">Ledger History</h3>
+            {/* Transactions Section */}
+            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                <div className="flex items-center justify-between mb-10">
+                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Recent Transactions</h3>
+                    <div className="flex items-center space-x-2 text-[#3b82f6] font-bold text-sm cursor-pointer hover:underline">
+                        <span>View all</span>
+                        <ChevronRight size={16} />
                     </div>
-                    <button className="text-xs font-bold text-wealth uppercase tracking-widest hover:underline">Export Data</button>
                 </div>
-
                 <div className="space-y-4">
-                    {transactions.slice(0, 10).map((t: any) => (
-                        <div key={t._id} className="flex items-center p-4 rounded-2xl hover:bg-white/5 transition-colors group">
-                            <div className={`p-3 rounded-xl mr-4 ${t.type === 'income' ? 'bg-health/10' : 'bg-relationships/10'}`}>
-                                {t.type === 'income' ? <TrendingUp size={20} className="text-health" /> : <TrendingDown size={20} className="text-relationships" />}
-                            </div>
-                            <div className="flex-1">
-                                <h4 className="font-semibold">{t.description || t.category}</h4>
-                                <p className="text-xs text-slate-500">{t.category} • {new Date(t.date).toLocaleDateString()}</p>
+                    {transactions.map((tx) => (
+                        <div key={tx.id} className="flex items-center justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group hover:bg-slate-100 transition-colors">
+                            <div className="flex items-center space-x-5">
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${tx.type === 'income' ? 'bg-[#ecfdf5] text-[#10b981]' : 'bg-[#eff6ff] text-[#3b82f6]'}`}>
+                                    {tx.type === 'income' ? <ArrowUpRight size={24} /> : <ArrowDownLeft size={24} />}
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-bold text-[#0f172a] dark:text-white">{tx.title}</h4>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">{tx.category}</p>
+                                </div>
                             </div>
                             <div className="text-right">
-                                <span className={`text-lg font-display font-bold ${t.type === 'income' ? 'text-health' : 'text-white'}`}>
-                                    {t.type === 'income' ? '+' : '-'}${t.amount.toLocaleString()}
-                                </span>
+                                <h4 className={`text-sm font-bold ${tx.type === 'income' ? 'text-[#10b981]' : 'text-[#0f172a] dark:text-white'}`}>
+                                    {tx.type === 'income' ? '+' : ''}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                </h4>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">{tx.date}</p>
                             </div>
                         </div>
                     ))}
-                    {transactions.length === 0 && (
-                        <p className="text-slate-500 italic text-center py-8">Ledger is empty. Initialize system with capital entry.</p>
-                    )}
                 </div>
             </div>
+
+            <AddTransactionModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSave={(data) => {
+                    console.log('Saved Transaction:', data);
+                    if (onUpdate) onUpdate();
+                }}
+            />
         </div>
     );
 }

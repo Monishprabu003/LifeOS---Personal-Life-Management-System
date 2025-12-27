@@ -4,7 +4,6 @@ import {
   Heart,
   Wallet,
   Zap,
-  Target,
   Users,
   MessageSquare,
   Plus,
@@ -16,11 +15,9 @@ import {
   Mail,
   Lock,
   LogOut,
-  Search,
   Settings,
   Bell,
-  Compass,
-  ArrowRight
+  Compass
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, kernelAPI, habitsAPI, goalsAPI, aiAPI } from './api';
@@ -32,6 +29,8 @@ import { SocialModule } from './components/SocialModule';
 import { HabitsModule } from './components/HabitsModule';
 import { UnifiedLogModal } from './components/UnifiedLogModal';
 import { DashboardModule } from './components/DashboardModule';
+import { ProfileModule } from './components/ProfileModule';
+import { SettingsModule } from './components/SettingsModule';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -391,6 +390,8 @@ function App() {
               {activeTab === 'habits' && <HabitsModule onUpdate={fetchAppData} />}
               {activeTab === 'goals' && <GoalsModule onUpdate={fetchAppData} />}
               {activeTab === 'relationships' && <SocialModule onUpdate={fetchAppData} />}
+              {activeTab === 'profile' && <ProfileModule user={user} />}
+              {activeTab === 'settings' && <SettingsModule />}
             </motion.div>
           </AnimatePresence>
         </div>
