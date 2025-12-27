@@ -10,7 +10,7 @@ export default {
       colors: {
         background: "var(--background)",
         surface: "var(--surface)",
-        foreground: "var(--text-main)",
+        main: "var(--text-main)",
         muted: "var(--text-muted)",
         border: "var(--border)",
         primary: "var(--primary)",

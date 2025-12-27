@@ -95,7 +95,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                         className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl glass rounded-[2.5rem] p-8 z-[101] border-border/10 shadow-2xl"
                     >
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-display font-bold text-foreground">Kernel Log Entry</h2>
+                            <h2 className="text-2xl font-display font-bold text-main">Kernel Log Entry</h2>
                             <button
                                 onClick={onClose}
                                 className="p-2 hover:bg-white/10 rounded-full transition-colors"
@@ -109,7 +109,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                 <button
                                     key={t.id}
                                     onClick={() => setActiveType(t.id)}
-                                    className={`flex-1 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all ${activeType === t.id ? 'bg-surface text-foreground shadow-lg border border-border/50' : 'text-muted hover:text-foreground'
+                                    className={`flex-1 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all ${activeType === t.id ? 'bg-surface text-main shadow-lg border border-border/50' : 'text-muted hover:text-main'
                                         }`}
                                 >
                                     <t.icon size={16} className={activeType === t.id ? t.color : ''} />
@@ -128,7 +128,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                         required
                                         value={formData.title}
                                         onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-accent/50 outline-none transition-all text-foreground placeholder:text-muted/50"
+                                        className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-accent/50 outline-none transition-all text-main placeholder:text-muted/50"
                                     />
                                 </div>
                             )}
@@ -146,7 +146,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                             required
                                             value={formData.value}
                                             onChange={e => setFormData({ ...formData, value: e.target.value })}
-                                            className={`w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all text-foreground placeholder:text-muted/50 ${activeType === 'wealth' ? 'pl-10' : ''}`}
+                                            className={`w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all text-main placeholder:text-muted/50 ${activeType === 'wealth' ? 'pl-10' : ''}`}
                                         />
                                     </div>
                                 </div>
@@ -156,7 +156,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                     <select
                                         value={formData.category}
                                         onChange={e => setFormData({ ...formData, category: e.target.value })}
-                                        className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all appearance-none text-foreground"
+                                        className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all appearance-none text-main"
                                     >
                                         <option value="">Select Category</option>
                                         {activeType === 'health' && (
@@ -210,7 +210,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                     placeholder="Record additional context..."
                                     value={formData.notes}
                                     onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                                    className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all h-24 text-foreground placeholder:text-muted/50"
+                                    className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 text-sm focus:border-primary/50 outline-none transition-all h-24 text-main placeholder:text-muted/50"
                                 />
                             </div>
 

@@ -123,7 +123,7 @@ function App() {
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-6 shadow-2xl">
               <span className="font-display font-bold text-white text-3xl">L</span>
             </div>
-            <h1 className="text-3xl font-display font-bold text-foreground mb-2">Initialize LifeOS</h1>
+            <h1 className="text-3xl font-display font-bold text-main mb-2">Initialize LifeOS</h1>
             <p className="text-muted text-center mb-8">System standby. Authentication required.</p>
 
             <form onSubmit={handleLogin} className="w-full space-y-4">
@@ -132,14 +132,14 @@ function App() {
                 placeholder="Terminal Email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted/50 text-foreground"
+                className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted/50 text-main"
               />
               <input
                 type="password"
                 placeholder="Access Key"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted/50 text-foreground"
+                className="w-full bg-surface/50 border border-border/50 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted/50 text-main"
               />
               <button
                 type="submit"
@@ -175,7 +175,7 @@ function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden text-foreground">
+    <div className="flex h-screen bg-background overflow-hidden text-main">
       {/* Sidebar */}
       <aside className="w-64 glass border-r border-border/50 flex flex-col">
         <div className="p-6">
@@ -198,7 +198,7 @@ function App() {
                 onClick={() => setActiveTab(module.id)}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group ${activeTab === module.id
                   ? 'bg-primary/20 text-primary shadow-[0_0_20px_rgba(99,102,241,0.2)]'
-                  : 'hover:bg-surface/50 text-muted hover:text-foreground'
+                  : 'hover:bg-surface/50 text-muted hover:text-main'
                   }`}
               >
                 <Icon size={20} className={activeTab === module.id ? module.color : 'group-hover:' + module.color} />
@@ -239,7 +239,7 @@ function App() {
             <input
               type="text"
               placeholder="Search life events, goals, or AI help..."
-              className="bg-transparent border-none focus:ring-0 ml-3 text-sm w-full outline-none text-foreground placeholder:text-muted/50"
+              className="bg-transparent border-none focus:ring-0 ml-3 text-sm w-full outline-none text-main placeholder:text-muted/50"
             />
           </div>
 
@@ -333,7 +333,7 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
               <Zap size={16} className="ml-2 text-wealth" />
             </h3>
             <div className="mt-4 flex items-end space-x-4">
-              <span className="text-7xl font-display font-bold text-foreground tracking-tighter">
+              <span className="text-7xl font-display font-bold text-main tracking-tighter">
                 {user?.lifeScore || 0} <span className="text-2xl text-muted">/ 100</span>
               </span>
               <div className="mb-2 flex items-center text-health text-sm font-semibold bg-health/10 px-2 py-1 rounded-lg">
@@ -404,7 +404,7 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
                     <Zap className="text-primary" size={20} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-foreground">{habit.name}</h4>
+                    <h4 className="font-semibold text-main">{habit.name}</h4>
                     <p className="text-xs text-muted">{habit.streak} day streak</p>
                   </div>
                   <div className="flex -space-x-1">
@@ -436,7 +436,7 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
                 <div key={goal._id} className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted">{goal.title}</span>
-                    <span className="font-semibold text-foreground">{goal.progress}%</span>
+                    <span className="font-semibold text-main">{goal.progress}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-border/20 rounded-full overflow-hidden">
                     <motion.div
@@ -450,7 +450,7 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
                 <p className="text-muted text-sm italic">No active missions detected.</p>
               )}
             </div>
-            <button onClick={() => setActiveTab('goals')} className="w-full mt-8 py-3 rounded-xl border border-border/50 hover:bg-surface transition-colors text-sm font-semibold text-foreground">
+            <button onClick={() => setActiveTab('goals')} className="w-full mt-8 py-3 rounded-xl border border-border/50 hover:bg-surface transition-colors text-sm font-semibold text-main">
               Refine Life Purpose
             </button>
           </section>
@@ -461,7 +461,7 @@ function Dashboard({ user, habits, goals, insight, fetchAppData, setActiveTab }:
               AI Insight
               <MessageSquare size={16} className="ml-2 text-accent" />
             </h3>
-            <p className="text-foreground/80 text-sm italic leading-relaxed">
+            <p className="text-main/80 text-sm italic leading-relaxed">
               "{insight || "Initializing system analysis..."}"
             </p>
           </section>

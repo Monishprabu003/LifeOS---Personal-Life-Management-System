@@ -4,39 +4,39 @@
 
 @layer base {
   :root {
-    --background: #f8fafc;
-    --surface: #ffffff;
-    --primary: #6366f1;
-    --secondary: #0ea5e9;
-    --health: #10b981;
-    --wealth: #f59e0b;
-    --habits: #8b5cf6;
-    --goals: #3b82f6;
-    --relationships: #f43f5e;
-    --accent: #f472b6;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --border: #e2e8f0;
+    --background: 248, 250, 252;
+    --surface: 255, 255, 255;
+    --primary: 99, 102, 241;
+    --secondary: 14, 165, 233;
+    --health: 16, 185, 129;
+    --wealth: 245, 158, 11;
+    --habits: 139, 92, 246;
+    --goals: 59, 130, 246;
+    --relationships: 244, 63, 94;
+    --accent: 244, 114, 182;
+    --text-main: 15, 23, 42;
+    --text-muted: 100, 116, 139;
+    --border: 226, 232, 240;
   }
 
   .dark {
-    --background: #020617;
-    --surface: #0f172a;
-    --primary: #6366f1;
-    --secondary: #0ea5e9;
-    --health: #10b981;
-    --wealth: #f59e0b;
-    --habits: #8b5cf6;
-    --goals: #3b82f6;
-    --relationships: #f43f5e;
-    --accent: #f472b6;
-    --text-main: #f1f5f9;
-    --text-muted: #94a3b8;
-    --border: #1e293b;
+    --background: 2, 6, 23;
+    --surface: 15, 23, 42;
+    --primary: 99, 102, 241;
+    --secondary: 14, 165, 233;
+    --health: 16, 185, 129;
+    --wealth: 245, 158, 11;
+    --habits: 139, 92, 246;
+    --goals: 59, 130, 246;
+    --relationships: 244, 63, 94;
+    --accent: 244, 114, 182;
+    --text-main: 241, 245, 249;
+    --text-muted: 148, 163, 184;
+    --border: 30, 41, 59;
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased transition-colors duration-300;
+    @apply bg-background text-main font-sans antialiased transition-colors duration-300;
   }
 }
 

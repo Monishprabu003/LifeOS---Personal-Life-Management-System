@@ -118,7 +118,7 @@ export function AICopilot({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                                         </div>
                                         <div className={`p-4 rounded-2xl text-sm leading-relaxed ${msg.sender === 'user'
                                             ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                            : 'glass text-foreground border border-border/10'
+                                            : 'glass text-main border border-border/10'
                                             }`}>
                                             {msg.text}
                                         </div>
@@ -144,7 +144,7 @@ export function AICopilot({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     placeholder="Ask your Copilot something..."
-                                    className="w-full bg-surface/50 border border-border/50 rounded-xl py-4 pl-5 pr-14 focus:border-accent/50 outline-none transition-all placeholder:text-muted focus:ring-4 focus:ring-accent/5 text-foreground"
+                                    className="w-full bg-surface/50 border border-border/50 rounded-xl py-4 pl-5 pr-14 focus:border-accent/50 outline-none transition-all placeholder:text-muted focus:ring-4 focus:ring-accent/5 text-main"
                                 />
                                 <button
                                     type="submit"

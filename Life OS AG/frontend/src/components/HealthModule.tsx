@@ -70,7 +70,7 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
             {/* Header Section */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-display font-bold text-foreground">Health System</h2>
+                    <h2 className="text-3xl font-display font-bold text-main">Health System</h2>
                     <p className="text-muted mt-1">Physiological and psychological status monitor.</p>
                 </div>
                 <button
@@ -141,7 +141,7 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                         <div className="absolute top-0 right-0 w-32 h-32 bg-health/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                         <div>
                             <p className="text-xs font-bold text-muted uppercase tracking-widest">Avg Sleep</p>
-                            <h4 className="text-3xl font-display font-bold mt-1 text-foreground">7.4h</h4>
+                            <h4 className="text-3xl font-display font-bold mt-1 text-main">7.4h</h4>
                         </div>
                         <Activity className="text-health opacity-20" size={48} />
                     </div>
@@ -150,17 +150,17 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                         <div>
                             <p className="text-xs font-bold text-muted uppercase tracking-widest">Active Minutes</p>
-                            <h4 className="text-3xl font-display font-bold mt-1 text-foreground">142m</h4>
+                            <h4 className="text-3xl font-display font-bold mt-1 text-main">142m</h4>
                         </div>
                         <Activity className="text-primary opacity-20" size={48} />
                     </div>
 
                     <div className="bg-gradient-to-br from-health/20 to-primary/20 rounded-[2rem] p-8 border border-health/20">
-                        <h4 className="font-bold flex items-center text-foreground">
+                        <h4 className="font-bold flex items-center text-main">
                             <Sun size={18} className="mr-2 text-health" />
                             Vitality Summary
                         </h4>
-                        <p className="text-sm text-foreground/80 mt-4 leading-relaxed">
+                        <p className="text-sm text-main/80 mt-4 leading-relaxed">
                             Your physiological synchronization is balanced. Morning sunlight exposure in the last 2 nodes has improved sleep onset latency by 12%.
                         </p>
                     </div>
@@ -211,7 +211,7 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                 placeholder="Log notes (e.g. Dream recall, workout intensity...)"
                                 value={notes}
                                 onChange={e => setNotes(e.target.value)}
-                                className="w-full bg-surface/50 border border-border/50 rounded-xl p-4 text-sm focus:border-health/50 outline-none h-24 transition-all text-foreground placeholder:text-muted/50"
+                                className="w-full bg-surface/50 border border-border/50 rounded-xl p-4 text-sm focus:border-health/50 outline-none h-24 transition-all text-main placeholder:text-muted/50"
                             />
 
                             <button className="w-full bg-health py-4 rounded-xl font-bold shadow-lg shadow-health/20 hover:shadow-health/40 transition-all active:scale-95">
@@ -241,11 +241,11 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                             <Icon className={config.color} size={20} />
                                         </div>
                                         <div className="flex-1">
-                                            <h4 className="font-semibold capitalize text-foreground">{log.type}</h4>
+                                            <h4 className="font-semibold capitalize text-main">{log.type}</h4>
                                             <p className="text-xs text-muted">{new Date(log.timestamp).toLocaleString()}</p>
                                         </div>
                                         <div className="text-right flex items-center space-x-4">
-                                            <span className="text-lg font-display font-bold text-foreground">{log.value} <span className="text-xs text-muted font-normal">{log.unit}</span></span>
+                                            <span className="text-lg font-display font-bold text-main">{log.value} <span className="text-xs text-muted font-normal">{log.unit}</span></span>
                                             {log.notes && (
                                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-muted italic max-w-xs truncate">
                                                     "{log.notes}"
