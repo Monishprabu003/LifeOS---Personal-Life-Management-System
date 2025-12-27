@@ -17,7 +17,9 @@ import {
   LogOut,
   Settings,
   Bell,
-  Compass
+  Compass,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, kernelAPI, habitsAPI, goalsAPI, aiAPI } from './api';
@@ -62,6 +64,7 @@ function App() {
   const [email, setEmail] = useState('demo@lifeos.com');
   const [password, setPassword] = useState('password123');
   const [name, setName] = useState('');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -254,25 +257,43 @@ function App() {
   return (
     <div className="flex h-screen bg-[#f8fafc] dark:bg-background overflow-hidden text-main">
       {/* Sidebar */}
-      <aside className="w-72 bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 flex flex-col shadow-sm z-20">
-        <div className="p-8">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-lg shadow-blue-100 dark:shadow-none">
+      <motion.aside
+        initial={false}
+        animate={{ width: isSidebarCollapsed ? 96 : 288 }}
+        className="bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 flex flex-col shadow-sm z-20 overflow-hidden"
+      >
+        <div className="p-8 flex items-center justify-between">
+          <div className="flex items-center space-x-3 overflow-hidden">
+            <div className="w-10 h-10 min-w-[40px] rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-lg shadow-blue-100 dark:shadow-none">
               <span className="font-display font-bold text-white text-xl">L</span>
             </div>
-            <div>
-              <h1 className="font-display text-xl font-bold tracking-tight text-[#0f172a] dark:text-white leading-none">
-                LifeOS
-              </h1>
-              <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest leading-none">Life Management</p>
-            </div>
+            {!isSidebarCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+              >
+                <h1 className="font-display text-xl font-bold tracking-tight text-[#0f172a] dark:text-white leading-none">
+                  LifeOS
+                </h1>
+                <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest leading-none">Life Management</p>
+              </motion.div>
+            )}
           </div>
+          <button
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all"
+          >
+            {isSidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+          </button>
         </div>
 
         <div className="flex-1 px-4 overflow-y-auto custom-scrollbar">
           {/* Modules Section */}
           <div className="mb-8">
-            <p className="px-4 mb-4 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Modules</p>
+            {!isSidebarCollapsed && (
+              <p className="px-4 mb-4 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Modules</p>
+            )}
             <div className="space-y-1">
               {modules.map((module) => {
                 const Icon = module.icon;
@@ -286,7 +307,9 @@ function App() {
                       }`}
                   >
                     <Icon size={20} className={activeTab === module.id ? 'text-[#10b981]' : ''} />
-                    <span className="font-bold text-sm">{module.name}</span>
+                    {!isSidebarCollapsed && (
+                      <span className="font-bold text-sm whitespace-nowrap">{module.name}</span>
+                    )}
                   </button>
                 )
               })}
@@ -295,7 +318,9 @@ function App() {
 
           {/* Account Section */}
           <div>
-            <p className="px-4 mb-4 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Account</p>
+            {!isSidebarCollapsed && (
+              <p className="px-4 mb-4 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Account</p>
+            )}
             <div className="space-y-1">
               {accountItems.map((item) => {
                 const Icon = item.icon;
@@ -308,8 +333,10 @@ function App() {
                       : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700'
                       }`}
                   >
-                    <Icon size={20} />
-                    <span className="font-bold text-sm">{item.name}</span>
+                    <Icon size={20} className={activeTab === item.id ? 'text-[#10b981]' : ''} />
+                    {!isSidebarCollapsed && (
+                      <span className="font-bold text-sm whitespace-nowrap">{item.name}</span>
+                    )}
                   </button>
                 )
               })}
@@ -317,21 +344,28 @@ function App() {
           </div>
         </div>
 
-        <div className="p-6 mt-auto border-t border-slate-100 dark:border-slate-800">
-          <div className="flex items-center space-x-3 p-3">
-            <div className="w-10 h-10 rounded-full bg-[#10b981] flex items-center justify-center text-white font-bold text-xs ring-4 ring-green-50">
-              MO
+        <div className={`p-6 mt-auto border-t border-slate-100 dark:border-slate-800 transition-all ${isSidebarCollapsed ? 'px-4' : 'px-6'}`}>
+          <div className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'space-x-4'}`}>
+            <div className={`w-10 h-10 min-w-[40px] rounded-xl bg-gradient-to-br from-[#10b981] to-[#059669] flex items-center justify-center text-white font-bold shadow-md shadow-green-100 dark:shadow-none transition-all ${isSidebarCollapsed ? 'scale-110' : ''}`}>
+              {user?.name?.charAt(0) || 'M'}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold truncate text-[#0f172a] dark:text-white">{user?.name || 'Monish Prabu'}</p>
-              <p className="text-[10px] font-medium text-slate-400 truncate tracking-tight">{user?.email || 'macz3377moni@gm...'}</p>
-            </div>
-            <button onClick={handleLogout} className="p-2 text-slate-300 hover:text-slate-500 transition-colors">
-              <LogOut size={16} />
-            </button>
+            {!isSidebarCollapsed && (
+              <div className="flex-1 overflow-hidden transition-all duration-300">
+                <p className="text-sm font-bold text-[#0f172a] dark:text-white truncate">{user?.name || 'Monish Prabu'}</p>
+                <p className="text-[10px] font-bold text-slate-400 truncate uppercase tracking-widest">{user?.email || 'moni@lifeos.com'}</p>
+              </div>
+            )}
+            {!isSidebarCollapsed && (
+              <button
+                onClick={handleLogout}
+                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
+              >
+                <LogOut size={18} />
+              </button>
+            )}
           </div>
         </div>
-      </aside>
+      </motion.aside>
 
       {/* Main Content */}
       <main className="flex-1 relative overflow-y-auto custom-scrollbar">
