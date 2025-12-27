@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Heart,
@@ -10,12 +10,133 @@ import {
   Settings,
   Bell,
   Search,
-  Plus
+  Plus,
+  ArrowRight,
+  LogOut,
+  RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { authAPI, kernelAPI, habitsAPI, goalsAPI } from './api';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [user, setUser] = useState<any>(null);
+  const [habits, setHabits] = useState<any[]>([]);
+  const [goals, setGoals] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(localStorage.getItem('lifeos_token'));
+
+  // Auth Flow State
+  const [email, setEmail] = useState('demo@lifeos.com');
+  const [password, setPassword] = useState('password123');
+
+  useEffect(() => {
+    if (token) {
+      fetchAppData();
+    } else {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const fetchAppData = async () => {
+    try {
+      setLoading(true);
+      const [userRes, habitsRes, goalsRes] = await Promise.all([
+        authAPI.getMe(),
+        habitsAPI.getHabits(),
+        goalsAPI.getGoals(),
+      ]);
+      setUser(userRes.data);
+      setHabits(habitsRes.data);
+      setGoals(goalsRes.data);
+    } catch (err) {
+      console.error('Failed to fetch data', err);
+      if ((err as any).response?.status === 401) {
+        handleLogout();
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await authAPI.login({ email, password });
+      const newToken = res.data.token;
+      localStorage.setItem('lifeos_token', newToken);
+      setToken(newToken);
+    } catch (err) {
+      alert('Login failed. Did you run "npm run seed" in the backend?');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('lifeos_token');
+    setToken(null);
+    setUser(null);
+  };
+
+  const syncScores = async () => {
+    await kernelAPI.getStatus();
+    const userRes = await authAPI.getMe();
+    setUser(userRes.data);
+  };
+
+  if (!token) {
+    return (
+      <div className="h-screen w-full bg-background flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md glass p-10 rounded-[2.5rem] relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-6 shadow-2xl">
+              <span className="font-display font-bold text-white text-3xl">L</span>
+            </div>
+            <h1 className="text-3xl font-display font-bold text-white mb-2">Initialize LifeOS</h1>
+            <p className="text-slate-400 text-center mb-8">System standby. Authentication required.</p>
+
+            <form onSubmit={handleLogin} className="w-full space-y-4">
+              <input
+                type="email"
+                placeholder="Terminal Email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-600"
+              />
+              <input
+                type="password"
+                placeholder="Access Key"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-600"
+              />
+              <button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl flex items-center justify-center space-x-2 shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 active:scale-[0.98]"
+              >
+                <span>Authorize Access</span>
+                <ArrowRight size={20} />
+              </button>
+            </form>
+            <p className="mt-8 text-xs text-slate-600 uppercase tracking-widest font-bold">Encrypted Connection Secure</p>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+
+  if (loading && !user) {
+    return (
+      <div className="h-screen w-full bg-background flex items-center justify-center">
+        <RefreshCw className="text-primary animate-spin" size={40} />
+      </div>
+    )
+  }
 
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, color: 'text-primary' },
@@ -42,7 +163,7 @@ function App() {
           </div>
         </div>
 
-        <nav className="flex-1 px-4 space-y-2 mt-4">
+        <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
           {modules.map((module) => {
             const Icon = module.icon;
             return (
@@ -68,15 +189,17 @@ function App() {
         </nav>
 
         <div className="p-4 mt-auto border-t border-slate-800/50">
-          <div className="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-800/50 cursor-pointer transition-colors">
+          <div className="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-800/50 transition-colors group">
             <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 overflow-hidden">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" />
+              <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Felix'}`} alt="User" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">Human 001</p>
-              <p className="text-xs text-slate-500 truncate">V1.0.0 Experimental</p>
+              <p className="text-sm font-semibold truncate">{user?.name || 'Authorized'}</p>
+              <p className="text-xs text-slate-500 truncate">{user?.email || 'V1.0.0'}</p>
             </div>
-            <Settings size={18} className="text-slate-500" />
+            <button onClick={handleLogout} className="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-slate-500 hover:text-relationships">
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
       </aside>
@@ -95,9 +218,11 @@ function App() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full hover:bg-slate-800 transition-colors relative">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-relationships rounded-full border border-background"></span>
+            <button
+              onClick={syncScores}
+              className="p-2 rounded-full hover:bg-slate-800 transition-colors text-slate-400 hover:text-primary"
+            >
+              <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
             </button>
             <button className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)]">
               <Plus size={18} />
@@ -116,7 +241,7 @@ function App() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'dashboard' && <DashboardMockup />}
+              {activeTab === 'dashboard' && <Dashboard user={user} habits={habits} goals={goals} fetchAppData={fetchAppData} />}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -134,7 +259,16 @@ function App() {
   );
 }
 
-function DashboardMockup() {
+function Dashboard({ user, habits, goals, fetchAppData }: any) {
+  const completeHabit = async (id: string) => {
+    try {
+      await habitsAPI.completeHabit(id);
+      fetchAppData();
+    } catch (err) {
+      console.error('Failed to complete habit', err);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Hero Stats */}
@@ -148,14 +282,14 @@ function DashboardMockup() {
             </h3>
             <div className="mt-4 flex items-end space-x-4">
               <span className="text-7xl font-display font-bold text-white tracking-tighter">
-                84 <span className="text-2xl text-slate-500">/ 100</span>
+                {user?.lifeScore || 0} <span className="text-2xl text-slate-500">/ 100</span>
               </span>
               <div className="mb-2 flex items-center text-health text-sm font-semibold bg-health/10 px-2 py-1 rounded-lg">
                 +5.2% <Plus size={12} className="ml-1" />
               </div>
             </div>
             <p className="mt-4 text-slate-400 max-w-xs leading-relaxed">
-              Your life system is performing optimally. Your focus on <span className="text-health">Health</span> this week is paying off.
+              System Health: <span className="text-health">Optimal</span>. Performance index is rising.
             </p>
           </div>
         </div>
@@ -165,12 +299,16 @@ function DashboardMockup() {
             <div className="w-12 h-12 rounded-2xl bg-health/10 flex items-center justify-center mb-4 transition-transform group-hover:rotate-12">
               <Heart className="text-health" />
             </div>
-            <h3 className="text-slate-400 font-medium">Health Status</h3>
+            <h3 className="text-slate-400 font-medium">Health Score</h3>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-bold">Stable</span>
-            <div className="w-full h-1.5 bg-slate-800 rounded-full mt-2">
-              <div className="w-[78%] h-full bg-health rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+            <span className="text-3xl font-bold">{user?.healthScore || 0}%</span>
+            <div className="w-full h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${user?.healthScore || 0}%` }}
+                className="h-full bg-health shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+              />
             </div>
           </div>
         </div>
@@ -180,42 +318,46 @@ function DashboardMockup() {
             <div className="w-12 h-12 rounded-2xl bg-wealth/10 flex items-center justify-center mb-4 transition-transform group-hover:rotate-12">
               <Wallet className="text-wealth" />
             </div>
-            <h3 className="text-slate-400 font-medium">Wealth Index</h3>
+            <h3 className="text-slate-400 font-medium">Wealth Score</h3>
           </div>
           <div className="mt-4">
-            <span className="text-3xl font-bold">$12,450.00</span>
-            <p className="text-xs text-slate-500 mt-1">Available Liquidity</p>
+            <span className="text-3xl font-bold">{user?.wealthScore || 0}%</span>
+            <div className="w-full h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${user?.wealthScore || 0}%` }}
+                className="h-full bg-wealth shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column - Habits */}
         <div className="lg:col-span-2 space-y-8">
           <section>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Habit Streaks</h2>
+              <h2 className="text-2xl font-bold">Active Habits</h2>
               <button className="text-primary text-sm font-medium hover:underline">View All</button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                { name: 'Deep Work', streak: '12 days', icon: Zap, color: 'text-habits', bg: 'bg-habits/10' },
-                { name: 'Reading', streak: '5 days', icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
-                { name: 'Meditation', streak: '14 days', icon: Zap, color: 'text-health', bg: 'bg-health/10' },
-                { name: 'Cold Shower', streak: '3 days', icon: Zap, color: 'text-accent', bg: 'bg-accent/10' }
-              ].map((habit) => (
-                <div key={habit.name} className="glass p-5 rounded-2xl flex items-center space-x-4 card-hover">
-                  <div className={`${habit.bg} w-12 h-12 rounded-xl flex items-center justify-center`}>
-                    <habit.icon className={habit.color} size={20} />
+              {habits.map((habit: any) => (
+                <div
+                  key={habit._id}
+                  onClick={() => completeHabit(habit._id)}
+                  className="glass p-5 rounded-2xl flex items-center space-x-4 card-hover cursor-pointer group"
+                >
+                  <div className={`bg-slate-800 w-12 h-12 rounded-xl flex items-center justify-center transition-colors group-hover:bg-primary/20`}>
+                    <Zap className="text-primary" size={20} />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold">{habit.name}</h4>
-                    <p className="text-xs text-slate-500">{habit.streak}</p>
+                    <p className="text-xs text-slate-500">{habit.streak} day streak</p>
                   </div>
                   <div className="flex -space-x-1">
                     {[1, 2, 3, 4, 5].map(i => (
-                      <div key={i} className={`w-2 h-2 rounded-full ${i <= 3 ? 'bg-primary' : 'bg-slate-800'}`}></div>
+                      <div key={i} className={`w-2 h-2 rounded-full ${i <= (habit.streak % 5 || 5) ? 'bg-primary' : 'bg-slate-800'}`}></div>
                     ))}
                   </div>
                 </div>
@@ -223,39 +365,38 @@ function DashboardMockup() {
             </div>
           </section>
 
-          <section className="glass rounded-3xl p-8 h-80 flex flex-col justify-center items-center">
-            <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-4">
-              <LayoutDashboard size={32} className="text-slate-600" />
+          <section className="glass rounded-3xl p-8 h-80 flex flex-col justify-center items-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-4">
+                <LayoutDashboard size={32} className="text-slate-600" />
+              </div>
+              <p className="text-slate-500 font-medium">Life Timeline initializing...</p>
             </div>
-            <p className="text-slate-500">Timeline and advanced charts will appear here.</p>
           </section>
         </div>
 
-        {/* Right Column - Goal Alignment */}
         <div className="space-y-8">
           <section className="glass rounded-3xl p-8">
-            <h2 className="text-xl font-bold mb-6">Mission Alignment</h2>
+            <h2 className="text-xl font-bold mb-6 italic tracking-tight uppercase text-slate-500 text-xs">Mission Alignment</h2>
             <div className="space-y-6">
-              {[
-                { name: 'Health & Vitality', progress: 85, color: 'bg-health' },
-                { name: 'Financial Freedom', progress: 42, color: 'bg-wealth' },
-                { name: 'Skill Mastery', progress: 68, color: 'bg-primary' },
-                { name: 'Social Connection', progress: 91, color: 'bg-relationships' },
-              ].map(goal => (
-                <div key={goal.name} className="space-y-2">
+              {goals.length > 0 ? goals.map((goal: any) => (
+                <div key={goal._id} className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">{goal.name}</span>
+                    <span className="text-slate-400">{goal.title}</span>
                     <span className="font-semibold">{goal.progress}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${goal.progress}%` }}
-                      className={`h-full ${goal.color}`}
+                      className="h-full bg-primary"
                     />
                   </div>
                 </div>
-              ))}
+              )) : (
+                <p className="text-slate-500 text-sm italic">No active missions detected.</p>
+              )}
             </div>
             <button className="w-full mt-8 py-3 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors text-sm font-semibold">
               Refine Life Purpose
@@ -269,11 +410,8 @@ function DashboardMockup() {
               <MessageSquare size={16} className="ml-2 text-accent" />
             </h3>
             <p className="text-slate-300 text-sm italic leading-relaxed">
-              "Your productivity peaks between 9 AM and 11 AM. I suggest scheduling your 'Deep Work' habit during this window to accelerate your Skill Mastery goal."
+              "System analysis complete. Your consistency in <span className="text-primary">Deep Work</span> is accelerating your Skill Mastery goal. Maintain trajectory."
             </p>
-            <button className="mt-4 text-xs font-bold text-accent uppercase tracking-wider hover:underline">
-              Explore Insight
-            </button>
           </section>
         </div>
       </div>
