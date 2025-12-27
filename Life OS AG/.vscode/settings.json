@@ -5,5 +5,6 @@
         "html": "html",
         "javascript": "javascript",
         "typescript": "typescript"
-    }
+    },
+    "json.schemaDownload.enable": false
 }
