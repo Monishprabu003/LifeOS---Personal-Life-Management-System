@@ -7,8 +7,6 @@ import {
   Target,
   Users,
   MessageSquare,
-  Settings,
-  Bell,
   Search,
   Plus,
   ArrowRight,
@@ -16,14 +14,17 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { authAPI, kernelAPI, habitsAPI, goalsAPI } from './api';
+import { authAPI, kernelAPI, habitsAPI, goalsAPI, aiAPI } from './api';
+import { AICopilot } from './components/AICopilot';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [user, setUser] = useState<any>(null);
   const [habits, setHabits] = useState<any[]>([]);
   const [goals, setGoals] = useState<any[]>([]);
+  const [insight, setInsight] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [token, setToken] = useState(localStorage.getItem('lifeos_token'));
 
   // Auth Flow State
@@ -41,14 +42,16 @@ function App() {
   const fetchAppData = async () => {
     try {
       setLoading(true);
-      const [userRes, habitsRes, goalsRes] = await Promise.all([
+      const [userRes, habitsRes, goalsRes, aiRes] = await Promise.all([
         authAPI.getMe(),
         habitsAPI.getHabits(),
         goalsAPI.getGoals(),
+        aiAPI.getInsight()
       ]);
       setUser(userRes.data);
       setHabits(habitsRes.data);
       setGoals(goalsRes.data);
+      setInsight(aiRes.data.insight);
     } catch (err) {
       console.error('Failed to fetch data', err);
       if ((err as any).response?.status === 401) {
@@ -241,7 +244,7 @@ function App() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'dashboard' && <Dashboard user={user} habits={habits} goals={goals} fetchAppData={fetchAppData} />}
+              {activeTab === 'dashboard' && <Dashboard user={user} habits={habits} goals={goals} insight={insight} fetchAppData={fetchAppData} />}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -251,15 +254,19 @@ function App() {
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-8 right-8 w-14 h-14 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-2xl z-50 group"
+        onClick={() => setIsAIChatOpen(true)}
+        className="fixed bottom-8 right-8 w-14 h-14 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-2xl z-50 group hover:shadow-accent/40 transition-all"
       >
-        <MessageSquare className="text-white group-hover:animate-bounce" />
+        <MessageSquare className="text-white group-hover:rotate-12 transition-transform" />
       </motion.button>
+
+      {/* AI Chat Modal */}
+      <AICopilot isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
     </div>
   );
 }
 
-function Dashboard({ user, habits, goals, fetchAppData }: any) {
+function Dashboard({ user, habits, goals, insight, fetchAppData }: any) {
   const completeHabit = async (id: string) => {
     try {
       await habitsAPI.completeHabit(id);
@@ -403,14 +410,14 @@ function Dashboard({ user, habits, goals, fetchAppData }: any) {
             </button>
           </section>
 
-          <section className="bg-gradient-to-br from-accent/20 to-primary/20 border border-accent/20 rounded-3xl p-8 relative overflow-hidden group">
+          <section className="bg-gradient-to-br from-accent/20 to-primary/20 border border-accent/20 rounded-3xl p-8 relative overflow-hidden group min-h-[160px]">
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-accent/20 blur-2xl group-hover:bg-accent/40 transition-all rounded-full"></div>
             <h3 className="font-display font-bold text-lg mb-2 flex items-center">
               AI Insight
               <MessageSquare size={16} className="ml-2 text-accent" />
             </h3>
             <p className="text-slate-300 text-sm italic leading-relaxed">
-              "System analysis complete. Your consistency in <span className="text-primary">Deep Work</span> is accelerating your Skill Mastery goal. Maintain trajectory."
+              "{insight || "Initializing system analysis..."}"
             </p>
           </section>
         </div>

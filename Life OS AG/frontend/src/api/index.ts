@@ -53,4 +53,9 @@ export const socialAPI = {
     logInteraction: (id: string, data: any) => api.post(`/social/${id}/interact`, data),
 };
 
+export const aiAPI = {
+    getInsight: () => api.get('/ai/insight'),
+    chat: (message: string) => api.post('/ai/chat', { message }),
+};
+
 export default api;
