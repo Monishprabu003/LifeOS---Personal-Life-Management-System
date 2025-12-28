@@ -164,32 +164,36 @@ export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
                         <TrendingUp size={20} className="text-[#f59e0b]" />
                     </div>
                     <div className="mt-4">
-                        <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">91%</h4>
-                        <p className="text-[10px] font-bold text-[#10b981] mt-2">+5% vs last week</p>
+                        <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">
+                            {progressPercent}%
+                        </h4>
+                        <p className="text-[10px] font-bold text-slate-400 mt-2">Active session accuracy</p>
                     </div>
                 </div>
             </div>
 
             {/* Weekly Overview */}
             <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
-                <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Weekly Overview</h3>
-                <div className="grid grid-cols-7 gap-4">
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, idx) => (
-                        <div key={day} className="flex flex-col items-center space-y-4">
-                            <div
-                                className={`w-full h-40 rounded-3xl flex items-center justify-center transition-all ${idx === 2 || idx === 5
-                                        ? 'bg-[#f59e0b] text-white shadow-lg shadow-orange-100'
-                                        : 'bg-[#fffbeb] text-[#f59e0b] border border-orange-50'
-                                    }`}
-                            >
-                                <span className="text-lg font-bold">
-                                    {idx === 2 ? '6/6' : idx === 5 ? '6/6' : idx === 1 ? '4/6' : '5/6'}
-                                </span>
-                            </div>
-                            <span className="text-sm font-bold text-slate-400 capitalize">{day}</span>
-                        </div>
-                    ))}
+                <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Weekly Overview</h3>
+                    <span className="text-xs font-bold text-slate-400">Past 7 days performance</span>
                 </div>
+                {habits.length > 0 ? (
+                    <div className="grid grid-cols-7 gap-4">
+                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                            <div key={day} className="flex flex-col items-center space-y-4">
+                                <div className="w-full h-40 rounded-3xl flex items-center justify-center bg-[#fffbeb] text-[#f59e0b] border border-orange-50 opacity-40">
+                                    <span className="text-xs font-bold uppercase tracking-widest rotate-90 whitespace-nowrap">No Data</span>
+                                </div>
+                                <span className="text-sm font-bold text-slate-400 capitalize">{day}</span>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="py-20 text-center bg-slate-50 dark:bg-slate-800/20 rounded-3xl border-2 border-dashed border-slate-100 dark:border-slate-800">
+                        <p className="text-slate-500 font-medium">Initialize your first habit to begin performance mapping.</p>
+                    </div>
+                )}
             </div>
 
             {/* Habit Form Modal */}
@@ -252,8 +256,8 @@ export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
                             <div
                                 key={habit._id}
                                 className={`p-6 rounded-[1.5rem] border transition-all cursor-pointer relative group ${habit.completedToday
-                                        ? 'bg-[#fffbeb] border-[#f59e0b] shadow-sm'
-                                        : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-slate-700'
+                                    ? 'bg-[#fffbeb] border-[#f59e0b] shadow-sm'
+                                    : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-slate-700'
                                     }`}
                                 onClick={() => !habit.completedToday && completeHabit(habit._id)}
                             >
@@ -280,8 +284,8 @@ export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
                                     </div>
 
                                     <div className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${habit.completedToday
-                                            ? 'bg-[#f59e0b] border-[#f59e0b] text-white shadow-sm'
-                                            : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 group-hover:border-orange-200'
+                                        ? 'bg-[#f59e0b] border-[#f59e0b] text-white shadow-sm'
+                                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 group-hover:border-orange-200'
                                         }`}>
                                         {habit.completedToday && <CheckCircle2 size={16} strokeWidth={3} />}
                                     </div>

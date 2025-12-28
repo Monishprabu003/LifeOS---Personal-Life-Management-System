@@ -37,17 +37,7 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
     const fetchGoals = async () => {
         try {
             const res = await goalsAPI.getGoals();
-            // Enrich goals with mock subtasks for UI demonstration if they don't exist
-            const enrichedGoals = res.data.map((g: Goal) => ({
-                ...g,
-                subTasks: [
-                    { title: 'Complete initial research', completed: g.progress > 20 },
-                    { title: 'Build core features', completed: g.progress > 50 },
-                    { title: 'Beta testing', completed: g.progress > 80 },
-                    { title: 'Marketing launch', completed: g.progress === 100 }
-                ]
-            }));
-            setGoals(enrichedGoals);
+            setGoals(res.data);
         } catch (err) {
             console.error('Failed to fetch goals', err);
         }
@@ -82,21 +72,10 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
 
     const categories = ['Career', 'Skills', 'Health', 'Wealth', 'Personal'];
 
-    // Mock data for bottom section
-    const skills = [
-        { name: 'JavaScript', progress: 85 },
-        { name: 'React', progress: 80 },
-        { name: 'Leadership', progress: 65 },
-        { name: 'Communication', progress: 75 },
-        { name: 'Python', progress: 45 },
-    ];
-
-    const learningItems = [
-        { title: 'Advanced React Patterns', type: 'Course', status: 'completed' },
-        { title: 'System Design Fundamentals', type: 'Course', status: 'in-progress' },
-        { title: 'Machine Learning Basics', type: 'Course', status: 'todo' },
-        { title: 'Public Speaking Workshop', type: 'Workshop', status: 'todo' },
-    ];
+    // Real stats calculation
+    const averageProgress = goals.length > 0
+        ? Math.round(goals.reduce((acc, g) => acc + g.progress, 0) / goals.length)
+        : 0;
 
     return (
         <div className="space-y-10 pb-20">
@@ -144,14 +123,14 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
                                 strokeWidth="8"
                                 fill="transparent"
                                 strokeDasharray={364.4}
-                                strokeDashoffset={364.4 - (364.4 * 76) / 100}
+                                strokeDashoffset={364.4 - (364.4 * averageProgress) / 100}
                                 strokeLinecap="round"
                                 className="transition-all duration-1000 ease-out"
                             />
                         </svg>
-                        <span className="absolute text-4xl font-display font-bold text-[#0f172a] dark:text-white">76</span>
+                        <span className="absolute text-4xl font-display font-bold text-[#0f172a] dark:text-white">{averageProgress}</span>
                     </div>
-                    <p className="mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Strong progress on goals</p>
+                    <p className="mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Based on real goal completion</p>
                 </div>
 
                 {/* Active Goals */}
@@ -163,24 +142,25 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
                     <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">{goals.length}</h4>
                 </div>
 
-                {/* Skills Tracked */}
+                {/* Skills Tracked (Real Placeholder) */}
                 <div className="bg-[#f5f3ff] dark:bg-slate-900 rounded-[2.5rem] p-8 border border-purple-50 dark:border-slate-800 shadow-sm flex flex-col justify-between">
                     <div className="flex justify-between items-start">
                         <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Skills Tracked</p>
                         <Award size={20} className="text-[#8b5cf6]" />
                     </div>
-                    <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">{skills.length}</h4>
+                    <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">0</h4>
+                    <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Awaiting interaction data</p>
                 </div>
 
-                {/* Learning Items */}
+                {/* Learning Items (Real Placeholder) */}
                 <div className="bg-[#f5f3ff] dark:bg-slate-900 rounded-[2.5rem] p-8 border border-purple-50 dark:border-slate-800 shadow-sm flex flex-col justify-between text-left">
                     <div className="flex justify-between items-start">
                         <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Learning Items</p>
                         <BookOpen size={20} className="text-[#8b5cf6]" />
                     </div>
                     <div className="mt-4">
-                        <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white">{learningItems.length}</h4>
-                        <p className="text-[10px] font-bold text-[#10b981] mt-2">+25% vs last week</p>
+                        <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white">0</h4>
+                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Define path in roadmap</p>
                     </div>
                 </div>
             </div>
@@ -196,7 +176,7 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
                                     <h4 className="text-xl font-bold text-[#0f172a] dark:text-white">{goal.title}</h4>
                                     <div className="flex items-center space-x-3 mt-2">
                                         <span className="bg-[#f5f3ff] text-[#8b5cf6] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">{goal.category}</span>
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Mar 2025'}</span>
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Set Deadline'}</span>
                                     </div>
                                 </div>
                                 <span className="text-2xl font-display font-bold text-[#8b5cf6]">{goal.progress}%</span>
@@ -211,7 +191,7 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
                             </div>
 
                             <div className="space-y-3 pl-1">
-                                {(goal.subTasks || []).map((task, idx) => (
+                                {(goal.subTasks || []).map((task: any, idx: number) => (
                                     <div key={idx} className="flex items-center space-x-3">
                                         {task.completed ? (
                                             <CheckCircle2 size={18} className="text-[#8b5cf6]" />
@@ -223,6 +203,9 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
                                         </span>
                                     </div>
                                 ))}
+                                {(goal.subTasks || []).length === 0 && (
+                                    <p className="text-xs text-slate-400 italic">No roadmap defined for this mission yet.</p>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -235,59 +218,23 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
                 </div>
             </div>
 
-            {/* Bottom Section: Skills & Learning */}
+            {/* Bottom Section: Skills & Learning (Acknowledging Zero State) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Skills Progress */}
                 <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
                     <h3 className="text-xl font-bold text-[#0f172a] dark:text-white mb-10">Skills Progress</h3>
-                    <div className="space-y-8">
-                        {skills.map(skill => (
-                            <div key={skill.name} className="space-y-3">
-                                <div className="flex justify-between items-end px-1">
-                                    <span className="text-sm font-bold text-[#0f172a] dark:text-white">{skill.name}</span>
-                                    <span className="text-[10px] font-bold text-slate-400">{skill.progress}%</span>
-                                </div>
-                                <div className="w-full h-2 bg-purple-50 dark:bg-slate-800 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${skill.progress}%` }}
-                                        className="h-full bg-[#10b981] rounded-full shadow-sm"
-                                    />
-                                </div>
-                            </div>
-                        ))}
+                    <div className="py-20 text-center opacity-60">
+                        <Award size={40} className="mx-auto text-slate-200 mb-4" />
+                        <p className="text-slate-400 font-medium text-sm">Skills are mapped from your real career interactions.<br />Log your first interaction to see skill growth.</p>
                     </div>
                 </div>
 
                 {/* Learning Path */}
                 <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
                     <h3 className="text-xl font-bold text-[#0f172a] dark:text-white mb-10">Learning Path</h3>
-                    <div className="space-y-4">
-                        {learningItems.map((item, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-5 bg-[#f5f3ff]/50 dark:bg-purple-900/10 rounded-2xl hover:bg-[#f5f3ff] transition-all cursor-pointer group">
-                                <div className="flex items-center space-x-5">
-                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
-                                        {item.status === 'completed' ? (
-                                            <CheckCircle2 size={20} className="text-[#8b5cf6]" />
-                                        ) : item.status === 'in-progress' ? (
-                                            <motion.div
-                                                animate={{ rotate: 360 }}
-                                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                            >
-                                                <Target size={20} className="text-[#8b5cf6]/50" />
-                                            </motion.div>
-                                        ) : (
-                                            <Circle size={20} className="text-slate-300" />
-                                        )}
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white group-hover:text-[#8b5cf6] transition-colors">{item.title}</h4>
-                                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{item.type}</p>
-                                    </div>
-                                </div>
-                                <ChevronRight size={18} className="text-slate-300 group-hover:text-[#8b5cf6] transition-colors" />
-                            </div>
-                        ))}
+                    <div className="py-20 text-center opacity-60">
+                        <BookOpen size={40} className="mx-auto text-slate-200 mb-4" />
+                        <p className="text-slate-400 font-medium text-sm">Define courses or workshops in your roadmap<br />to generate your learning path.</p>
                     </div>
                 </div>
             </div>
