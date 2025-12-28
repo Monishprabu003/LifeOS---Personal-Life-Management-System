@@ -7,7 +7,8 @@ import {
     Target,
     TrendingUp,
     ClipboardList,
-    Layout
+    Layout,
+    Trash2
 } from 'lucide-react';
 import { habitsAPI } from '../api';
 
@@ -52,8 +53,19 @@ export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
             setDescription('');
             fetchHabits();
             if (onUpdate) onUpdate();
-        } catch (err) {
+        } catch {
             alert('Failed to initialize habit.');
+        }
+    };
+
+    const handleDeleteHabit = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this habit?')) return;
+        try {
+            await habitsAPI.deleteHabit(id);
+            fetchHabits();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to delete habit', err);
         }
     };
 
@@ -283,11 +295,20 @@ export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
                                         </div>
                                     </div>
 
-                                    <div className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${habit.completedToday
-                                        ? 'bg-[#f59e0b] border-[#f59e0b] text-white shadow-sm'
-                                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 group-hover:border-orange-200'
-                                        }`}>
-                                        {habit.completedToday && <CheckCircle2 size={16} strokeWidth={3} />}
+                                    <div className="flex items-center space-x-2">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleDeleteHabit(habit._id); }}
+                                            className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                            title="Delete Habit"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                        <div className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${habit.completedToday
+                                            ? 'bg-[#f59e0b] border-[#f59e0b] text-white shadow-sm'
+                                            : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 group-hover:border-orange-200'
+                                            }`}>
+                                            {habit.completedToday && <CheckCircle2 size={16} strokeWidth={3} />}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -309,6 +330,6 @@ export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
                     })}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

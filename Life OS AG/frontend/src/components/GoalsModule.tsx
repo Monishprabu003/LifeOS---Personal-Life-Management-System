@@ -7,7 +7,8 @@ import {
     Award,
     BookOpen,
     CheckCircle2,
-    Circle
+    Circle,
+    Trash2
 } from 'lucide-react';
 import { goalsAPI, tasksAPI } from '../api';
 
@@ -70,8 +71,19 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
             setPriority('high');
             fetchGoals();
             if (onUpdate) onUpdate();
-        } catch (err) {
+        } catch {
             alert('Failed to initialize mission');
+        }
+    };
+
+    const handleDeleteGoal = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this mission?')) return;
+        try {
+            await goalsAPI.deleteGoal(id);
+            fetchGoals();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to delete goal', err);
         }
     };
 
@@ -191,7 +203,16 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString() : 'No deadline'}</span>
                                     </div>
                                 </div>
-                                <span className="text-2xl font-display font-bold text-[#8b5cf6]">{goal.progress}%</span>
+                                <div className="flex items-center space-x-4">
+                                    <span className="text-2xl font-display font-bold text-[#8b5cf6]">{goal.progress}%</span>
+                                    <button
+                                        onClick={() => handleDeleteGoal(goal._id)}
+                                        className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
+                                        title="Delete Goal"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="w-full h-2.5 bg-purple-50 dark:bg-slate-800 rounded-full overflow-hidden mb-6">

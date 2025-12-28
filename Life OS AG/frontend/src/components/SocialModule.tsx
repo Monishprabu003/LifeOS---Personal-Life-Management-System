@@ -8,7 +8,8 @@ import {
     Heart,
     Calendar,
     CheckCircle2,
-    MessageSquare
+    MessageSquare,
+    Trash2
 } from 'lucide-react';
 import { AddConnectionModal } from './AddConnectionModal';
 import { socialAPI, kernelAPI } from '../api';
@@ -106,6 +107,28 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
             if (onUpdate) onUpdate();
         } catch (err) {
             console.error('Failed to save gratitude', err);
+        }
+    };
+
+    const handleDeleteGratitude = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this gratitude entry?')) return;
+        try {
+            await kernelAPI.deleteEvent(id);
+            fetchGratitude();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to delete gratitude', err);
+        }
+    };
+
+    const handleDeleteRelationship = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this connection?')) return;
+        try {
+            await socialAPI.deleteRelationship(id);
+            fetchConnections();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to delete relationship', err);
         }
     };
 
@@ -229,6 +252,13 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                                         >
                                             <MessageCircle size={18} />
                                         </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleDeleteRelationship(conn._id); }}
+                                            className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
+                                            title="Delete Connection"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -296,9 +326,20 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                         {gratitudeEntries.length > 0 ? (
                             <div className="space-y-4">
                                 {gratitudeEntries.map((entry) => (
-                                    <div key={entry._id} className="p-6 bg-rose-50/50 dark:bg-rose-500/5 rounded-2xl">
-                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white leading-relaxed">{entry.description}</h4>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-2">{new Date(entry.timestamp).toLocaleDateString()}</p>
+                                    <div key={entry._id} className="p-6 bg-rose-50/50 dark:bg-rose-500/5 rounded-2xl group relative">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1">
+                                                <h4 className="text-sm font-bold text-[#0f172a] dark:text-white leading-relaxed">{entry.description}</h4>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-2">{new Date(entry.timestamp).toLocaleDateString()}</p>
+                                            </div>
+                                            <button
+                                                onClick={() => handleDeleteGratitude(entry._id)}
+                                                className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
+                                                title="Delete Entry"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

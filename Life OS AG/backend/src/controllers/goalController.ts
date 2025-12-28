@@ -58,3 +58,21 @@ export const updateGoalProgress = async (req: AuthRequest, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const deleteGoal = async (req: AuthRequest, res: Response) => {
+    try {
+        const goal = await Goal.findById(req.params.id);
+        if (!goal || goal.userId.toString() !== req.user._id.toString()) {
+            return res.status(404).json({ message: 'Goal not found' });
+        }
+
+        await Goal.findByIdAndDelete(req.params.id);
+
+        // Recalculate scores
+        await Kernel.updateLifeScores(req.user._id as string);
+
+        res.json({ message: 'Goal deleted successfully' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

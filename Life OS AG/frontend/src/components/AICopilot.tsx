@@ -53,7 +53,7 @@ export function AICopilot({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, aiMsg]);
-        } catch (err) {
+        } catch {
             setMessages(prev => [...prev, {
                 id: 'err',
                 text: "Signal interference detected. Please ensure backend is active.",

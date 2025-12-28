@@ -43,3 +43,21 @@ export const getLifeStatus = async (req: AuthRequest, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const deleteEvent = async (req: AuthRequest, res: Response) => {
+    try {
+        const event = await LifeEvent.findById(req.params.id);
+        if (!event || event.userId.toString() !== req.user._id.toString()) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        await LifeEvent.findByIdAndDelete(req.params.id);
+
+        // Recalculate scores (some events might affect scores)
+        await Kernel.updateLifeScores(req.user._id as string);
+
+        res.json({ message: 'Event deleted successfully' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

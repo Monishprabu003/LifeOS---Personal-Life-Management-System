@@ -7,7 +7,8 @@ import {
     Droplets,
     Smile,
     Zap,
-    Activity
+    Activity,
+    Trash2
 } from 'lucide-react';
 import {
     BarChart,
@@ -78,6 +79,17 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
             console.error('Failed to fetch health logs', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteLog = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this log?')) return;
+        try {
+            await healthAPI.deleteLog(id);
+            fetchLogs();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to delete log', err);
         }
     };
 
@@ -258,6 +270,48 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                         )}
                     </div>
                 </div>
+            </div>
+
+            {/* Recent Logs Section */}
+            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Recent Logs</h3>
+                {logs.length > 0 ? (
+                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4 scrollbar-thin">
+                        {logs.map((log) => (
+                            <div key={log._id} className="flex items-center justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group hover:bg-slate-100 transition-colors">
+                                <div className="flex items-center space-x-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-[#10b981] shadow-sm">
+                                        <Activity size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white">
+                                            {new Date(log.timestamp).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
+                                        </h4>
+                                        <div className="flex items-center space-x-3 mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                            <span>Sleep: {log.sleepHours}h</span>
+                                            <span>•</span>
+                                            <span>Water: {log.waterIntake}L</span>
+                                            <span>•</span>
+                                            <span>Mood: {log.mood}/10</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleDeleteLog(log._id)}
+                                    className="p-2.5 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                    title="Delete Log"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="py-12 text-center opacity-40">
+                        <Activity size={40} className="mx-auto mb-4 text-slate-200" />
+                        <p className="text-slate-500 font-medium text-sm">No health logs found. Log your first entry!</p>
+                    </div>
+                )}
             </div>
 
             {/* Health Habits Section (Locked to Real Habits later) */}

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
     Zap,
@@ -5,8 +6,11 @@ import {
     Moon,
     Droplets,
     Smile,
-    CheckCircle2
+    CheckCircle2,
+    Trash2,
+    Activity
 } from 'lucide-react';
+import { kernelAPI } from '../api';
 
 interface CircularProgressProps {
     value: number;
@@ -56,7 +60,33 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabe
     );
 };
 
-export function DashboardModule({ user, habits, goals, setActiveTab }: any) {
+export function DashboardModule({ user, habits, goals, setActiveTab, onUpdate }: any) {
+    const [events, setEvents] = useState<any[]>([]);
+
+    const fetchEvents = async () => {
+        try {
+            const res = await kernelAPI.getEvents();
+            setEvents(res.data);
+        } catch (err) {
+            console.error('Failed to fetch events', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchEvents();
+    }, []);
+
+    const handleDeleteEvent = async (id: string) => {
+        if (!confirm('Delete this event log?')) return;
+        try {
+            await kernelAPI.deleteEvent(id);
+            fetchEvents();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to delete event', err);
+        }
+    };
+
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'long',
@@ -220,6 +250,48 @@ export function DashboardModule({ user, habits, goals, setActiveTab }: any) {
                         <div className="py-12 text-center">
                             <CheckCircle2 size={40} className="mx-auto mb-4 text-slate-200" />
                             <p className="text-slate-400 font-medium text-sm">No tasks for today. Start by adding a habit or goal!</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Recent Activity */}
+                <div className="lg:col-span-12 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Recent Activity</h3>
+                        <span className="text-xs font-bold text-slate-400">{events.length} logs</span>
+                    </div>
+                    {events.length > 0 ? (
+                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
+                            {events.map((event) => (
+                                <div key={event._id} className="flex items-center justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group hover:bg-slate-100 transition-colors">
+                                    <div className="flex items-center space-x-6">
+                                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-blue-500 shadow-sm transition-colors">
+                                            <Activity size={24} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-[#0f172a] dark:text-white">{event.title}</h4>
+                                            <div className="flex items-center space-x-3 mt-1">
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{new Date(event.timestamp).toLocaleString()}</p>
+                                                <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${event.impact === 'positive' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                                                    {event.impact}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDeleteEvent(event._id)}
+                                        className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                        title="Delete Activity"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="py-12 text-center opacity-40">
+                            <Activity size={40} className="mx-auto mb-4 text-slate-200" />
+                            <p className="text-slate-500 font-medium text-sm">No recent activity logs.</p>
                         </div>
                     )}
                 </div>

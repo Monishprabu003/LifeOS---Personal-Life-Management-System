@@ -57,3 +57,21 @@ export const completeHabit = async (req: AuthRequest, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const deleteHabit = async (req: AuthRequest, res: Response) => {
+    try {
+        const habit = await Habit.findById(req.params.id);
+        if (!habit || habit.userId.toString() !== req.user._id.toString()) {
+            return res.status(404).json({ message: 'Habit not found' });
+        }
+
+        await Habit.findByIdAndDelete(req.params.id);
+
+        // Recalculate scores
+        await Kernel.updateLifeScores(req.user._id as string);
+
+        res.json({ message: 'Habit deleted successfully' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

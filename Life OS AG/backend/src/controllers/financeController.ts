@@ -34,3 +34,21 @@ export const getTransactions = async (req: AuthRequest, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const deleteTransaction = async (req: AuthRequest, res: Response) => {
+    try {
+        const transaction = await Finance.findById(req.params.id);
+        if (!transaction || transaction.userId.toString() !== req.user._id.toString()) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+
+        await Finance.findByIdAndDelete(req.params.id);
+
+        // Recalculate scores
+        await Kernel.updateLifeScores(req.user._id as string);
+
+        res.json({ message: 'Transaction deleted successfully' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

@@ -414,7 +414,7 @@ function App() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'dashboard' && <DashboardModule user={user} habits={habits} goals={goals} fetchAppData={fetchAppData} setActiveTab={setActiveTab} />}
+              {activeTab === 'dashboard' && <DashboardModule user={user} habits={habits} goals={goals} onUpdate={fetchAppData} setActiveTab={setActiveTab} />}
               {activeTab === 'health' && <HealthModule onUpdate={fetchAppData} />}
               {activeTab === 'wealth' && <WealthModule onUpdate={fetchAppData} />}
               {activeTab === 'habits' && <HabitsModule onUpdate={fetchAppData} />}

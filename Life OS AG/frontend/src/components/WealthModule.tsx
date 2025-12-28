@@ -9,7 +9,8 @@ import {
     DollarSign,
     ArrowUpRight,
     ArrowDownLeft,
-    Search
+    Search,
+    Trash2
 } from 'lucide-react';
 import {
     Tooltip,
@@ -79,6 +80,17 @@ export function WealthModule({ onUpdate }: { onUpdate?: () => void }) {
             console.error('Failed to fetch transactions', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteTransaction = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this transaction?')) return;
+        try {
+            await financeAPI.deleteTransaction(id);
+            fetchTransactions();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to delete transaction', err);
         }
     };
 
@@ -240,10 +252,19 @@ export function WealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">{tx.category} • {new Date(tx.date).toLocaleDateString()}</p>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <h4 className={`text-sm font-bold ${tx.type === 'income' ? 'text-[#10b981]' : 'text-[#0f172a] dark:text-white'}`}>
-                                            {tx.type === 'income' ? '+' : '-'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                                        </h4>
+                                    <div className="flex items-center space-x-4">
+                                        <div className="text-right">
+                                            <h4 className={`text-sm font-bold ${tx.type === 'income' ? 'text-[#10b981]' : 'text-[#0f172a] dark:text-white'}`}>
+                                                {tx.type === 'income' ? '+' : '-'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                            </h4>
+                                        </div>
+                                        <button
+                                            onClick={() => handleDeleteTransaction(tx._id)}
+                                            className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                            title="Delete Transaction"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
                                     </div>
                                 </div>
                             ))}

@@ -45,3 +45,21 @@ export const getHealthLogs = async (req: AuthRequest, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const deleteHealthLog = async (req: AuthRequest, res: Response) => {
+    try {
+        const log = await HealthLog.findById(req.params.id);
+        if (!log || log.userId.toString() !== req.user._id.toString()) {
+            return res.status(404).json({ message: 'Log not found' });
+        }
+
+        await HealthLog.findByIdAndDelete(req.params.id);
+
+        // Recalculate scores after deletion
+        await Kernel.updateLifeScores(req.user._id as string);
+
+        res.json({ message: 'Log deleted successfully' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

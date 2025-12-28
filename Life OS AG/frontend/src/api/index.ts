@@ -23,34 +23,40 @@ export const kernelAPI = {
     getEvents: () => api.get('/kernel/events'),
     getStatus: () => api.get('/kernel/status'),
     logGenericEvent: (data: any) => api.post('/kernel/event', data),
+    deleteEvent: (id: string) => api.delete(`/kernel/events/${id}`),
 };
 
 export const habitsAPI = {
     getHabits: () => api.get('/habits'),
     createHabit: (data: any) => api.post('/habits', data),
     completeHabit: (id: string) => api.post(`/habits/${id}/complete`),
+    deleteHabit: (id: string) => api.delete(`/habits/${id}`),
 };
 
 export const financeAPI = {
     getTransactions: () => api.get('/finance'),
     createTransaction: (data: any) => api.post('/finance', data),
+    deleteTransaction: (id: string) => api.delete(`/finance/${id}`),
 };
 
 export const goalsAPI = {
     getGoals: () => api.get('/goals'),
     createGoal: (data: any) => api.post('/goals', data),
     updateProgress: (id: string, progress: number) => api.patch(`/goals/${id}/progress`, { progress }),
+    deleteGoal: (id: string) => api.delete(`/goals/${id}`),
 };
 
 export const healthAPI = {
     getLogs: () => api.get('/health'),
     createLog: (data: any) => api.post('/health', data),
+    deleteLog: (id: string) => api.delete(`/health/${id}`),
 };
 
 export const socialAPI = {
     getRelationships: () => api.get('/social'),
     createRelationship: (data: any) => api.post('/social', data),
     logInteraction: (id: string, data: any) => api.post(`/social/${id}/interact`, data),
+    deleteRelationship: (id: string) => api.delete(`/social/${id}`),
 };
 
 export const tasksAPI = {
