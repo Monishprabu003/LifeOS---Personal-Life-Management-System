@@ -11,7 +11,7 @@ import {
     MessageSquare
 } from 'lucide-react';
 import { AddConnectionModal } from './AddConnectionModal';
-import { socialAPI } from '../api';
+import { socialAPI, kernelAPI } from '../api';
 
 const CircularProgress = ({ value, label }: { value: number; label: string }) => {
     const size = 160;
@@ -60,6 +60,7 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [gratitudeText, setGratitudeText] = useState('');
     const [connections, setConnections] = useState<any[]>([]);
+    const [gratitudeEntries, setGratitudeEntries] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchConnections = async () => {
@@ -74,13 +75,55 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
         }
     };
 
+    const fetchGratitude = async () => {
+        try {
+            const res = await kernelAPI.getEvents();
+            // Filter for gratitude/emotional events
+            const entries = res.data.filter((e: any) => e.type === 'emotional_event' || e.title.includes('Gratitude'));
+            setGratitudeEntries(entries);
+        } catch (err) {
+            console.error('Failed to fetch gratitude', err);
+        }
+    };
+
     useEffect(() => {
         fetchConnections();
+        fetchGratitude();
     }, []);
 
+    const handleGratitudeSubmit = async () => {
+        if (!gratitudeText.trim()) return;
+        try {
+            await kernelAPI.logGenericEvent({
+                type: 'emotional_event',
+                title: 'Gratitude Entry',
+                impact: 'positive',
+                value: 5,
+                description: gratitudeText
+            });
+            setGratitudeText('');
+            fetchGratitude();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to save gratitude', err);
+        }
+    };
+
+    const handleInteraction = async (id: string, name: string, type: 'call' | 'message') => {
+        try {
+            await socialAPI.logInteraction(id, {
+                type,
+                description: `Logged a ${type} with ${name}`
+            });
+            if (onUpdate) onUpdate();
+            fetchConnections(); // Refresh local list too
+        } catch (err) {
+            console.error('Failed to log interaction', err);
+        }
+    };
+
     const socialScore = connections.length > 0 ? Math.min(connections.length * 10, 100) : 0;
-    const tasks: any[] = []; // Future implementation
-    const gratitudeEntries: any[] = []; // Future implementation
+    const tasks: any[] = [];
 
     return (
         <div className="space-y-10 pb-20">
@@ -130,7 +173,9 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                             <MessageSquare size={20} className="text-[#f43f5e]" />
                         </div>
                         <div className="mt-6">
-                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">0</h4>
+                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">
+                                {connections.reduce((s, c) => s + (c.interactionHistory?.length || 0), 0)}
+                            </h4>
                             <p className="text-[10px] font-bold text-slate-400 mt-2">Log interactions to track</p>
                         </div>
                     </div>
@@ -141,7 +186,7 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                             <Heart size={20} className="text-[#f43f5e]" />
                         </div>
                         <div className="mt-6">
-                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">0</h4>
+                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{gratitudeEntries.length}</h4>
                             <p className="text-[10px] font-bold text-slate-400 mt-2">Start your journal below</p>
                         </div>
                     </div>
@@ -172,10 +217,16 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                                         </div>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <button className="p-2 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleInteraction(conn._id, conn.name, 'call'); }}
+                                            className="p-2 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors"
+                                        >
                                             <Phone size={18} />
                                         </button>
-                                        <button className="p-2 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleInteraction(conn._id, conn.name, 'message'); }}
+                                            className="p-2 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors"
+                                        >
                                             <MessageCircle size={18} />
                                         </button>
                                     </div>
@@ -233,6 +284,7 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                             className="w-full h-32 bg-slate-50 dark:bg-slate-800 border-none rounded-[1.5rem] p-6 text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 resize-none"
                         />
                         <button
+                            onClick={handleGratitudeSubmit}
                             className="bg-[#f43f5e] hover:bg-[#e11d48] text-white px-8 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-rose-100 dark:shadow-none"
                         >
                             Save Entry
@@ -244,9 +296,9 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                         {gratitudeEntries.length > 0 ? (
                             <div className="space-y-4">
                                 {gratitudeEntries.map((entry) => (
-                                    <div key={entry.id} className="p-6 bg-rose-50/50 dark:bg-rose-500/5 rounded-2xl">
-                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white leading-relaxed">{entry.text}</h4>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-2">{entry.date}</p>
+                                    <div key={entry._id} className="p-6 bg-rose-50/50 dark:bg-rose-500/5 rounded-2xl">
+                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white leading-relaxed">{entry.description}</h4>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-2">{new Date(entry.timestamp).toLocaleDateString()}</p>
                                     </div>
                                 ))}
                             </div>

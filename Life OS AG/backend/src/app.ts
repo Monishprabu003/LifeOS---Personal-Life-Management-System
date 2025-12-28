@@ -13,6 +13,7 @@ import healthRoutes from './routes/healthRoutes';
 import relationshipRoutes from './routes/relationshipRoutes';
 import aiRoutes from './routes/aiRoutes';
 import userRoutes from './routes/userRoutes';
+import taskRoutes from './routes/taskRoutes';
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/social', relationshipRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/tasks', taskRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'up', timestamp: new Date().toISOString() });

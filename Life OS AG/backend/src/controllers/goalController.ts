@@ -10,6 +10,10 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
             userId: req.user._id,
             ...req.body,
         });
+
+        // Recalculate scores for instant dashboard reflection
+        await Kernel.updateLifeScores(req.user._id as string);
+
         res.status(201).json(goal);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
@@ -43,6 +47,9 @@ export const updateGoalProgress = async (req: AuthRequest, res: Response) => {
                 value: 10,
                 metadata: { goalId: goal._id }
             });
+        } else {
+            // Even partial progress updates the dashboard instantly
+            await Kernel.updateLifeScores(req.user._id as string);
         }
 
         await goal.save();

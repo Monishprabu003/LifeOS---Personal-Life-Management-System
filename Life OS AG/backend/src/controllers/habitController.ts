@@ -10,6 +10,10 @@ export const createHabit = async (req: AuthRequest, res: Response) => {
             userId: req.user._id,
             ...req.body,
         });
+
+        // Recalculate scores for instant dashboard reflection
+        await Kernel.updateLifeScores(req.user._id as string);
+
         res.status(201).json(habit);
     } catch (error: any) {
         res.status(500).json({ message: error.message });

@@ -53,6 +53,11 @@ export const socialAPI = {
     logInteraction: (id: string, data: any) => api.post(`/social/${id}/interact`, data),
 };
 
+export const tasksAPI = {
+    createTask: (data: any) => api.post('/tasks', data),
+    toggleTask: (id: string) => api.post(`/tasks/${id}/toggle`),
+};
+
 export const aiAPI = {
     getInsight: () => api.get('/ai/insight'),
     chat: (message: string) => api.post('/ai/chat', { message }),
