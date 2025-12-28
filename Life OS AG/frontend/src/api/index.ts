@@ -24,6 +24,7 @@ export const kernelAPI = {
     getStatus: () => api.get('/kernel/status'),
     logGenericEvent: (data: any) => api.post('/kernel/event', data),
     deleteEvent: (id: string) => api.delete(`/kernel/events/${id}`),
+    deleteAllLogs: () => api.delete('/kernel/logs'),
 };
 
 export const habitsAPI = {

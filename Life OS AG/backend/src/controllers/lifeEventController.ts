@@ -61,3 +61,35 @@ export const deleteEvent = async (req: AuthRequest, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const deleteAllData = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.user._id;
+
+        // Import all models dynamically to avoid circular dependencies if any, 
+        // but here we can just import them at the top or here.
+        const HealthLog = (await import('../models/HealthLog')).default;
+        const Finance = (await import('../models/Finance')).default;
+        const Habit = (await import('../models/Habit')).default;
+        const Goal = (await import('../models/Goal')).default;
+        const Relationship = (await import('../models/Relationship')).default;
+        const Task = (await import('../models/Task')).default;
+
+        await Promise.all([
+            LifeEvent.deleteMany({ userId }),
+            HealthLog.deleteMany({ userId }),
+            Finance.deleteMany({ userId }),
+            Habit.deleteMany({ userId }),
+            Goal.deleteMany({ userId }),
+            Relationship.deleteMany({ userId }),
+            Task.deleteMany({ userId })
+        ]);
+
+        // Recalculate and reset scores
+        await Kernel.updateLifeScores(userId as string);
+
+        res.json({ message: 'All logs and data deleted successfully' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

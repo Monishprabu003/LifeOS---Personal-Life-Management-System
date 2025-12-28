@@ -260,7 +260,7 @@ export function WealthModule({ onUpdate }: { onUpdate?: () => void }) {
                                         </div>
                                         <button
                                             onClick={() => handleDeleteTransaction(tx._id)}
-                                            className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                            className="p-2 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
                                             title="Delete Transaction"
                                         >
                                             <Trash2 size={16} />

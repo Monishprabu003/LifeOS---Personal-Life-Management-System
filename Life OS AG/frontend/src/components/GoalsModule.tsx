@@ -207,7 +207,7 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
                                     <span className="text-2xl font-display font-bold text-[#8b5cf6]">{goal.progress}%</span>
                                     <button
                                         onClick={() => handleDeleteGoal(goal._id)}
-                                        className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
+                                        className="p-2 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
                                         title="Delete Goal"
                                     >
                                         <Trash2 size={18} />

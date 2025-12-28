@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { AIInsightsModule } from './components/AIInsightsModule';
 import {
   LayoutDashboard,
   Heart,
@@ -19,7 +20,8 @@ import {
   Bell,
   Compass,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, kernelAPI, habitsAPI, goalsAPI } from './api';
@@ -242,7 +244,8 @@ function App() {
     { id: 'wealth', name: 'Wealth', icon: Wallet, color: 'text-wealth' },
     { id: 'relationships', name: 'Relationships', icon: Users, color: 'text-relationships' },
     { id: 'habits', name: 'Habits', icon: Zap, color: 'text-habits' },
-    { id: 'goals', name: 'Purpose', icon: Compass, color: 'text-goals' }
+    { id: 'goals', name: 'Purpose', icon: Compass, color: 'text-goals' },
+    { id: 'ai-insights', name: 'AI Insights', icon: Sparkles, color: 'text-accent' }
   ];
 
   const accountItems = [
@@ -375,18 +378,6 @@ function App() {
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
               <button
-                onClick={toggleTheme}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-slate-400 hover:text-primary shadow-sm"
-              >
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-              <button
-                onClick={syncScores}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-slate-400 hover:text-primary shadow-sm"
-              >
-                <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
-              </button>
-              <button
                 className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-slate-400 hover:text-primary shadow-sm relative"
               >
                 <Bell size={20} />
@@ -419,6 +410,7 @@ function App() {
               {activeTab === 'wealth' && <WealthModule onUpdate={fetchAppData} />}
               {activeTab === 'habits' && <HabitsModule onUpdate={fetchAppData} />}
               {activeTab === 'goals' && <GoalsModule onUpdate={fetchAppData} />}
+              {activeTab === 'ai-insights' && <AIInsightsModule user={user} />}
               {activeTab === 'relationships' && <SocialModule onUpdate={fetchAppData} />}
               {activeTab === 'profile' && <ProfileModule user={user} />}
               {activeTab === 'settings' && <SettingsModule />}

@@ -254,7 +254,7 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                                         </button>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleDeleteRelationship(conn._id); }}
-                                            className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
+                                            className="p-2 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
                                             title="Delete Connection"
                                         >
                                             <Trash2 size={18} />
@@ -334,7 +334,7 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                                             </div>
                                             <button
                                                 onClick={() => handleDeleteGratitude(entry._id)}
-                                                className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
+                                                className="p-2 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
                                                 title="Delete Entry"
                                             >
                                                 <Trash2 size={18} />

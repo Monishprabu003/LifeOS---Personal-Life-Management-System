@@ -298,7 +298,7 @@ export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
                                     <div className="flex items-center space-x-2">
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleDeleteHabit(habit._id); }}
-                                            className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                            className="p-2 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
                                             title="Delete Habit"
                                         >
                                             <Trash2 size={18} />

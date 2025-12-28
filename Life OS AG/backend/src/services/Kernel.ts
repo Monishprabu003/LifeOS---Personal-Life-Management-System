@@ -45,12 +45,12 @@ class LifeKernelEngine {
         const transactions = await Finance.find({ userId });
         const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
         const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-        let wealthScore = 50; // Starting neutral
+        let wealthScore = 0; // Starting at 0 for no data
         if (income > 0) {
             const savingsRate = (income - expense) / income;
             wealthScore = Math.max(0, Math.min(100, 50 + (savingsRate * 50)));
         } else if (expense > 0) {
-            wealthScore = 20; // Burning cash with no income
+            wealthScore = 10; // Low score if only expenses exist
         }
 
         // 3. Habit Score Calculation

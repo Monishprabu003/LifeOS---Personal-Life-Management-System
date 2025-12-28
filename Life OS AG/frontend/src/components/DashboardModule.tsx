@@ -87,6 +87,24 @@ export function DashboardModule({ user, habits, goals, setActiveTab, onUpdate }:
         }
     };
 
+    const handleDeleteAllLogs = async () => {
+        const confirm1 = confirm('⚠️ CRITICAL ACTION: This will permanently delete ALL logs, module data, and habits across the entire system. Are you absolutely sure?');
+        if (!confirm1) return;
+
+        const confirm2 = confirm('FINAL CONFIRMATION: This action is irreversible. All your data will be lost. Proceed?');
+        if (!confirm2) return;
+
+        try {
+            await kernelAPI.deleteAllLogs();
+            fetchEvents();
+            if (onUpdate) onUpdate();
+            alert('System reset complete. All data has been purged.');
+        } catch (err) {
+            console.error('Failed to delete all logs', err);
+            alert('Failed to complete system purge.');
+        }
+    };
+
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'long',
@@ -257,7 +275,15 @@ export function DashboardModule({ user, habits, goals, setActiveTab, onUpdate }:
                 {/* Recent Activity */}
                 <div className="lg:col-span-12 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Recent Activity</h3>
+                        <div className="flex items-center space-x-4">
+                            <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Recent Activity</h3>
+                            <button
+                                onClick={handleDeleteAllLogs}
+                                className="text-[10px] font-bold text-red-500 hover:bg-red-50 px-3 py-1 rounded-full border border-red-100 transition-all uppercase tracking-widest"
+                            >
+                                Delete All Logs
+                            </button>
+                        </div>
                         <span className="text-xs font-bold text-slate-400">{events.length} logs</span>
                     </div>
                     {events.length > 0 ? (
@@ -280,7 +306,7 @@ export function DashboardModule({ user, habits, goals, setActiveTab, onUpdate }:
                                     </div>
                                     <button
                                         onClick={() => handleDeleteEvent(event._id)}
-                                        className="p-2 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                        className="p-2 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
                                         title="Delete Activity"
                                     >
                                         <Trash2 size={18} />
