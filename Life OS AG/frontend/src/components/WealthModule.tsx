@@ -52,7 +52,7 @@ const transactions = [
     { id: 5, title: 'Coffee Shop', category: 'Food', amount: 6.50, type: 'expense', date: 'Nov 30' },
 ];
 
-const CircularProgress = ({ value, label }: any) => {
+const CircularProgress = ({ value, label }: { value: number; label: string }) => {
     const size = 160;
     const strokeWidth = 12;
     const radius = (size - strokeWidth) / 2;

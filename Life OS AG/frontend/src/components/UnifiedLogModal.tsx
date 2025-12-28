@@ -65,7 +65,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                 await kernelAPI.logGenericEvent({
                     type: 'system_log',
                     title: eventTitle,
-                    impact: eventImpact as any,
+                    impact: eventImpact as 'positive' | 'negative',
                     value: 0,
                     description: description
                 });

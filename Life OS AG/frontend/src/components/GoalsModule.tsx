@@ -9,8 +9,18 @@ import {
 } from 'lucide-react';
 import { goalsAPI } from '../api';
 
+interface Goal {
+    _id: string;
+    title: string;
+    category: string;
+    deadline: string;
+    priority: string;
+    status: string;
+    progress: number;
+}
+
 export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
-    const [goals, setGoals] = useState<any[]>([]);
+    const [goals, setGoals] = useState<Goal[]>([]);
     const [showForm, setShowForm] = useState(false);
 
     // Form State
@@ -18,10 +28,6 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
     const [category, setCategory] = useState('Career');
     const [deadline, setDeadline] = useState('');
     const [priority, setPriority] = useState('high');
-
-    useEffect(() => {
-        fetchGoals();
-    }, []);
 
     const fetchGoals = async () => {
         try {
@@ -31,6 +37,10 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
             console.error('Failed to fetch goals', err);
         }
     };
+
+    useEffect(() => {
+        fetchGoals();
+    }, []);
 
     const handleCreateGoal = async (e: React.FormEvent) => {
         e.preventDefault();

@@ -3,18 +3,22 @@ import { motion } from 'framer-motion';
 import { Zap, Plus, TrendingUp, CheckCircle2, Flame, Award } from 'lucide-react';
 import { habitsAPI } from '../api';
 
+interface Habit {
+    _id: string;
+    name: string;
+    frequency: string;
+    description: string;
+    streak: number;
+}
+
 export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
-    const [habits, setHabits] = useState<any[]>([]);
+    const [habits, setHabits] = useState<Habit[]>([]);
     const [showForm, setShowForm] = useState(false);
 
     // Form State
     const [name, setName] = useState('');
     const [frequency, setFrequency] = useState('daily');
     const [description, setDescription] = useState('');
-
-    useEffect(() => {
-        fetchHabits();
-    }, []);
 
     const fetchHabits = async () => {
         try {
@@ -24,6 +28,10 @@ export function HabitsModule({ onUpdate }: { onUpdate?: () => void }) {
             console.error('Failed to fetch habits', err);
         }
     };
+
+    useEffect(() => {
+        fetchHabits();
+    }, []);
 
     const handleCreateHabit = async (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   LayoutDashboard,
   Heart,
@@ -36,7 +36,7 @@ import { SettingsModule } from './components/SettingsModule';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(null); // TODO: Define User interface
   const [habits, setHabits] = useState<any[]>([]);
   const [goals, setGoals] = useState<any[]>([]);
   const [insight, setInsight] = useState<string>('');
@@ -66,15 +66,7 @@ function App() {
   const [name, setName] = useState('');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      fetchAppData();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
-
-  const fetchAppData = async () => {
+  const fetchAppData = useCallback(async () => {
     try {
       setLoading(true);
       const [userRes, habitsRes, goalsRes, aiRes] = await Promise.all([
@@ -95,7 +87,15 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchAppData();
+    } else {
+      setLoading(false);
+    }
+  }, [token, fetchAppData]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();

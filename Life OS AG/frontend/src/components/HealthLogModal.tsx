@@ -1,11 +1,17 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Moon, Droplets, Zap, Smile, Frown, Meh, Laugh } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X, Smile, Frown, Meh, Laugh } from 'lucide-react';
 
 interface HealthLogModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (data: any) => void;
+    onSave: (data: {
+        sleepDuration: number;
+        sleepQuality: number;
+        waterIntake: number;
+        stressLevel: number;
+        mood: number;
+    }) => void;
 }
 
 export function HealthLogModal({ isOpen, onClose, onSave }: HealthLogModalProps) {
@@ -133,8 +139,8 @@ export function HealthLogModal({ isOpen, onClose, onSave }: HealthLogModalProps)
                                         key={index}
                                         onClick={() => setMood(index)}
                                         className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${isSelected
-                                                ? 'bg-[#ecfdf5] dark:bg-[#10b981]/10 ring-2 ring-[#10b981] text-[#10b981]'
-                                                : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100'
+                                            ? 'bg-[#ecfdf5] dark:bg-[#10b981]/10 ring-2 ring-[#10b981] text-[#10b981]'
+                                            : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100'
                                             }`}
                                     >
                                         <Icon size={24} />

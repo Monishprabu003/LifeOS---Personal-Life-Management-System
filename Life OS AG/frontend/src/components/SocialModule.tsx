@@ -6,7 +6,6 @@ import {
     Phone,
     MessageCircle,
     Heart,
-    HeartHandshake,
     Calendar,
     CheckCircle2,
     MessageSquare
@@ -32,7 +31,7 @@ const gratitudeEntries = [
     { id: 3, text: 'Coffee with colleagues was refreshing', date: '2 days ago' },
 ];
 
-const CircularProgress = ({ value, label }: any) => {
+const CircularProgress = ({ value, label }: { value: number; label: string }) => {
     const size = 160;
     const strokeWidth = 12;
     const radius = (size - strokeWidth) / 2;
