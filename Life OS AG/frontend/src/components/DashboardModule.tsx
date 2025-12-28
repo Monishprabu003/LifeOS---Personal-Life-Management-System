@@ -1,19 +1,11 @@
 import { motion } from 'framer-motion';
 import {
-    Activity,
-    Heart,
-    Wallet,
-    Users,
     Zap,
-    Target,
     TrendingUp,
     Moon,
     Droplets,
     Smile,
-    CheckCircle2,
-    Calendar,
-    ArrowUpRight,
-    Bell
+    CheckCircle2
 } from 'lucide-react';
 import {
     AreaChart,
@@ -83,7 +75,7 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabe
     );
 };
 
-export function DashboardModule({ user, habits, goals, insight, setActiveTab }: any) {
+export function DashboardModule({ user }: any) {
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'long',

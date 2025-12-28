@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     X,
     Heart,
     Wallet,
     Zap,
-    Moon,
-    Droplets,
     Smile,
     Frown,
     Meh,
@@ -15,8 +13,7 @@ import {
     DollarSign,
     CheckCircle2,
     TrendingUp,
-    TrendingDown,
-    Plus
+    TrendingDown
 } from 'lucide-react';
 import { healthAPI, financeAPI, kernelAPI } from '../api';
 
@@ -32,7 +29,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
 
     // Health States
     const [sleepDuration, setSleepDuration] = useState(7.5);
-    const [sleepQuality, setSleepQuality] = useState(8);
+    const [sleepQuality] = useState(8);
     const [waterIntake, setWaterIntake] = useState(2.1);
     const [stressLevel, setStressLevel] = useState(3);
     const [mood, setMood] = useState(3);
@@ -129,8 +126,8 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`flex-1 flex items-center justify-center space-x-2 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab.id
-                                        ? 'bg-white dark:bg-slate-800 shadow-md text-[#0f172a] dark:text-white'
-                                        : 'text-slate-400 hover:text-slate-600'
+                                    ? 'bg-white dark:bg-slate-800 shadow-md text-[#0f172a] dark:text-white'
+                                    : 'text-slate-400 hover:text-slate-600'
                                     }`}
                             >
                                 <tab.icon size={14} className={activeTab === tab.id ? tab.color : ''} />
@@ -183,8 +180,8 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                                 key={idx}
                                                 onClick={() => setMood(idx)}
                                                 className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${mood === idx
-                                                        ? 'bg-rose-50 dark:bg-rose-500/10 ring-2 ring-rose-500 text-rose-500'
-                                                        : 'bg-slate-50 dark:bg-slate-800 text-slate-400'
+                                                    ? 'bg-rose-50 dark:bg-rose-500/10 ring-2 ring-rose-500 text-rose-500'
+                                                    : 'bg-slate-50 dark:bg-slate-800 text-slate-400'
                                                     }`}
                                             >
                                                 <emoji.icon size={24} />
@@ -260,8 +257,8 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                                 key={imp.id}
                                                 onClick={() => setEventImpact(imp.id)}
                                                 className={`flex-1 flex items-center justify-center space-x-3 py-4 rounded-2xl border-2 transition-all ${eventImpact === imp.id
-                                                        ? `border-current ${imp.color} ${imp.bg} dark:bg-transparent`
-                                                        : 'border-slate-100 dark:border-slate-800 text-slate-400'
+                                                    ? `border-current ${imp.color} ${imp.bg} dark:bg-transparent`
+                                                    : 'border-slate-100 dark:border-slate-800 text-slate-400'
                                                     }`}
                                             >
                                                 <imp.icon size={20} />
