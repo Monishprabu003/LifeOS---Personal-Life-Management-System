@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
     Heart,
@@ -7,9 +7,7 @@ import {
     Droplets,
     Smile,
     Zap,
-    Activity,
-    CheckCircle2,
-    Flame
+    Activity
 } from 'lucide-react';
 import {
     BarChart,
@@ -23,26 +21,7 @@ import {
     Line
 } from 'recharts';
 import { HealthLogModal } from './HealthLogModal';
-
-const sleepData = [
-    { name: 'Mon', hours: 7 },
-    { name: 'Tue', hours: 6.5 },
-    { name: 'Wed', hours: 8 },
-    { name: 'Thu', hours: 7.5 },
-    { name: 'Fri', hours: 7 },
-    { name: 'Sat', hours: 9 },
-    { name: 'Sun', hours: 8.5 },
-];
-
-const trendData = [
-    { name: 'Mon', mood: 7, stress: 3 },
-    { name: 'Tue', mood: 6, stress: 4 },
-    { name: 'Wed', mood: 8, stress: 3 },
-    { name: 'Thu', mood: 7, stress: 5 },
-    { name: 'Fri', mood: 8, stress: 4 },
-    { name: 'Sat', mood: 9, stress: 3 },
-    { name: 'Sun', mood: 8, stress: 4 },
-];
+import { healthAPI } from '../api';
 
 const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, label }: any) => {
     const radius = (size - strokeWidth) / 2;
@@ -87,12 +66,44 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, label }:
 
 export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+    const [logs, setLogs] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const habits = [
-        { name: 'Morning Meditation', streak: 12, completed: true, icon: Smile, color: 'text-[#10b981]', bg: 'bg-[#ecfdf5]' },
-        { name: '30 Min Workout', streak: 8, completed: false, icon: Activity, color: 'text-[#f59e0b]', bg: 'bg-[#fffbeb]' },
-        { name: '10K Steps', streak: 5, completed: false, icon: Zap, color: 'text-[#3b82f6]', bg: 'bg-[#eff6ff]' },
-    ];
+    const fetchLogs = async () => {
+        try {
+            setLoading(true);
+            const res = await healthAPI.getLogs();
+            setLogs(res.data);
+        } catch (err) {
+            console.error('Failed to fetch health logs', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchLogs();
+    }, []);
+
+    // Get latest log for cards
+    const latestLog = logs[0] || null;
+
+    // Prepare chart data from logs
+    const sleepData = logs.slice(0, 7).reverse().map(log => ({
+        name: new Date(log.timestamp).toLocaleDateString('en-US', { weekday: 'short' }),
+        hours: log.sleepHours || 0
+    }));
+
+    const trendData = logs.slice(0, 7).reverse().map(log => ({
+        name: new Date(log.timestamp).toLocaleDateString('en-US', { weekday: 'short' }),
+        mood: log.mood || 0,
+        stress: log.stress || 0
+    }));
+
+    // Daily score calculation (simple average for now)
+    const dailyScore = latestLog
+        ? Math.round(((latestLog.mood * 10) + (latestLog.sleepHours * 10) + (100 - (latestLog.stress * 10)) + (latestLog.waterIntake * 20)) / 4)
+        : 0;
 
     return (
         <div className="space-y-10 pb-20">
@@ -120,15 +131,15 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                 <div className="md:col-span-1 bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-center">
                     <h3 className="text-sm font-bold text-[#0f172a] dark:text-white mb-8 self-start">Daily Health Score</h3>
-                    <CircularProgress value={76} color="#10b981" size={120} label="Based on today's metrics" />
+                    <CircularProgress value={dailyScore} color="#10b981" size={120} label={latestLog ? "Based on today's metrics" : "Log data to see score"} />
                 </div>
 
                 <div className="bg-[#ecfdf5] dark:bg-[#10b981]/10 rounded-[2.5rem] p-8 relative group cursor-pointer hover:scale-[1.02] transition-transform">
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sleep</p>
-                            <h4 className="text-2xl font-display font-bold mt-2 text-[#0f172a] dark:text-white">7.5 hrs</h4>
-                            <p className="text-[10px] font-bold text-[#10b981] mt-2">+8% vs last week</p>
+                            <h4 className="text-2xl font-display font-bold mt-2 text-[#0f172a] dark:text-white">{latestLog?.sleepHours || '--'} hrs</h4>
+                            <p className="text-[10px] font-bold text-slate-400 mt-2">Target: 8 hrs</p>
                         </div>
                         <Moon size={22} className="text-[#10b981]" />
                     </div>
@@ -138,8 +149,8 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Water</p>
-                            <h4 className="text-2xl font-display font-bold mt-2 text-[#0f172a] dark:text-white">2.1 L</h4>
-                            <p className="text-[10px] font-bold text-[#10b981] mt-2">+12% vs last week</p>
+                            <h4 className="text-2xl font-display font-bold mt-2 text-[#0f172a] dark:text-white">{latestLog?.waterIntake || '0.0'} L</h4>
+                            <p className="text-[10px] font-bold text-slate-400 mt-2">Target: 2.5 L</p>
                         </div>
                         <Droplets size={22} className="text-[#10b981] opacity-70" />
                     </div>
@@ -149,8 +160,8 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Mood</p>
-                            <h4 className="text-2xl font-display font-bold mt-2 text-[#0f172a] dark:text-white">8/10</h4>
-                            <p className="text-[10px] font-bold text-[#10b981] mt-2">+5% vs last week</p>
+                            <h4 className="text-2xl font-display font-bold mt-2 text-[#0f172a] dark:text-white">{latestLog?.mood ? `${latestLog.mood}/10` : '--/10'}</h4>
+                            <p className="text-[10px] font-bold text-slate-400 mt-2">Track daily</p>
                         </div>
                         <Smile size={22} className="text-[#10b981] opacity-70" />
                     </div>
@@ -160,10 +171,10 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Stress</p>
-                            <h4 className="text-2xl font-display font-bold mt-2 text-[#0f172a] dark:text-white">3/10</h4>
-                            <p className="text-[10px] font-bold text-red-500 mt-2">15% vs last week</p>
+                            <h4 className="text-2xl font-display font-bold mt-2 text-[#0f172a] dark:text-white">{latestLog?.stress ? `${latestLog.stress}/10` : '--/10'}</h4>
+                            <p className="text-[10px] font-bold text-slate-400 mt-2">Keep it low</p>
                         </div>
-                        <Activity size={22} className="text-red-500/60" />
+                        <Activity size={22} className="text-[#10b981] opacity-70" />
                     </div>
                 </div>
             </div>
@@ -173,102 +184,99 @@ export function HealthModule({ onUpdate }: { onUpdate?: () => void }) {
                 <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Sleep Tracking</h3>
                     <div className="h-[280px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={sleepData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                <XAxis
-                                    dataKey="name"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
-                                    dy={10}
-                                />
-                                <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
-                                    domain={[0, 12]}
-                                    ticks={[0, 3, 6, 9, 12]}
-                                />
-                                <Tooltip
-                                    cursor={{ fill: '#f8fafc' }}
-                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
-                                />
-                                <Bar dataKey="hours" fill="#10b981" radius={[8, 8, 8, 8]} barSize={40} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {loading ? (
+                            <div className="h-full flex items-center justify-center text-slate-300">Loading...</div>
+                        ) : sleepData.length > 0 ? (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={sleepData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                    <XAxis
+                                        dataKey="name"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        dy={10}
+                                    />
+                                    <YAxis
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        domain={[0, 12]}
+                                        ticks={[0, 3, 6, 9, 12]}
+                                    />
+                                    <Tooltip
+                                        cursor={{ fill: '#f8fafc' }}
+                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
+                                    />
+                                    <Bar dataKey="hours" fill="#10b981" radius={[8, 8, 8, 8]} barSize={40} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
+                                <Moon size={40} className="mb-4 text-slate-300" />
+                                <p className="text-slate-500 font-medium">Log your first entry to see sleep trends</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Mood & Stress Trends</h3>
                     <div className="h-[280px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={trendData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                <XAxis
-                                    dataKey="name"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
-                                    dy={10}
-                                />
-                                <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
-                                    domain={[0, 12]}
-                                    ticks={[0, 3, 6, 9, 12]}
-                                />
-                                <Tooltip
-                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
-                                />
-                                <Line type="monotone" dataKey="mood" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} />
-                                <Line type="monotone" dataKey="stress" stroke="#f43f5e" strokeWidth={3} dot={{ r: 4, fill: '#f43f5e' }} />
-                            </LineChart>
-                        </ResponsiveContainer>
+                        {loading ? (
+                            <div className="h-full flex items-center justify-center text-slate-300">Loading...</div>
+                        ) : trendData.length > 0 ? (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={trendData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                    <XAxis
+                                        dataKey="name"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        dy={10}
+                                    />
+                                    <YAxis
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        domain={[0, 10]}
+                                        ticks={[0, 2, 4, 6, 8, 10]}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
+                                    />
+                                    <Line type="monotone" dataKey="mood" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} />
+                                    <Line type="monotone" dataKey="stress" stroke="#f43f5e" strokeWidth={3} dot={{ r: 4, fill: '#f43f5e' }} />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
+                                <Smile size={40} className="mb-4 text-slate-300" />
+                                <p className="text-slate-500 font-medium">Trends will appear here after your first log</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Health Habits Section */}
+            {/* Health Habits Section (Locked to Real Habits later) */}
             <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
-                <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Health Habits</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {habits.map((habit) => {
-                        const Icon = habit.icon;
-                        return (
-                            <div
-                                key={habit.name}
-                                className={`p-6 rounded-[2rem] flex items-center justify-between transition-all cursor-pointer group border-2 ${habit.completed ? 'border-[#10b981] bg-[#ecfdf5] dark:bg-[#10b981]/10' : 'border-slate-50 bg-slate-50 dark:bg-slate-800/50 dark:border-slate-800'}`}
-                            >
-                                <div className="flex items-center space-x-4">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${habit.completed ? 'bg-white text-[#10b981]' : 'bg-white dark:bg-slate-800 text-slate-400'}`}>
-                                        <Icon size={24} />
-                                    </div>
-                                    <div>
-                                        <h4 className={`text-sm font-bold ${habit.completed ? 'text-[#0da271]' : 'text-slate-600 dark:text-slate-300'}`}>{habit.name}</h4>
-                                        <div className="flex items-center space-x-1 mt-1">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{habit.streak} day streak</span>
-                                            <Flame size={12} className="text-orange-500" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors border-2 ${habit.completed ? 'bg-[#10b981] border-[#10b981] text-white' : 'border-slate-200 dark:border-slate-700 text-transparent'}`}>
-                                    <CheckCircle2 size={16} />
-                                </div>
-                            </div>
-                        )
-                    })}
+                <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Health Habit Progress</h3>
+                <div className="py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-[2rem]">
+                    <Zap size={40} className="mx-auto mb-4 text-slate-200" />
+                    <p className="text-slate-400 font-medium text-sm">Create health-focused rituals in the Habits module<br />to track your streaks here.</p>
                 </div>
             </div>
 
             <HealthLogModal
                 isOpen={isLogModalOpen}
                 onClose={() => setIsLogModalOpen(false)}
-                onSave={(data) => {
-                    console.log('Saved Health Data:', data);
+                onSave={async (data) => {
+                    await healthAPI.createLog(data);
+                    fetchLogs();
                     if (onUpdate) onUpdate();
+                    setIsLogModalOpen(false);
                 }}
             />
         </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
     Users,
@@ -11,25 +11,7 @@ import {
     MessageSquare
 } from 'lucide-react';
 import { AddConnectionModal } from './AddConnectionModal';
-
-const connections = [
-    { id: 1, name: 'Mom', lastContact: '2 days ago', avatar: '👩‍🦳' },
-    { id: 2, name: 'Best Friend - Sarah', lastContact: 'Yesterday', avatar: '👯‍♀️' },
-    { id: 3, name: 'Dad', lastContact: '5 days ago', avatar: '👴' },
-    { id: 4, name: 'Brother - Mike', lastContact: '1 week ago', avatar: '👦' },
-];
-
-const tasks = [
-    { id: 1, title: 'Call Mom', due: 'Today', completed: false },
-    { id: 2, title: 'Text Dad about weekend plans', due: 'Tomorrow', completed: false },
-    { id: 3, title: 'Send birthday wishes to colleague', due: 'In 3 days', completed: false },
-];
-
-const gratitudeEntries = [
-    { id: 1, text: 'Grateful for the supportive call with Sarah today', date: 'Today' },
-    { id: 2, text: "Mom's surprise visit made my week", date: 'Yesterday' },
-    { id: 3, text: 'Coffee with colleagues was refreshing', date: '2 days ago' },
-];
+import { socialAPI } from '../api';
 
 const CircularProgress = ({ value, label }: { value: number; label: string }) => {
     const size = 160;
@@ -77,6 +59,28 @@ const CircularProgress = ({ value, label }: { value: number; label: string }) =>
 export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [gratitudeText, setGratitudeText] = useState('');
+    const [connections, setConnections] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchConnections = async () => {
+        try {
+            setLoading(true);
+            const res = await socialAPI.getRelationships();
+            setConnections(res.data);
+        } catch (err) {
+            console.error('Failed to fetch connections', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchConnections();
+    }, []);
+
+    const socialScore = connections.length > 0 ? Math.min(connections.length * 10, 100) : 0;
+    const tasks: any[] = []; // Future implementation
+    const gratitudeEntries: any[] = []; // Future implementation
 
     return (
         <div className="space-y-10 pb-20">
@@ -105,7 +109,7 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                 <div className="lg:col-span-3 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-start border-rose-50 dark:border-rose-900/10">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-10">Relationship Wellness</h3>
                     <div className="w-full flex justify-center">
-                        <CircularProgress value={88} label="Strong connections this week" />
+                        <CircularProgress value={socialScore} label={connections.length > 0 ? "Building meaningful connections" : "No connections logged"} />
                     </div>
                 </div>
 
@@ -116,7 +120,7 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                             <Users size={20} className="text-[#f43f5e]" />
                         </div>
                         <div className="mt-6">
-                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">24</h4>
+                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{connections.length}</h4>
                         </div>
                     </div>
 
@@ -126,8 +130,8 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                             <MessageSquare size={20} className="text-[#f43f5e]" />
                         </div>
                         <div className="mt-6">
-                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">12</h4>
-                            <p className="text-[10px] font-bold text-[#10b981] mt-2">+20% vs last week</p>
+                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">0</h4>
+                            <p className="text-[10px] font-bold text-slate-400 mt-2">Log interactions to track</p>
                         </div>
                     </div>
 
@@ -137,8 +141,8 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                             <Heart size={20} className="text-[#f43f5e]" />
                         </div>
                         <div className="mt-6">
-                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">8</h4>
-                            <p className="text-[10px] font-bold text-[#10b981] mt-2">+15% vs last week</p>
+                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">0</h4>
+                            <p className="text-[10px] font-bold text-slate-400 mt-2">Start your journal below</p>
                         </div>
                     </div>
                 </div>
@@ -149,50 +153,66 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
                 {/* Your Connections List */}
                 <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Your Connections</h3>
-                    <div className="space-y-6">
-                        {connections.map((conn) => (
-                            <div key={conn.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl hover:bg-slate-100 transition-colors cursor-pointer group">
-                                <div className="flex items-center space-x-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-2xl shadow-sm">
-                                        {conn.avatar}
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white">{conn.name}</h4>
-                                        <div className="flex items-center space-x-1 mt-1 text-slate-400">
-                                            <Calendar size={12} />
-                                            <span className="text-[10px] font-bold uppercase tracking-tight">{conn.lastContact}</span>
+                    {loading ? (
+                        <div className="text-center py-12 text-slate-400">Loading...</div>
+                    ) : connections.length > 0 ? (
+                        <div className="space-y-6">
+                            {connections.map((conn) => (
+                                <div key={conn._id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl hover:bg-slate-100 transition-colors cursor-pointer group">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-2xl shadow-sm">
+                                            {conn.avatar || '👤'}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-[#0f172a] dark:text-white">{conn.name}</h4>
+                                            <div className="flex items-center space-x-1 mt-1 text-slate-400">
+                                                <Calendar size={12} />
+                                                <span className="text-[10px] font-bold uppercase tracking-tight">{conn.type}</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className="flex items-center space-x-2">
+                                        <button className="p-2 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors">
+                                            <Phone size={18} />
+                                        </button>
+                                        <button className="p-2 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors">
+                                            <MessageCircle size={18} />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <button className="p-2 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors">
-                                        <Phone size={18} />
-                                    </button>
-                                    <button className="p-2 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors">
-                                        <MessageCircle size={18} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20 bg-slate-50 dark:bg-slate-800/20 rounded-3xl border-2 border-dashed border-slate-100 dark:border-slate-800">
+                            <Users size={40} className="mx-auto text-slate-300 mb-4" />
+                            <p className="text-slate-500 font-medium">Add your inner circle to begin tracking wellness.</p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Connection Tasks */}
                 <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Connection Tasks</h3>
-                    <div className="space-y-4">
-                        {tasks.map((task) => (
-                            <div key={task.id} className="flex items-center space-x-4 p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group hover:bg-slate-100 transition-colors cursor-pointer">
-                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 transition-colors ${task.completed ? 'bg-[#f43f5e] border-[#f43f5e] text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-transparent group-hover:border-rose-400'}`}>
-                                    <CheckCircle2 size={16} />
+                    {tasks.length > 0 ? (
+                        <div className="space-y-4">
+                            {tasks.map((task) => (
+                                <div key={task.id} className="flex items-center space-x-4 p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group hover:bg-slate-100 transition-colors cursor-pointer">
+                                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 transition-colors ${task.completed ? 'bg-[#f43f5e] border-[#f43f5e] text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-transparent group-hover:border-rose-400'}`}>
+                                        <CheckCircle2 size={16} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className={`text-sm font-bold ${task.completed ? 'text-slate-400 line-through' : 'text-[#0f172a] dark:text-white font-medium'}`}>{task.title}</h4>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1">{task.due}</p>
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className={`text-sm font-bold ${task.completed ? 'text-slate-400 line-through' : 'text-[#0f172a] dark:text-white font-medium'}`}>{task.title}</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1">{task.due}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="py-20 text-center opacity-40">
+                            <CheckCircle2 size={40} className="mx-auto mb-4 text-slate-300" />
+                            <p className="text-slate-500 font-medium text-sm">No connection tasks for now.</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -221,14 +241,20 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
 
                     <div className="pt-8 border-t border-slate-100 dark:border-slate-800">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Recent Entries</p>
-                        <div className="space-y-4">
-                            {gratitudeEntries.map((entry) => (
-                                <div key={entry.id} className="p-6 bg-rose-50/50 dark:bg-rose-500/5 rounded-2xl">
-                                    <h4 className="text-sm font-bold text-[#0f172a] dark:text-white leading-relaxed">{entry.text}</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-2">{entry.date}</p>
-                                </div>
-                            ))}
-                        </div>
+                        {gratitudeEntries.length > 0 ? (
+                            <div className="space-y-4">
+                                {gratitudeEntries.map((entry) => (
+                                    <div key={entry.id} className="p-6 bg-rose-50/50 dark:bg-rose-500/5 rounded-2xl">
+                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white leading-relaxed">{entry.text}</h4>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-2">{entry.date}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="py-12 text-center opacity-40">
+                                <p className="text-slate-500 font-medium text-sm italic">"Gratitude turns what we have into enough."</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -236,9 +262,11 @@ export function SocialModule({ onUpdate }: { onUpdate?: () => void }) {
             <AddConnectionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSave={(data) => {
-                    console.log('Saved Connection:', data);
+                onSave={async (data) => {
+                    await socialAPI.createRelationship(data);
+                    fetchConnections();
                     if (onUpdate) onUpdate();
+                    setIsModalOpen(false);
                 }}
             />
         </div>

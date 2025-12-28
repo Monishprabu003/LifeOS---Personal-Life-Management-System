@@ -6,10 +6,20 @@ import { EventType } from '../models/LifeEvent';
 
 export const createRelationship = async (req: AuthRequest, res: Response) => {
     try {
-        const relationship = await Relationship.create({
+        const relationship: any = await Relationship.create({
             userId: req.user._id,
             ...req.body,
         });
+
+        // Trigger life event for score update
+        await Kernel.processEvent(req.user._id, {
+            type: EventType.SOCIAL,
+            title: `Added relationship: ${relationship.name}`,
+            impact: 'positive',
+            value: 5, // Significant impact for adding a connection
+            metadata: { relationshipId: relationship._id }
+        });
+
         res.status(201).json(relationship);
     } catch (error: any) {
         res.status(500).json({ message: error.message });

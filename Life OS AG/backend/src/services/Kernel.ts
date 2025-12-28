@@ -12,8 +12,8 @@ class LifeKernelEngine {
             ...eventData,
         });
 
-        // 2. Trigger score recalculation (Async)
-        this.updateLifeScores(userId);
+        // 2. Trigger score recalculation (Await to ensure consistency for re-fetches)
+        await this.updateLifeScores(userId);
 
         return event;
     }

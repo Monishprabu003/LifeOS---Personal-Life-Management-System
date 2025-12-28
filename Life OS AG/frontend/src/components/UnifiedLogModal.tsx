@@ -49,10 +49,12 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
         try {
             if (activeTab === 'health') {
                 await healthAPI.createLog({
-                    type: 'daily_log',
-                    value: mood,
-                    notes: `Sleep: ${sleepDuration}h, Quality: ${sleepQuality}, Water: ${waterIntake}L, Stress: ${stressLevel}`,
-                    unit: 'composite'
+                    sleepDuration,
+                    sleepQuality,
+                    waterIntake,
+                    stressLevel,
+                    mood,
+                    notes: `Daily Sync`
                 });
             } else if (activeTab === 'wealth') {
                 await financeAPI.createTransaction({
