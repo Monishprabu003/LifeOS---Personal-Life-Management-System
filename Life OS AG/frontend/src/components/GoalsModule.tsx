@@ -188,35 +188,35 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
             {/* Goals List Section */}
             <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
                 <h3 className="text-xl font-bold text-[#0f172a] dark:text-white mb-10 pl-2">Your Goals</h3>
-                <div className="space-y-8">
+                <div className="space-y-6">
                     {goals.map(goal => (
-                        <div key={goal._id} className="group p-8 border border-slate-100 dark:border-slate-800 rounded-[2rem] hover:border-purple-200 dark:hover:border-slate-700 transition-all bg-[#fafafa]/30 dark:bg-slate-800/20">
-                            <div className="flex justify-between items-start mb-6">
+                        <div key={goal._id} className="p-8 border border-slate-100 dark:border-slate-800 rounded-[2rem] bg-white dark:bg-slate-900 shadow-sm border-b-2">
+                            <div className="flex justify-between items-start mb-4">
                                 <div>
-                                    <h4 className="text-2xl font-bold text-[#0f172a] dark:text-white">{goal.title}</h4>
+                                    <h4 className="text-xl font-bold text-[#0f172a] dark:text-white">{goal.title}</h4>
                                     <div className="flex items-center space-x-3 mt-2">
                                         <span className="bg-[#f5f3ff] text-[#8b5cf6] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">{goal.category}</span>
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString() : 'Dec 2025'}</span>
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Mar 2025'}</span>
                                     </div>
                                 </div>
-                                <span className="text-3xl font-display font-bold text-[#8b5cf6]">{goal.progress}%</span>
+                                <span className="text-2xl font-display font-bold text-[#8b5cf6]">{goal.progress}%</span>
                             </div>
 
-                            <div className="w-full h-3 bg-purple-50 dark:bg-slate-800 rounded-full overflow-hidden mb-10">
+                            <div className="w-full h-2.5 bg-purple-50 dark:bg-slate-800 rounded-full overflow-hidden mb-6">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${goal.progress}%` }}
-                                    className="h-full bg-[#10b981] rounded-full shadow-sm shadow-green-100"
+                                    className="h-full bg-[#10b981] rounded-full"
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12 pl-2">
+                            <div className="space-y-3 pl-1">
                                 {(goal.subTasks || []).map((task, idx) => (
-                                    <div key={idx} className="flex items-center space-x-3 group/task">
+                                    <div key={idx} className="flex items-center space-x-3">
                                         {task.completed ? (
                                             <CheckCircle2 size={18} className="text-[#8b5cf6]" />
                                         ) : (
-                                            <Circle size={18} className="text-slate-300 group-hover/task:text-purple-300 transition-colors" />
+                                            <Circle size={18} className="text-slate-300" />
                                         )}
                                         <span className={`text-sm font-medium ${task.completed ? 'text-slate-400 line-through' : 'text-slate-600 dark:text-slate-300'}`}>
                                             {task.title}

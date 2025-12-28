@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IRelationship extends Document {
     userId: mongoose.Types.ObjectId;
     name: string;
-    type: 'family' | 'friend' | 'colleague' | 'partner' | 'other';
+    type: string;
     lastInteraction: Date;
     frequencyGoal: number; // target days between interactions
     healthScore: number; // 0-100
@@ -21,8 +21,7 @@ const RelationshipSchema: Schema = new Schema(
         name: { type: String, required: true },
         type: {
             type: String,
-            enum: ['family', 'friend', 'colleague', 'partner', 'other'],
-            required: true
+            default: 'other'
         },
         lastInteraction: { type: Date, default: Date.now },
         frequencyGoal: { type: Number, default: 7 }, // weekly by default

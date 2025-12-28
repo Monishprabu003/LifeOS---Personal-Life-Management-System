@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IHabit extends Document {
     userId: mongoose.Types.ObjectId;
     name: string;
-    category: 'health' | 'wealth' | 'productivity' | 'social' | 'mindset';
+    category?: string;
     frequency: 'daily' | 'weekly' | 'custom';
     targetDays: number; // e.g., 5 days a week
     streak: number;
@@ -22,8 +22,7 @@ const HabitSchema: Schema = new Schema(
         name: { type: String, required: true },
         category: {
             type: String,
-            enum: ['health', 'wealth', 'productivity', 'social', 'mindset'],
-            required: true
+            default: 'General'
         },
         frequency: { type: String, enum: ['daily', 'weekly', 'custom'], default: 'daily' },
         targetDays: { type: Number, default: 7 },
