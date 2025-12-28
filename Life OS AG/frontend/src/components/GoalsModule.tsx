@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
     Plus,
-    Calendar,
-    AlertCircle,
-    Trophy,
-    Zap
+    Target,
+    Flag,
+    Award,
+    BookOpen,
+    ChevronRight,
+    CheckCircle2,
+    Circle,
+    TrendingUp
 } from 'lucide-react';
 import { goalsAPI } from '../api';
 
@@ -17,6 +21,7 @@ interface Goal {
     priority: string;
     status: string;
     progress: number;
+    subTasks?: Array<{ title: string; completed: boolean }>;
 }
 
 export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
@@ -32,7 +37,17 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
     const fetchGoals = async () => {
         try {
             const res = await goalsAPI.getGoals();
-            setGoals(res.data);
+            // Enrich goals with mock subtasks for UI demonstration if they don't exist
+            const enrichedGoals = res.data.map((g: Goal) => ({
+                ...g,
+                subTasks: [
+                    { title: 'Complete initial research', completed: g.progress > 20 },
+                    { title: 'Build core features', completed: g.progress > 50 },
+                    { title: 'Beta testing', completed: g.progress > 80 },
+                    { title: 'Marketing launch', completed: g.progress === 100 }
+                ]
+            }));
+            setGoals(enrichedGoals);
         } catch (err) {
             console.error('Failed to fetch goals', err);
         }
@@ -65,194 +80,266 @@ export function GoalsModule({ onUpdate }: { onUpdate?: () => void }) {
         }
     };
 
-    const updateProgress = async (id: string, current: number) => {
-        try {
-            const next = Math.min(current + 10, 100);
-            await goalsAPI.updateProgress(id, next);
-            fetchGoals();
-            if (onUpdate) onUpdate();
-        } catch (err) {
-            console.error('Progress update failed', err);
-        }
-    };
+    const categories = ['Career', 'Skills', 'Health', 'Wealth', 'Personal'];
 
-    const categories = ['Career', 'Health', 'Wealth', 'Skills', 'Personal'];
+    // Mock data for bottom section
+    const skills = [
+        { name: 'JavaScript', progress: 85 },
+        { name: 'React', progress: 80 },
+        { name: 'Leadership', progress: 65 },
+        { name: 'Communication', progress: 75 },
+        { name: 'Python', progress: 45 },
+    ];
+
+    const learningItems = [
+        { title: 'Advanced React Patterns', type: 'Course', status: 'completed' },
+        { title: 'System Design Fundamentals', type: 'Course', status: 'in-progress' },
+        { title: 'Machine Learning Basics', type: 'Course', status: 'todo' },
+        { title: 'Public Speaking Workshop', type: 'Workshop', status: 'todo' },
+    ];
 
     return (
-        <div className="space-y-8 pb-12">
-            {/* Header */}
+        <div className="space-y-10 pb-20">
+            {/* Header Section */}
             <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-3xl font-display font-bold text-white tracking-tight">Mission Control</h2>
-                    <p className="text-slate-400 mt-1">Strategic roadmap and purpose alignment.</p>
+                <div className="flex items-center space-x-5">
+                    <div className="w-14 h-14 rounded-[1.25rem] bg-[#8b5cf6] flex items-center justify-center text-white shadow-lg shadow-purple-200 dark:shadow-none">
+                        <Target size={28} />
+                    </div>
+                    <div>
+                        <h1 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white leading-tight">Purpose & Career</h1>
+                        <p className="text-slate-500 font-medium mt-1">Define your mission and track your growth</p>
+                    </div>
                 </div>
                 <button
                     onClick={() => setShowForm(!showForm)}
-                    className="bg-goals hover:bg-goals/90 text-white px-6 py-3 rounded-2xl flex items-center space-x-2 shadow-lg shadow-goals/20 transition-all active:scale-95"
+                    className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white px-8 py-4 rounded-2xl font-bold flex items-center space-x-3 transition-all shadow-lg shadow-purple-100 dark:shadow-none active:scale-95"
                 >
                     <Plus size={20} />
-                    <span className="font-bold">Initialize Mission</span>
+                    <span>New Goal</span>
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                {/* Active Missions Grid */}
-                <div className="lg:col-span-3 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {goals.filter(g => g.status === 'active').map((goal) => (
-                            <motion.div
-                                key={goal._id}
-                                layoutId={goal._id}
-                                className="glass rounded-3xl p-8 border-white/5 group hover:border-goals/30 transition-all"
-                            >
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${goal.priority === 'high' ? 'bg-relationships/20 text-relationships' : 'bg-slate-800 text-slate-400'
-                                        }`}>
-                                        {goal.priority} Priority
-                                    </div>
-                                    <button
-                                        onClick={() => updateProgress(goal._id, goal.progress)}
-                                        className="p-2 bg-goals/10 rounded-xl text-goals opacity-0 group-hover:opacity-100 transition-opacity"
-                                    >
-                                        <Plus size={18} />
-                                    </button>
-                                </div>
-
-                                <h3 className="text-xl font-bold mb-2">{goal.title}</h3>
-                                <p className="text-slate-500 text-sm mb-6">{goal.category}</p>
-
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-end">
-                                        <span className="text-2xl font-display font-bold text-white">{goal.progress}%</span>
-                                        <span className="text-xs text-slate-500 mb-1">Target Completion</span>
-                                    </div>
-                                    <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${goal.progress}%` }}
-                                            className="h-full bg-gradient-to-r from-goals to-primary shadow-[0_0_15px_rgba(34,197,94,0.3)]"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between text-xs text-slate-500">
-                                    <div className="flex items-center">
-                                        <Calendar size={14} className="mr-2" />
-                                        {goal.deadline ? new Date(goal.deadline).toLocaleDateString() : 'No Deadline'}
-                                    </div>
-                                    <div className="flex items-center">
-                                        <AlertCircle size={14} className="mr-2" />
-                                        Active Phase
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
+            {/* Stats Row */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* Purpose Score */}
+                <div className="bg-[#f5f3ff] dark:bg-slate-900 rounded-[2.5rem] p-8 border border-purple-50 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center text-center">
+                    <h3 className="text-sm font-bold text-[#0f172a] dark:text-white mb-6">Purpose Score</h3>
+                    <div className="relative w-32 h-32 flex items-center justify-center">
+                        <svg className="w-full h-full transform -rotate-90">
+                            <circle
+                                cx="64"
+                                cy="64"
+                                r="58"
+                                stroke="currentColor"
+                                strokeWidth="8"
+                                fill="transparent"
+                                className="text-purple-50 dark:text-slate-800"
+                            />
+                            <circle
+                                cx="64"
+                                cy="64"
+                                r="58"
+                                stroke="#8b5cf6"
+                                strokeWidth="8"
+                                fill="transparent"
+                                strokeDasharray={364.4}
+                                strokeDashoffset={364.4 - (364.4 * 76) / 100}
+                                strokeLinecap="round"
+                                className="transition-all duration-1000 ease-out"
+                            />
+                        </svg>
+                        <span className="absolute text-4xl font-display font-bold text-[#0f172a] dark:text-white">76</span>
                     </div>
-
-                    {goals.filter(g => g.status === 'active').length === 0 && (
-                        <div className="glass rounded-3xl p-16 flex flex-col items-center justify-center text-center opacity-50">
-                            <Zap size={48} className="text-slate-700 mb-4" />
-                            <h4 className="text-xl font-bold">No High-Intensity Missions</h4>
-                            <p className="text-slate-500 mt-2 max-w-xs">Initialize a new mission to begin strategic data tracking.</p>
-                        </div>
-                    )}
+                    <p className="mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Strong progress on goals</p>
                 </div>
 
-                {/* Sidebar Analytics */}
-                <div className="space-y-6">
-                    {showForm && (
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="glass rounded-[2rem] p-8 border-goals/30"
-                        >
-                            <h3 className="font-bold text-xl mb-6">Mission Config</h3>
-                            <form onSubmit={handleCreateGoal} className="space-y-5">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Title</label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter strategic goal..."
-                                        value={title}
-                                        onChange={e => setTitle(e.target.value)}
-                                        className="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-sm outline-none focus:border-goals/50"
-                                    />
-                                </div>
+                {/* Active Goals */}
+                <div className="bg-[#f5f3ff] dark:bg-slate-900 rounded-[2.5rem] p-8 border border-purple-50 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div className="flex justify-between items-start">
+                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Active Goals</p>
+                        <Flag size={20} className="text-[#8b5cf6]" />
+                    </div>
+                    <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">{goals.length}</h4>
+                </div>
 
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Priority</label>
-                                        <select
-                                            value={priority}
-                                            onChange={e => setPriority(e.target.value)}
-                                            className="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-xs outline-none focus:border-goals/50"
-                                        >
-                                            <option value="low">Low</option>
-                                            <option value="medium">Medium</option>
-                                            <option value="high">High</option>
-                                            <option value="critical">Critical</option>
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Category</label>
-                                        <select
-                                            value={category}
-                                            onChange={e => setCategory(e.target.value)}
-                                            className="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-xs outline-none focus:border-goals/50"
-                                        >
-                                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                                        </select>
-                                    </div>
-                                </div>
+                {/* Skills Tracked */}
+                <div className="bg-[#f5f3ff] dark:bg-slate-900 rounded-[2.5rem] p-8 border border-purple-50 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div className="flex justify-between items-start">
+                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Skills Tracked</p>
+                        <Award size={20} className="text-[#8b5cf6]" />
+                    </div>
+                    <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">{skills.length}</h4>
+                </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Deadline</label>
-                                    <input
-                                        type="date"
-                                        value={deadline}
-                                        onChange={e => setDeadline(e.target.value)}
-                                        className="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-sm outline-none focus:border-goals/50"
-                                    />
-                                </div>
-
-                                <button className="w-full bg-goals py-4 rounded-xl font-bold shadow-lg shadow-goals/20 hover:shadow-goals/40 transition-all">
-                                    Initialize Node
-                                </button>
-                            </form>
-                        </motion.div>
-                    )}
-
-                    <div className="glass rounded-[2rem] p-8 space-y-8">
-                        <h3 className="font-bold text-lg flex items-center">
-                            <Trophy size={18} className="mr-2 text-wealth" />
-                            Achievements
-                        </h3>
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm text-slate-400">Total Missions</span>
-                                <span className="font-bold">{goals.length}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm text-slate-400">Completed</span>
-                                <span className="font-bold text-goals">{goals.filter(g => g.status === 'completed').length}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm text-slate-400">Overall Progress</span>
-                                <span className="font-bold text-primary">
-                                    {Math.round(goals.reduce((acc, g) => acc + g.progress, 0) / (goals.length || 1))}%
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="bg-gradient-to-br from-primary/10 to-goals/10 border border-goals/10 p-5 rounded-2xl">
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-goals mb-2">AI Optimization Insight</h4>
-                            <p className="text-xs text-slate-300 leading-relaxed italic">
-                                "System suggests prioritizing your 'Career' missions during the upcoming 48-hour cycle for maximum leverage."
-                            </p>
-                        </div>
+                {/* Learning Items */}
+                <div className="bg-[#f5f3ff] dark:bg-slate-900 rounded-[2.5rem] p-8 border border-purple-50 dark:border-slate-800 shadow-sm flex flex-col justify-between text-left">
+                    <div className="flex justify-between items-start">
+                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Learning Items</p>
+                        <BookOpen size={20} className="text-[#8b5cf6]" />
+                    </div>
+                    <div className="mt-4">
+                        <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white">{learningItems.length}</h4>
+                        <p className="text-[10px] font-bold text-[#10b981] mt-2">+25% vs last week</p>
                     </div>
                 </div>
             </div>
+
+            {/* Goals List Section */}
+            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                <h3 className="text-xl font-bold text-[#0f172a] dark:text-white mb-10 pl-2">Your Goals</h3>
+                <div className="space-y-8">
+                    {goals.map(goal => (
+                        <div key={goal._id} className="group p-8 border border-slate-100 dark:border-slate-800 rounded-[2rem] hover:border-purple-200 dark:hover:border-slate-700 transition-all bg-[#fafafa]/30 dark:bg-slate-800/20">
+                            <div className="flex justify-between items-start mb-6">
+                                <div>
+                                    <h4 className="text-2xl font-bold text-[#0f172a] dark:text-white">{goal.title}</h4>
+                                    <div className="flex items-center space-x-3 mt-2">
+                                        <span className="bg-[#f5f3ff] text-[#8b5cf6] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">{goal.category}</span>
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString() : 'Dec 2025'}</span>
+                                    </div>
+                                </div>
+                                <span className="text-3xl font-display font-bold text-[#8b5cf6]">{goal.progress}%</span>
+                            </div>
+
+                            <div className="w-full h-3 bg-purple-50 dark:bg-slate-800 rounded-full overflow-hidden mb-10">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${goal.progress}%` }}
+                                    className="h-full bg-[#10b981] rounded-full shadow-sm shadow-green-100"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12 pl-2">
+                                {(goal.subTasks || []).map((task, idx) => (
+                                    <div key={idx} className="flex items-center space-x-3 group/task">
+                                        {task.completed ? (
+                                            <CheckCircle2 size={18} className="text-[#8b5cf6]" />
+                                        ) : (
+                                            <Circle size={18} className="text-slate-300 group-hover/task:text-purple-300 transition-colors" />
+                                        )}
+                                        <span className={`text-sm font-medium ${task.completed ? 'text-slate-400 line-through' : 'text-slate-600 dark:text-slate-300'}`}>
+                                            {task.title}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                    {goals.length === 0 && (
+                        <div className="text-center py-20 bg-slate-50 dark:bg-slate-800/30 rounded-[2rem] border-2 border-dashed border-slate-100 dark:border-slate-800">
+                            <Target size={40} className="mx-auto text-slate-300 mb-4" />
+                            <p className="text-slate-500 font-medium">No active goals found. Start your mission by clicking "New Goal".</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Bottom Section: Skills & Learning */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Skills Progress */}
+                <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <h3 className="text-xl font-bold text-[#0f172a] dark:text-white mb-10">Skills Progress</h3>
+                    <div className="space-y-8">
+                        {skills.map(skill => (
+                            <div key={skill.name} className="space-y-3">
+                                <div className="flex justify-between items-end px-1">
+                                    <span className="text-sm font-bold text-[#0f172a] dark:text-white">{skill.name}</span>
+                                    <span className="text-[10px] font-bold text-slate-400">{skill.progress}%</span>
+                                </div>
+                                <div className="w-full h-2 bg-purple-50 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${skill.progress}%` }}
+                                        className="h-full bg-[#10b981] rounded-full shadow-sm"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Learning Path */}
+                <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <h3 className="text-xl font-bold text-[#0f172a] dark:text-white mb-10">Learning Path</h3>
+                    <div className="space-y-4">
+                        {learningItems.map((item, idx) => (
+                            <div key={idx} className="flex items-center justify-between p-5 bg-[#f5f3ff]/50 dark:bg-purple-900/10 rounded-2xl hover:bg-[#f5f3ff] transition-all cursor-pointer group">
+                                <div className="flex items-center space-x-5">
+                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
+                                        {item.status === 'completed' ? (
+                                            <CheckCircle2 size={20} className="text-[#8b5cf6]" />
+                                        ) : item.status === 'in-progress' ? (
+                                            <motion.div
+                                                animate={{ rotate: 360 }}
+                                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                            >
+                                                <Target size={20} className="text-[#8b5cf6]/50" />
+                                            </motion.div>
+                                        ) : (
+                                            <Circle size={20} className="text-slate-300" />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white group-hover:text-[#8b5cf6] transition-colors">{item.title}</h4>
+                                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{item.type}</p>
+                                    </div>
+                                </div>
+                                <ChevronRight size={18} className="text-slate-300 group-hover:text-[#8b5cf6] transition-colors" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Goal Form Modal */}
+            {showForm && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] p-10 shadow-2xl relative"
+                    >
+                        <h2 className="text-2xl font-bold mb-8 text-[#0f172a] dark:text-white">Initialize Mission</h2>
+                        <form onSubmit={handleCreateGoal} className="space-y-6">
+                            <input
+                                placeholder="Goal Title (e.g. Get Promoted to Senior)"
+                                value={title}
+                                onChange={e => setTitle(e.target.value)}
+                                className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-[#8b5cf6]/20 outline-none"
+                                required
+                            />
+                            <div className="grid grid-cols-2 gap-4">
+                                <select
+                                    value={category}
+                                    onChange={e => setCategory(e.target.value)}
+                                    className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-[#8b5cf6]/20 outline-none"
+                                >
+                                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                                <input
+                                    type="date"
+                                    value={deadline}
+                                    onChange={e => setDeadline(e.target.value)}
+                                    className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-[#8b5cf6]/20 outline-none"
+                                />
+                            </div>
+                            <div className="flex space-x-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowForm(false)}
+                                    className="flex-1 py-4 font-bold text-slate-500 hover:text-slate-700 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button className="flex-1 bg-[#8b5cf6] hover:bg-[#7c3aed] text-white py-4 rounded-2xl font-bold shadow-lg shadow-purple-100 dark:shadow-none transition-all">
+                                    Start Mission
+                                </button>
+                            </div>
+                        </form>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }
