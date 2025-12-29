@@ -18,7 +18,11 @@ import {
   Compass,
   PanelLeftClose,
   PanelLeftOpen,
-  Sparkles
+  Sparkles,
+  Sun,
+  Moon,
+  Monitor,
+  Bell
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, habitsAPI, goalsAPI } from './api';
@@ -42,11 +46,32 @@ function App() {
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [token, setToken] = useState<string | null>(localStorage.getItem('lifeos_token'));
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'system');
 
   useEffect(() => {
-    document.documentElement.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
-  }, []);
+    const root = window.document.documentElement;
+
+    const applyTheme = (t: string) => {
+      root.classList.remove('light', 'dark');
+
+      if (t === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        root.classList.add(systemTheme);
+      } else {
+        root.classList.add(t);
+      }
+    };
+
+    applyTheme(theme);
+    localStorage.setItem('theme', theme);
+
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => applyTheme('system');
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+  }, [theme]);
 
 
   // Auth Flow State
@@ -238,12 +263,12 @@ function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] overflow-hidden text-main">
+    <div className="flex h-screen bg-[#f8fafc] dark:bg-[#0f111a] overflow-hidden text-main transition-colors duration-300">
       {/* Sidebar */}
       <motion.aside
         initial={false}
         animate={{ width: isSidebarCollapsed ? 96 : 288 }}
-        className="bg-white border-r border-slate-100 flex flex-col shadow-sm z-20 overflow-hidden"
+        className="bg-white dark:bg-[#1a1c2e] border-r border-slate-100 dark:border-[#222436] flex flex-col shadow-sm z-20 overflow-hidden transition-colors duration-300"
       >
         <div className="p-8 flex items-center justify-between">
           <div className="flex items-center space-x-3 overflow-hidden">
@@ -285,8 +310,8 @@ function App() {
                     key={module.id}
                     onClick={() => setActiveTab(module.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-200 group ${activeTab === module.id
-                      ? 'bg-[#ecfdf5] text-[#10b981]'
-                      : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700'
+                      ? 'bg-[#ecfdf5] dark:bg-[#222436] text-[#10b981]'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#222436]/50 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                   >
                     <Icon size={20} className={activeTab === module.id ? 'text-[#10b981]' : ''} />
@@ -312,8 +337,8 @@ function App() {
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-200 group ${activeTab === item.id
-                      ? 'bg-[#ecfdf5] text-[#10b981]'
-                      : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700'
+                      ? 'bg-[#ecfdf5] dark:bg-[#222436] text-[#10b981]'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#222436]/50 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                   >
                     <Icon size={20} className={activeTab === item.id ? 'text-[#10b981]' : ''} />
@@ -353,26 +378,68 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 relative overflow-y-auto custom-scrollbar">
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-[#f8fafc]/80 dark:bg-background/80 backdrop-blur-md px-10 py-6 flex items-center justify-between">
+        <header className="sticky top-0 z-10 bg-[#f8fafc]/80 dark:bg-[#0f111a]/80 backdrop-blur-md px-10 py-6 flex items-center justify-between transition-colors duration-300">
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Welcome back,</p>
+            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none mb-1">Welcome back,</p>
             <h2 className="text-xl font-bold text-[#0f172a] dark:text-white">{user?.name || 'John Doe'}</h2>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={fetchAppData}
-              disabled={loading}
-              className={`flex items-center space-x-2 bg-[#3b82f6] hover:bg-[#2563eb] text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-blue-100 ${loading ? 'cursor-not-allowed opacity-70' : ''}`}
-            >
-              <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
-            </button>
-            <button
-              onClick={() => setIsLogModalOpen(true)}
-              className="flex items-center space-x-2 bg-[#10b981] hover:bg-[#0da271] text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-green-100"
-            >
-              <Plus size={18} />
-              <span>Log Event</span>
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center bg-slate-100/50 dark:bg-[#1a1c2e]/50 p-1.5 rounded-2xl border border-slate-200/50 dark:border-[#222436]/50 backdrop-blur-sm">
+              {[
+                { id: 'light', icon: Sun, label: 'Light' },
+                { id: 'dark', icon: Moon, label: 'Dark' },
+                { id: 'system', icon: Monitor, label: 'System' }
+              ].map((t) => {
+                const Icon = t.icon;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setTheme(t.id)}
+                    className={`p-2.5 rounded-xl transition-all duration-300 group relative ${theme === t.id
+                      ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                      }`}
+                    title={t.label}
+                  >
+                    <Icon size={18} className={theme === t.id ? 'scale-110' : 'group-hover:scale-110 transition-transform'} />
+                    {theme === t.id && (
+                      <motion.div
+                        layoutId="activeTheme"
+                        className="absolute inset-0 bg-white dark:bg-slate-700 rounded-xl -z-10 shadow-sm"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700" />
+
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={fetchAppData}
+                disabled={loading}
+                className={`flex items-center space-x-2 bg-[#3b82f6] hover:bg-[#2563eb] text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-blue-100 dark:shadow-none ${loading ? 'cursor-not-allowed opacity-70' : ''}`}
+              >
+                <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+                <span>{loading ? '...' : 'Refresh'}</span>
+              </button>
+              <button
+                onClick={() => setIsLogModalOpen(true)}
+                className="flex items-center space-x-2 bg-[#10b981] hover:bg-[#0da271] text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-green-100 dark:shadow-none"
+              >
+                <Plus size={18} />
+                <span>Log Event</span>
+              </button>
+            </div>
+
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700" />
+
+            <button className="relative p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+              <Bell size={24} />
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 border-2 border-white dark:border-[#0f111a] rounded-full" />
             </button>
           </div>
         </header>
@@ -421,7 +488,7 @@ function App() {
         onClose={() => setIsLogModalOpen(false)}
         onSuccess={fetchAppData}
       />
-    </div>
+    </div >
   );
 }
 

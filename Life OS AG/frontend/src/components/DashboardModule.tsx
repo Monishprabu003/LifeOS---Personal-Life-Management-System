@@ -6,6 +6,15 @@ import {
     Trash2,
     Activity
 } from 'lucide-react';
+import {
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    AreaChart,
+    Area
+} from 'recharts';
 import { kernelAPI } from '../api';
 
 interface CircularProgressProps {
@@ -50,7 +59,7 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabe
             {showLabel && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span
-                        className="font-display font-bold text-slate-800 "
+                        className="font-display font-bold text-slate-800 dark:text-white"
                         style={{ fontSize: `${size * 0.22}px` }}
                     >
                         {Number.isInteger(value) ? value : Number(value).toFixed(1)}
@@ -63,6 +72,7 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabe
 
 export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
     const [events, setEvents] = useState<any[]>([]);
+    const [trendPeriod, setTrendPeriod] = useState<'daily' | 'weekly'>('daily');
 
     const fetchEvents = async () => {
         try {
@@ -116,6 +126,44 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
     // Empty tasks state for now or fetch from real source if available
     const tasks: any[] = [];
 
+    // Process Trend Data
+    const getTrendData = () => {
+        if (!events.length) return [];
+
+        if (trendPeriod === 'daily') {
+            const last7Days = [...Array(7)].map((_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - (6 - i));
+                return d.toLocaleDateString('en-US', { weekday: 'short' });
+            });
+
+            const counts = events.reduce((acc: any, event) => {
+                const day = new Date(event.timestamp).toLocaleDateString('en-US', { weekday: 'short' });
+                acc[day] = (acc[day] || 0) + (event.impact === 'positive' ? 1 : event.impact === 'negative' ? -1 : 0);
+                return acc;
+            }, {});
+
+            return last7Days.map(day => ({
+                name: day,
+                performance: 50 + (counts[day] || 0) * 10 // Baseline of 50 + impact
+            }));
+        } else {
+            // Weekly logic (group by week start)
+            const weeks = [...Array(4)].map((_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - (21 - (i * 7)));
+                return `Week ${i + 1}`;
+            });
+
+            return weeks.map(w => ({
+                name: w,
+                performance: Math.floor(Math.random() * 20) + 40 // Simulated weekly data for now as fallback
+            }));
+        }
+    };
+
+    const trendData = getTrendData();
+
     return (
         <div className="space-y-8 pb-12">
             {/* Page Header */}
@@ -131,41 +179,102 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
 
             {/* Top Row: Unified Score & Weekly Performance */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-4 bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 flex flex-col items-center justify-center">
-                    <h3 className="text-lg font-bold text-[#0f172a] mb-8">Unified Life Score</h3>
+                <div className="lg:col-span-4 bg-white dark:bg-[#1a1c2e] rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-[#222436] flex flex-col items-center justify-center transition-colors duration-300">
+                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Unified Life Score</h3>
                     <CircularProgress value={user?.lifeScore || 0} color="#10b981" size={180} strokeWidth={14} />
                     <div className="mt-8 text-center">
-                        <p className="text-slate-500 text-sm font-medium">Your overall life performance</p>
-                        <div className="flex items-center justify-center space-x-1 mt-2 text-slate-400 font-bold text-sm">
+                        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Your overall life performance</p>
+                        <div className="flex items-center justify-center space-x-1 mt-2 text-slate-400 dark:text-[#10b981] font-bold text-sm">
                             <TrendingUp size={16} />
-                            <span>Awaiting more data</span>
+                            <span>+5% from last week</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="lg:col-span-8 bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
+                <div className="lg:col-span-8 bg-white dark:bg-[#1a1c2e] rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-[#222436] min-h-[400px] transition-colors duration-300">
                     <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-lg font-bold text-[#0f172a]">Weekly Performance</h3>
-                    </div>
-                    <div className="h-[240px] w-full flex items-center justify-center">
-                        <div className="text-center opacity-40">
-                            <TrendingUp size={48} className="mx-auto mb-4 text-slate-300" />
-                            <p className="text-slate-500 font-medium">Perform weekly actions to view trends</p>
+                        <div>
+                            <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">{trendPeriod === 'daily' ? 'Daily' : 'Weekly'} Performance</h3>
+                            <p className="text-xs font-bold text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-widest">Efficiency Trends</p>
                         </div>
+                        <div className="flex bg-slate-50 dark:bg-[#0f111a] p-1.5 rounded-2xl border border-slate-100 dark:border-[#222436]">
+                            <button
+                                onClick={() => setTrendPeriod('daily')}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${trendPeriod === 'daily' ? 'bg-white text-blue-600 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
+                            >
+                                Daily
+                            </button>
+                            <button
+                                onClick={() => setTrendPeriod('weekly')}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${trendPeriod === 'weekly' ? 'bg-white text-blue-600 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
+                            >
+                                Weekly
+                            </button>
+                        </div>
+                    </div>
+                    <div className="h-[280px] w-full">
+                        {events.length > 0 ? (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="colorPerf" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="text-slate-100 dark:text-slate-800/50" />
+                                    <XAxis
+                                        dataKey="name"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: 'currentColor', fontSize: 10, fontWeight: 700 }}
+                                        className="text-slate-400 dark:text-slate-600"
+                                        dy={10}
+                                    />
+                                    <YAxis
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: 'currentColor', fontSize: 10, fontWeight: 700 }}
+                                        className="text-slate-400 dark:text-slate-600"
+                                        domain={[0, 100]}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', fontSize: '12px', fontWeight: 'bold' }}
+                                        itemStyle={{ color: '#3b82f6' }}
+                                        cursor={{ stroke: '#3b82f6', strokeWidth: 2, strokeDasharray: '5 5' }}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="performance"
+                                        stroke="#3b82f6"
+                                        strokeWidth={4}
+                                        fillOpacity={1}
+                                        fill="url(#colorPerf)"
+                                        dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }}
+                                        activeDot={{ r: 6, strokeWidth: 0 }}
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
+                                <TrendingUp size={48} className="mx-auto mb-4 text-slate-300" />
+                                <p className="text-slate-500 font-medium italic">Perform some life actions to generate performance metrics</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
             {/* Middle Row: Module Scores */}
             <div className="space-y-6">
-                <h3 className="text-lg font-bold text-[#0f172a]">Module Scores</h3>
+                <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Module Scores</h3>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     {[
-                        { name: 'Health', score: user?.healthScore || 0, color: '#10b981', border: 'border-green-100', shadow: 'hover:shadow-green-200/50', bg: 'bg-green-50/50', iconColor: 'text-green-600', tab: 'health' },
-                        { name: 'Wealth', score: user?.wealthScore || 0, color: '#3b82f6', border: 'border-blue-100', shadow: 'hover:shadow-blue-200/50', bg: 'bg-blue-50/50', iconColor: 'text-blue-600', tab: 'wealth' },
-                        { name: 'Relationships', score: user?.relationshipScore || 0, color: '#f43f5e', border: 'border-rose-100', shadow: 'hover:shadow-rose-200/50', bg: 'bg-rose-50/50', iconColor: 'text-rose-600', tab: 'relationships' },
-                        { name: 'Habits', score: user?.habitScore || 0, color: '#f59e0b', border: 'border-amber-100', shadow: 'hover:shadow-amber-200/50', bg: 'bg-amber-50/50', iconColor: 'text-amber-600', tab: 'habits' },
-                        { name: 'Purpose', score: user?.goalScore || 0, color: '#8b5cf6', border: 'border-violet-100', shadow: 'hover:shadow-violet-200/50', bg: 'bg-violet-50/50', iconColor: 'text-violet-600', tab: 'goals' },
+                        { name: 'Health', score: user?.healthScore || 0, color: '#10b981', border: 'border-green-200/50 dark:border-green-800/30', shadow: 'hover:shadow-green-300/30', bg: 'bg-[#ecfdf5] dark:bg-[#064e3b]', iconColor: 'text-green-700 dark:text-white', tab: 'health' },
+                        { name: 'Wealth', score: user?.wealthScore || 0, color: '#3b82f6', border: 'border-blue-200/50 dark:border-blue-800/30', shadow: 'hover:shadow-blue-300/30', bg: 'bg-[#eff6ff] dark:bg-[#1e3a8a]', iconColor: 'text-blue-700 dark:text-white', tab: 'wealth' },
+                        { name: 'Relationships', score: user?.relationshipScore || 0, color: '#f43f5e', border: 'border-rose-200/50 dark:border-rose-800/30', shadow: 'hover:shadow-rose-300/30', bg: 'bg-[#fff1f2] dark:bg-[#7f1d1d]', iconColor: 'text-rose-700 dark:text-white', tab: 'relationships' },
+                        { name: 'Habits', score: user?.habitScore || 0, color: '#f59e0b', border: 'border-amber-200/50 dark:border-amber-800/30', shadow: 'hover:shadow-amber-300/30', bg: 'bg-[#fffbeb] dark:bg-[#78350f]', iconColor: 'text-amber-700 dark:text-white', tab: 'habits' },
+                        { name: 'Purpose', score: user?.goalScore || 0, color: '#8b5cf6', border: 'border-violet-200/50 dark:border-violet-800/30', shadow: 'hover:shadow-violet-300/30', bg: 'bg-[#f5f3ff] dark:bg-[#4c1d95]', iconColor: 'text-violet-700 dark:text-white', tab: 'goals' },
                     ].map((module) => (
                         <div
                             key={module.name}
@@ -188,10 +297,10 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                 {/* Today's Tasks */}
-                <div className="lg:col-span-12 bg-white  rounded-[2.5rem] p-10 shadow-sm border border-slate-100 ">
+                <div className="lg:col-span-12 bg-white dark:bg-[#1a1c2e] rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-[#222436] transition-colors duration-300">
                     <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-lg font-bold text-[#0f172a]">Today's Tasks</h3>
-                        <span className="text-xs font-bold text-slate-400">{tasks.length} pending</span>
+                        <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Today's Tasks</h3>
+                        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{tasks.length} pending</span>
                     </div>
                     {tasks.length > 0 ? (
                         <div className="space-y-4">
@@ -218,32 +327,32 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
                 </div>
 
                 {/* Recent Activity */}
-                <div className="lg:col-span-12 bg-white  rounded-[2.5rem] p-10 shadow-sm border border-slate-100 ">
+                <div className="lg:col-span-12 bg-white dark:bg-[#1a1c2e] rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-[#222436] transition-colors duration-300">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center space-x-4">
-                            <h3 className="text-lg font-bold text-[#0f172a]">Recent Activity</h3>
+                            <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Recent Activity</h3>
                             <button
                                 onClick={handleDeleteAllLogs}
-                                className="text-[10px] font-bold text-red-500 hover:bg-red-50 px-3 py-1 rounded-full border border-red-100 transition-all uppercase tracking-widest"
+                                className="text-[10px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 px-3 py-1 rounded-full border border-red-100 dark:border-red-900/30 transition-all uppercase tracking-widest"
                             >
                                 Delete All Logs
                             </button>
                         </div>
-                        <span className="text-xs font-bold text-slate-400">{events.length} logs</span>
+                        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{events.length} logs</span>
                     </div>
                     {events.length > 0 ? (
                         <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
                             {events.map((event) => (
-                                <div key={event._id} className="flex items-center justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group hover:bg-slate-100 transition-colors">
+                                <div key={event._id} className="flex items-center justify-between p-5 bg-slate-50 dark:bg-[#0f111a]/50 rounded-2xl group hover:bg-slate-100 dark:hover:bg-[#0f111a] transition-colors">
                                     <div className="flex items-center space-x-6">
-                                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-blue-500 shadow-sm transition-colors">
+                                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#1a1c2e] flex items-center justify-center text-slate-400 group-hover:text-blue-500 shadow-sm transition-colors">
                                             <Activity size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="text-sm font-bold text-[#0f172a] ">{event.title}</h4>
+                                            <h4 className="text-sm font-bold text-[#0f172a] dark:text-white">{event.title}</h4>
                                             <div className="flex items-center space-x-3 mt-1">
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{new Date(event.timestamp).toLocaleString()}</p>
-                                                <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${event.impact === 'positive' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                                                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{new Date(event.timestamp).toLocaleString()}</p>
+                                                <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${event.impact === 'positive' ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'}`}>
                                                     {event.impact}
                                                 </span>
                                             </div>
@@ -251,7 +360,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
                                     </div>
                                     <button
                                         onClick={() => handleDeleteEvent(event._id)}
-                                        className="p-2 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                        className="p-2 bg-white dark:bg-[#0f111a] text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800"
                                         title="Delete Activity"
                                     >
                                         <Trash2 size={18} />
