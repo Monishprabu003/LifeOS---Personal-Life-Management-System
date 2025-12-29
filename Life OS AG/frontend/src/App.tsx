@@ -42,7 +42,6 @@ function App() {
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [token, setToken] = useState<string | null>(localStorage.getItem('lifeos_token'));
-  const [theme] = useState('light');
 
   useEffect(() => {
     document.documentElement.classList.remove('dark');
