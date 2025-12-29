@@ -50,7 +50,7 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabe
             {showLabel && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span
-                        className="font-display font-bold text-slate-800 dark:text-white"
+                        className="font-display font-bold text-slate-800 "
                         style={{ fontSize: `${size * 0.22}px` }}
                     >
                         {Number.isInteger(value) ? value : Number(value).toFixed(1)}
@@ -121,7 +121,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
             {/* Page Header */}
             <div className="flex items-end justify-between">
                 <div>
-                    <h2 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">Life Dashboard</h2>
+                    <h2 className="text-4xl font-display font-bold text-[#0f172a] ">Life Dashboard</h2>
                     <p className="text-slate-500 mt-2 font-medium">Your unified life performance overview</p>
                 </div>
                 <div className="flex items-center space-x-2 text-slate-400 font-semibold text-sm">
@@ -131,8 +131,8 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
 
             {/* Top Row: Unified Score & Weekly Performance */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center">
-                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Unified Life Score</h3>
+                <div className="lg:col-span-4 bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 flex flex-col items-center justify-center">
+                    <h3 className="text-lg font-bold text-[#0f172a] mb-8">Unified Life Score</h3>
                     <CircularProgress value={user?.lifeScore || 0} color="#10b981" size={180} strokeWidth={14} />
                     <div className="mt-8 text-center">
                         <p className="text-slate-500 text-sm font-medium">Your overall life performance</p>
@@ -143,9 +143,9 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
                     </div>
                 </div>
 
-                <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-slate-800">
+                <div className="lg:col-span-8 bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
                     <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Weekly Performance</h3>
+                        <h3 className="text-lg font-bold text-[#0f172a]">Weekly Performance</h3>
                     </div>
                     <div className="h-[240px] w-full flex items-center justify-center">
                         <div className="text-center opacity-40">
@@ -158,14 +158,14 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
 
             {/* Middle Row: Module Scores */}
             <div className="space-y-6">
-                <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Module Scores</h3>
+                <h3 className="text-lg font-bold text-[#0f172a]">Module Scores</h3>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     {[
-                        { name: 'Health', score: user?.healthScore || 0, color: '#10b981', border: 'border-green-300/50', shadow: 'hover:shadow-green-300/50', bg: 'bg-green-100/70', iconColor: 'text-green-700', tab: 'health' },
-                        { name: 'Wealth', score: user?.wealthScore || 0, color: '#3b82f6', border: 'border-blue-300/50', shadow: 'hover:shadow-blue-300/50', bg: 'bg-blue-100/70', iconColor: 'text-blue-700', tab: 'wealth' },
-                        { name: 'Relationships', score: user?.relationshipScore || 0, color: '#f43f5e', border: 'border-rose-300/50', shadow: 'hover:shadow-rose-300/50', bg: 'bg-rose-100/70', iconColor: 'text-rose-700', tab: 'relationships' },
-                        { name: 'Habits', score: user?.habitScore || 0, color: '#f59e0b', border: 'border-amber-300/50', shadow: 'hover:shadow-amber-300/50', bg: 'bg-amber-100/70', iconColor: 'text-amber-700', tab: 'habits' },
-                        { name: 'Purpose', score: user?.goalScore || 0, color: '#8b5cf6', border: 'border-violet-300/50', shadow: 'hover:shadow-violet-300/50', bg: 'bg-violet-100/70', iconColor: 'text-violet-700', tab: 'goals' },
+                        { name: 'Health', score: user?.healthScore || 0, color: '#10b981', border: 'border-green-100', shadow: 'hover:shadow-green-200/50', bg: 'bg-green-50/50', iconColor: 'text-green-600', tab: 'health' },
+                        { name: 'Wealth', score: user?.wealthScore || 0, color: '#3b82f6', border: 'border-blue-100', shadow: 'hover:shadow-blue-200/50', bg: 'bg-blue-50/50', iconColor: 'text-blue-600', tab: 'wealth' },
+                        { name: 'Relationships', score: user?.relationshipScore || 0, color: '#f43f5e', border: 'border-rose-100', shadow: 'hover:shadow-rose-200/50', bg: 'bg-rose-50/50', iconColor: 'text-rose-600', tab: 'relationships' },
+                        { name: 'Habits', score: user?.habitScore || 0, color: '#f59e0b', border: 'border-amber-100', shadow: 'hover:shadow-amber-200/50', bg: 'bg-amber-50/50', iconColor: 'text-amber-600', tab: 'habits' },
+                        { name: 'Purpose', score: user?.goalScore || 0, color: '#8b5cf6', border: 'border-violet-100', shadow: 'hover:shadow-violet-200/50', bg: 'bg-violet-50/50', iconColor: 'text-violet-600', tab: 'goals' },
                     ].map((module) => (
                         <div
                             key={module.name}
@@ -188,9 +188,9 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                 {/* Today's Tasks */}
-                <div className="lg:col-span-12 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-slate-800">
+                <div className="lg:col-span-12 bg-white  rounded-[2.5rem] p-10 shadow-sm border border-slate-100 ">
                     <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Today's Tasks</h3>
+                        <h3 className="text-lg font-bold text-[#0f172a]">Today's Tasks</h3>
                         <span className="text-xs font-bold text-slate-400">{tasks.length} pending</span>
                     </div>
                     {tasks.length > 0 ? (
@@ -218,10 +218,10 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
                 </div>
 
                 {/* Recent Activity */}
-                <div className="lg:col-span-12 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-slate-800">
+                <div className="lg:col-span-12 bg-white  rounded-[2.5rem] p-10 shadow-sm border border-slate-100 ">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center space-x-4">
-                            <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Recent Activity</h3>
+                            <h3 className="text-lg font-bold text-[#0f172a]">Recent Activity</h3>
                             <button
                                 onClick={handleDeleteAllLogs}
                                 className="text-[10px] font-bold text-red-500 hover:bg-red-50 px-3 py-1 rounded-full border border-red-100 transition-all uppercase tracking-widest"
@@ -240,7 +240,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
                                             <Activity size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="text-sm font-bold text-[#0f172a] dark:text-white">{event.title}</h4>
+                                            <h4 className="text-sm font-bold text-[#0f172a] ">{event.title}</h4>
                                             <div className="flex items-center space-x-3 mt-1">
                                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{new Date(event.timestamp).toLocaleString()}</p>
                                                 <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${event.impact === 'positive' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>

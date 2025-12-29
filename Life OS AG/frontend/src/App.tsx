@@ -42,16 +42,12 @@ function App() {
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [token, setToken] = useState<string | null>(localStorage.getItem('lifeos_token'));
-  const [theme] = useState(localStorage.getItem('theme') || 'dark');
+  const [theme] = useState('light');
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }, []);
 
 
   // Auth Flow State
@@ -243,12 +239,12 @@ function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] dark:bg-background overflow-hidden text-main">
+    <div className="flex h-screen bg-[#f8fafc] overflow-hidden text-main">
       {/* Sidebar */}
       <motion.aside
         initial={false}
         animate={{ width: isSidebarCollapsed ? 96 : 288 }}
-        className="bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 flex flex-col shadow-sm z-20 overflow-hidden"
+        className="bg-white border-r border-slate-100 flex flex-col shadow-sm z-20 overflow-hidden"
       >
         <div className="p-8 flex items-center justify-between">
           <div className="flex items-center space-x-3 overflow-hidden">
