@@ -51,6 +51,46 @@ export const deleteEvent = async (req: AuthRequest, res: Response) => {
             return res.status(404).json({ message: 'Event not found' });
         }
 
+        // Check for associated source data in metadata and delete it
+        if (event.metadata) {
+            const metadata = event.metadata as any;
+
+            // Handle Health Logs
+            if (metadata.get('logId')) {
+                const HealthLog = (await import('../models/HealthLog')).default;
+                await HealthLog.findByIdAndDelete(metadata.get('logId'));
+            }
+
+            // Handle Transactions
+            if (metadata.get('transactionId')) {
+                const Finance = (await import('../models/Finance')).default;
+                await Finance.findByIdAndDelete(metadata.get('transactionId'));
+            }
+
+            // Handle Goal Rollback
+            if (metadata.get('goalId')) {
+                const Goal = (await import('../models/Goal')).default;
+                await Goal.findByIdAndUpdate(metadata.get('goalId'), {
+                    status: 'in-progress',
+                    progress: 90
+                });
+            }
+
+            // Handle Habit Rollback
+            if (metadata.get('habitId')) {
+                const Habit = (await import('../models/Habit')).default;
+                const habit = await Habit.findById(metadata.get('habitId'));
+                if (habit && habit.history.length > 0) {
+                    habit.history.pop();
+                    habit.streak = Math.max(0, habit.streak - 1);
+                    const lastComp = habit.history[habit.history.length - 1];
+                    const h = habit as any;
+                    h.lastCompleted = lastComp ? lastComp.date : null;
+                    await h.save();
+                }
+            }
+        }
+
         await LifeEvent.findByIdAndDelete(req.params.id);
 
         // Recalculate scores (some events might affect scores)

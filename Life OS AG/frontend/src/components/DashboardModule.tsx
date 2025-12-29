@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-    Zap,
     TrendingUp,
-    Moon,
-    Droplets,
-    Smile,
     CheckCircle2,
     Trash2,
     Activity
@@ -53,14 +49,19 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabe
             </svg>
             {showLabel && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-3xl font-display font-bold text-main">{value}</span>
+                    <span
+                        className="font-display font-bold text-slate-800 dark:text-white"
+                        style={{ fontSize: `${size * 0.22}px` }}
+                    >
+                        {Number.isInteger(value) ? value : Number(value).toFixed(1)}
+                    </span>
                 </div>
             )}
         </div>
     );
 };
 
-export function DashboardModule({ user, habits, goals, setActiveTab, onUpdate }: any) {
+export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
     const [events, setEvents] = useState<any[]>([]);
 
     const fetchEvents = async () => {
@@ -112,11 +113,6 @@ export function DashboardModule({ user, habits, goals, setActiveTab, onUpdate }:
         year: 'numeric'
     });
 
-    // Calculate dynamic stats from real data
-    const activeHabitsCount = habits?.length || 0;
-    const completedHabitsCount = habits?.filter((h: any) => h.completedToday).length || 0;
-    const activeGoalsCount = goals?.length || 0;
-
     // Empty tasks state for now or fetch from real source if available
     const tasks: any[] = [];
 
@@ -165,19 +161,24 @@ export function DashboardModule({ user, habits, goals, setActiveTab, onUpdate }:
                 <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Module Scores</h3>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     {[
-                        { name: 'Health', score: user?.healthScore || 0, color: '#10b981', bg: 'bg-[#ecfdf5]', tab: 'health' },
-                        { name: 'Wealth', score: user?.wealthScore || 0, color: '#3b82f6', bg: 'bg-[#eff6ff]', tab: 'wealth' },
-                        { name: 'Relationships', score: user?.relationshipScore || 0, color: '#f43f5e', bg: 'bg-[#fff1f2]', tab: 'relationships' },
-                        { name: 'Habits', score: user?.habitScore || 0, color: '#f59e0b', bg: 'bg-[#fffbeb]', tab: 'habits' },
-                        { name: 'Purpose', score: user?.goalScore || 0, color: '#8b5cf6', bg: 'bg-[#f5f3ff]', tab: 'goals' },
+                        { name: 'Health', score: user?.healthScore || 0, color: '#10b981', border: 'border-green-300/50', shadow: 'hover:shadow-green-300/50', bg: 'bg-green-100/70', iconColor: 'text-green-700', tab: 'health' },
+                        { name: 'Wealth', score: user?.wealthScore || 0, color: '#3b82f6', border: 'border-blue-300/50', shadow: 'hover:shadow-blue-300/50', bg: 'bg-blue-100/70', iconColor: 'text-blue-700', tab: 'wealth' },
+                        { name: 'Relationships', score: user?.relationshipScore || 0, color: '#f43f5e', border: 'border-rose-300/50', shadow: 'hover:shadow-rose-300/50', bg: 'bg-rose-100/70', iconColor: 'text-rose-700', tab: 'relationships' },
+                        { name: 'Habits', score: user?.habitScore || 0, color: '#f59e0b', border: 'border-amber-300/50', shadow: 'hover:shadow-amber-300/50', bg: 'bg-amber-100/70', iconColor: 'text-amber-700', tab: 'habits' },
+                        { name: 'Purpose', score: user?.goalScore || 0, color: '#8b5cf6', border: 'border-violet-300/50', shadow: 'hover:shadow-violet-300/50', bg: 'bg-violet-100/70', iconColor: 'text-violet-700', tab: 'goals' },
                     ].map((module) => (
                         <div
                             key={module.name}
                             onClick={() => setActiveTab && setActiveTab(module.tab)}
-                            className={`${module.bg} rounded-[2rem] p-6 flex flex-col items-center justify-center group hover:scale-[1.02] transition-transform cursor-pointer`}
+                            className={`${module.bg} ${module.border} border rounded-[2rem] p-6 flex flex-col items-center justify-center group hover:scale-[1.05] ${module.shadow} hover:shadow-2xl transition-all duration-300 cursor-pointer backdrop-blur-sm`}
                         >
-                            <CircularProgress value={module.score} color={module.color} size={80} strokeWidth={8} />
-                            <span className="mt-4 font-bold text-slate-700 text-sm">{module.name}</span>
+                            <div className="relative">
+                                <CircularProgress value={module.score} color={module.color} size={84} strokeWidth={8} />
+                                <div className={`absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${module.iconColor}`}>
+                                    <Activity size={24} className="animate-pulse" />
+                                </div>
+                            </div>
+                            <span className={`mt-4 font-bold ${module.iconColor} text-sm tracking-tight`}>{module.name}</span>
                         </div>
                     ))}
                 </div>
@@ -185,62 +186,6 @@ export function DashboardModule({ user, habits, goals, setActiveTab, onUpdate }:
 
             {/* Bottom Row: Detailed Metrics & Insights */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Metric Cards */}
-                <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div
-                        onClick={() => setActiveTab && setActiveTab('health')}
-                        className="bg-[#ecfdf5] rounded-3xl p-6 relative overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
-                    >
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sleep Quality</p>
-                                <h4 className="text-2xl font-display font-bold mt-1 text-[#0f172a]">-- hrs</h4>
-                                <p className="text-[10px] font-bold text-slate-400 mt-1">Log today's sleep</p>
-                            </div>
-                            <Moon size={20} className="text-[#10b981]" />
-                        </div>
-                    </div>
-                    <div
-                        onClick={() => setActiveTab && setActiveTab('health')}
-                        className="bg-[#eff6ff] rounded-3xl p-6 relative overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
-                    >
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Water Intake</p>
-                                <h4 className="text-2xl font-display font-bold mt-1 text-[#0f172a]">0.0 L</h4>
-                                <p className="text-[10px] font-bold text-slate-400 mt-1">Stay hydrated</p>
-                            </div>
-                            <p className="hidden">{completedHabitsCount}/{activeHabitsCount}</p>
-                            <Droplets size={20} className="text-[#3b82f6]" />
-                        </div>
-                    </div>
-                    <div
-                        onClick={() => setActiveTab && setActiveTab('health')}
-                        className="bg-[#fff1f2] rounded-3xl p-6 relative overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
-                    >
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Mood Score</p>
-                                <h4 className="text-2xl font-display font-bold mt-1 text-[#0f172a]">--/10</h4>
-                                <p className="text-[10px] font-bold text-slate-400 mt-1">Track your mood</p>
-                            </div>
-                            <Smile size={20} className="text-[#f43f5e]" />
-                        </div>
-                    </div>
-                    <div
-                        onClick={() => setActiveTab && setActiveTab('goals')}
-                        className="bg-[#fffbeb] rounded-3xl p-6 relative overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
-                    >
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Goals</p>
-                                <h4 className="text-2xl font-display font-bold mt-1 text-[#0f172a]">{activeGoalsCount} goals</h4>
-                                <p className="text-[10px] font-bold text-slate-400 mt-1">Steady mission progress</p>
-                            </div>
-                            <Zap size={20} className="text-[#f59e0b]" />
-                        </div>
-                    </div>
-                </div>
 
                 {/* Today's Tasks */}
                 <div className="lg:col-span-12 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-slate-800">
