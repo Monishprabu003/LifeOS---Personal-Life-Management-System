@@ -9,8 +9,7 @@ import {
     Wallet,
     Users,
     CheckSquare,
-    Target,
-    ArrowUpRight
+    Target
 } from 'lucide-react';
 import {
     XAxis,
@@ -21,7 +20,7 @@ import {
     AreaChart,
     Area
 } from 'recharts';
-import { kernelAPI } from '../api';
+import { kernelAPI, tasksAPI } from '../api';
 
 interface CircularProgressProps {
     value: number;
@@ -78,14 +77,19 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabe
 
 export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
     const [events, setEvents] = useState<any[]>([]);
+    const [tasks, setTasks] = useState<any[]>([]);
     const [trendPeriod, setTrendPeriod] = useState<'daily' | 'weekly'>('daily');
 
     const fetchEvents = async () => {
         try {
-            const res = await kernelAPI.getEvents();
-            setEvents(res.data);
+            const [eventsRes, tasksRes] = await Promise.all([
+                kernelAPI.getEvents(),
+                tasksAPI.getTasks ? tasksAPI.getTasks() : Promise.resolve({ data: [] })
+            ]);
+            setEvents(eventsRes.data);
+            setTasks(tasksRes.data);
         } catch (err) {
-            console.error('Failed to fetch events', err);
+            console.error('Failed to fetch dashboard data', err);
         }
     };
 
@@ -101,6 +105,16 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
             if (onUpdate) onUpdate();
         } catch (err) {
             console.error('Failed to delete event', err);
+        }
+    };
+
+    const handleToggleTask = async (id: string) => {
+        try {
+            await tasksAPI.toggleTask(id);
+            fetchEvents();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to toggle task', err);
         }
     };
 
@@ -129,8 +143,8 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
         year: 'numeric'
     });
 
-    // Empty tasks state for now or fetch from real source if available
-    const tasks: any[] = [];
+    // Filter tasks for today or pending
+    const pendingTasks = tasks.filter(t => t.status !== 'done');
 
     // Process Trend Data
     const getTrendData = () => {
@@ -301,13 +315,6 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white">Your Modules</h3>
-                    <button
-                        className="text-sm font-semibold text-slate-400 dark:text-slate-500 hover:text-blue-500 transition-colors flex items-center space-x-1"
-                        onClick={() => setActiveTab && setActiveTab('ai-insights')}
-                    >
-                        <span>View all</span>
-                        <ArrowUpRight size={14} />
-                    </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                     {[
@@ -417,20 +424,26 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
                 <div className="lg:col-span-12 bg-white dark:bg-[#1a1c2e] rounded-[2.5rem] p-10 shadow-sm border border-slate-100 dark:border-[#222436] transition-colors duration-300">
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Today's Tasks</h3>
-                        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{tasks.length} pending</span>
+                        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{pendingTasks.length} pending</span>
                     </div>
                     {tasks.length > 0 ? (
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {tasks.map((task) => (
-                                <div key={task.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                                <div
+                                    key={task._id}
+                                    onClick={() => handleToggleTask(task._id)}
+                                    className="flex items-center justify-between p-5 bg-slate-50 dark:bg-[#0f111a]/50 rounded-2xl group hover:bg-slate-100 dark:hover:bg-[#0f111a] transition-all cursor-pointer border border-transparent hover:border-blue-500/20"
+                                >
                                     <div className="flex items-center space-x-4">
-                                        <div className={`w-2 h-2 rounded-full ${task.color}`} />
-                                        <span className={`text-sm font-semibold ${task.completed ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-200'}`}>
+                                        <div className={`w-3 h-3 rounded-full ${task.priority === 'high' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]' :
+                                                task.priority === 'medium' ? 'bg-amber-500' : 'bg-slate-300'
+                                            }`} />
+                                        <span className={`text-sm font-bold transition-all ${task.status === 'done' ? 'text-slate-400 line-through opacity-50' : 'text-[#0f172a] dark:text-white'}`}>
                                             {task.title}
                                         </span>
                                     </div>
-                                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-colors ${task.completed ? 'bg-[#10b981] border-[#10b981]' : 'border-slate-200 dark:border-slate-700'}`}>
-                                        {task.completed && <CheckCircle2 size={14} className="text-white" />}
+                                    <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all ${task.status === 'done' ? 'bg-[#10b981] border-[#10b981] shadow-lg shadow-green-100 dark:shadow-none' : 'border-slate-200 dark:border-slate-800 group-hover:border-blue-500/50'}`}>
+                                        {task.status === 'done' && <CheckCircle2 size={16} className="text-white" />}
                                     </div>
                                 </div>
                             ))}

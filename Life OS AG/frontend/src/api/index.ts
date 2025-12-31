@@ -61,6 +61,7 @@ export const socialAPI = {
 };
 
 export const tasksAPI = {
+    getTasks: () => api.get('/tasks'),
     createTask: (data: any) => api.post('/tasks', data),
     toggleTask: (id: string) => api.post(`/tasks/${id}/toggle`),
 };

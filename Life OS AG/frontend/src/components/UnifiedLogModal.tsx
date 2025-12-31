@@ -15,7 +15,7 @@ import {
     DollarSign,
     CheckCircle2
 } from 'lucide-react';
-import { healthAPI, financeAPI, habitsAPI, goalsAPI, socialAPI } from '../api';
+import { healthAPI, financeAPI, habitsAPI, goalsAPI, socialAPI, tasksAPI } from '../api';
 
 interface UnifiedLogModalProps {
     isOpen: boolean;
@@ -55,6 +55,10 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
     // Purpose/Goal States
     const [selectedGoalId, setSelectedGoalId] = useState('');
     const [goalProgress, setGoalProgress] = useState(0);
+
+    // Task States
+    const [taskTitle, setTaskTitle] = useState('');
+    const [taskPriority, setTaskPriority] = useState('medium');
 
     useEffect(() => {
         if (isOpen) {
@@ -118,6 +122,14 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                 if (selectedGoalId) {
                     await goalsAPI.updateProgress(selectedGoalId, goalProgress);
                 }
+            } else if (activeTab === 'tasks') {
+                if (taskTitle) {
+                    await tasksAPI.createTask({
+                        title: taskTitle,
+                        priority: taskPriority,
+                        goalId: selectedGoalId || undefined
+                    });
+                }
             }
 
             onSuccess();
@@ -135,6 +147,8 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
         setCategory('');
         setDescription('');
         setGoalProgress(0);
+        setTaskTitle('');
+        setTaskPriority('medium');
     };
 
     const emojis = [
@@ -172,7 +186,8 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                             { id: 'wealth', name: 'Wealth', icon: Wallet, color: 'text-blue-500' },
                             { id: 'habits', name: 'Habits', icon: Zap, color: 'text-amber-500' },
                             { id: 'relationships', name: 'Social', icon: Users, color: 'text-pink-500' },
-                            { id: 'goals', name: 'Purpose', icon: Compass, color: 'text-violet-500' }
+                            { id: 'goals', name: 'Purpose', icon: Compass, color: 'text-violet-500' },
+                            { id: 'tasks', name: 'Tasks', icon: CheckCircle2, color: 'text-emerald-500' }
                         ].map((tab) => (
                             <button
                                 key={tab.id}
@@ -375,6 +390,51 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }: UnifiedLogModalP
                                         onChange={(e) => setGoalProgress(parseInt(e.target.value))}
                                         className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-500"
                                     />
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'tasks' && (
+                            <div className="space-y-8">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Task Description</label>
+                                    <input
+                                        type="text"
+                                        placeholder="What needs to be done?"
+                                        value={taskTitle}
+                                        onChange={(e) => setTaskTitle(e.target.value)}
+                                        className="w-full bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl p-5 text-[#0f172a] dark:text-white font-medium outline-none shadow-sm"
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Priority Level</p>
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {['low', 'medium', 'high'].map((p) => (
+                                            <button
+                                                key={p}
+                                                onClick={() => setTaskPriority(p)}
+                                                className={`py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${taskPriority === p
+                                                    ? 'bg-emerald-500 text-white shadow-lg'
+                                                    : 'bg-slate-50 dark:bg-slate-800 text-slate-400'}`}
+                                            >
+                                                {p}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Link to Goal (Optional)</label>
+                                    <select
+                                        value={selectedGoalId}
+                                        onChange={(e) => setSelectedGoalId(e.target.value)}
+                                        className="w-full bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl p-5 text-[#0f172a] dark:text-white font-bold outline-none appearance-none cursor-pointer"
+                                    >
+                                        <option value="">No Goal</option>
+                                        {goalList.map(g => (
+                                            <option key={g._id} value={g._id}>{g.title}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
                         )}
