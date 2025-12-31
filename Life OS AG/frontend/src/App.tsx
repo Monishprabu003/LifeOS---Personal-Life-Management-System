@@ -268,7 +268,7 @@ function App() {
       <motion.aside
         initial={false}
         animate={{ width: isSidebarCollapsed ? 96 : 288 }}
-        className="bg-white dark:bg-[#1a1c2e] border-r border-slate-100 dark:border-[#222436] flex flex-col shadow-sm z-20 overflow-hidden transition-colors duration-300"
+        className="bg-white dark:bg-[#1a1c2e] border-r border-slate-100 dark:border-[#222436] flex flex-col shadow-sm z-50 overflow-hidden transition-colors duration-300"
       >
         <div className="p-8 flex items-center justify-between">
           <div className="flex items-center space-x-3 overflow-hidden">
@@ -378,7 +378,7 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 relative overflow-y-auto custom-scrollbar">
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-[#f8fafc]/80 dark:bg-[#0f111a]/80 backdrop-blur-md px-10 py-6 flex items-center justify-between transition-colors duration-300">
+        <header className="sticky top-0 z-40 bg-[#f8fafc]/80 dark:bg-[#0f111a]/80 backdrop-blur-md px-10 py-6 flex items-center justify-between transition-colors duration-300">
           <div>
             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none mb-1">Welcome back,</p>
             <h2 className="text-xl font-bold text-[#0f172a] dark:text-white">{user?.name || 'John Doe'}</h2>
