@@ -4,7 +4,13 @@ import {
     TrendingUp,
     CheckCircle2,
     Trash2,
-    Activity
+    Activity,
+    Heart,
+    Wallet,
+    Users,
+    CheckSquare,
+    Target,
+    ArrowUpRight
 } from 'lucide-react';
 import {
     XAxis,
@@ -293,29 +299,114 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
 
             {/* Middle Row: Module Scores */}
             <div className="space-y-6">
-                <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Module Scores</h3>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white">Your Modules</h3>
+                    <button
+                        className="text-sm font-semibold text-slate-400 dark:text-slate-500 hover:text-blue-500 transition-colors flex items-center space-x-1"
+                        onClick={() => setActiveTab && setActiveTab('ai-insights')}
+                    >
+                        <span>View all</span>
+                        <ArrowUpRight size={14} />
+                    </button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                     {[
-                        { name: 'Health', score: user?.healthScore || 0, color: '#10b981', border: 'border-green-200/50 dark:border-green-800/30', shadow: 'hover:shadow-green-300/30', bg: 'bg-[#ecfdf5] dark:bg-[#064e3b]', iconColor: 'text-green-700 dark:text-white', tab: 'health' },
-                        { name: 'Wealth', score: user?.wealthScore || 0, color: '#3b82f6', border: 'border-blue-200/50 dark:border-blue-800/30', shadow: 'hover:shadow-blue-300/30', bg: 'bg-[#eff6ff] dark:bg-[#1e3a8a]', iconColor: 'text-blue-700 dark:text-white', tab: 'wealth' },
-                        { name: 'Relationships', score: user?.relationshipScore || 0, color: '#f43f5e', border: 'border-rose-200/50 dark:border-rose-800/30', shadow: 'hover:shadow-rose-300/30', bg: 'bg-[#fff1f2] dark:bg-[#7f1d1d]', iconColor: 'text-rose-700 dark:text-white', tab: 'relationships' },
-                        { name: 'Habits', score: user?.habitScore || 0, color: '#f59e0b', border: 'border-amber-200/50 dark:border-amber-800/30', shadow: 'hover:shadow-amber-300/30', bg: 'bg-[#fffbeb] dark:bg-[#78350f]', iconColor: 'text-amber-700 dark:text-white', tab: 'habits' },
-                        { name: 'Purpose', score: user?.goalScore || 0, color: '#8b5cf6', border: 'border-violet-200/50 dark:border-violet-800/30', shadow: 'hover:shadow-violet-300/30', bg: 'bg-[#f5f3ff] dark:bg-[#4c1d95]', iconColor: 'text-violet-700 dark:text-white', tab: 'goals' },
-                    ].map((module) => (
-                        <div
-                            key={module.name}
-                            onClick={() => setActiveTab && setActiveTab(module.tab)}
-                            className={`${module.bg} ${module.border} border rounded-[2rem] p-6 flex flex-col items-center justify-center group hover:scale-[1.05] ${module.shadow} hover:shadow-2xl transition-all duration-300 cursor-pointer backdrop-blur-sm`}
-                        >
-                            <div className="relative">
-                                <CircularProgress value={module.score} color={module.color} size={84} strokeWidth={8} />
-                                <div className={`absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${module.iconColor}`}>
-                                    <Activity size={24} className="animate-pulse" />
+                        {
+                            name: 'Health',
+                            score: user?.healthScore || 0,
+                            color: 'emerald',
+                            icon: Heart,
+                            tab: 'health',
+                            gradient: 'from-emerald-500/10 to-transparent',
+                            darkGradient: 'dark:from-emerald-500/5 dark:to-[#1a1c2e]'
+                        },
+                        {
+                            name: 'Wealth',
+                            score: user?.wealthScore || 0,
+                            color: 'blue',
+                            icon: Wallet,
+                            tab: 'wealth',
+                            gradient: 'from-blue-500/10 to-transparent',
+                            darkGradient: 'dark:from-blue-500/5 dark:to-[#1a1c2e]'
+                        },
+                        {
+                            name: 'Relationships',
+                            score: user?.relationshipScore || 0,
+                            color: 'rose',
+                            icon: Users,
+                            tab: 'relationships',
+                            gradient: 'from-rose-500/10 to-transparent',
+                            darkGradient: 'dark:from-rose-500/5 dark:to-[#1a1c2e]'
+                        },
+                        {
+                            name: 'Habits',
+                            score: user?.habitScore || 0,
+                            color: 'amber',
+                            icon: CheckSquare,
+                            tab: 'habits',
+                            gradient: 'from-amber-500/10 to-transparent',
+                            darkGradient: 'dark:from-amber-500/5 dark:to-[#1a1c2e]'
+                        },
+                        {
+                            name: 'Purpose',
+                            score: user?.goalScore || 0,
+                            color: 'violet',
+                            icon: Target,
+                            tab: 'goals',
+                            gradient: 'from-violet-500/10 to-transparent',
+                            darkGradient: 'dark:from-violet-500/5 dark:to-[#1a1c2e]'
+                        },
+                    ].map((module) => {
+                        const Icon = module.icon;
+                        const colorClass = {
+                            emerald: 'border-emerald-500/20 text-emerald-500 bg-emerald-500/5',
+                            blue: 'border-blue-500/20 text-blue-500 bg-blue-500/5',
+                            rose: 'border-rose-500/20 text-rose-500 bg-rose-500/5',
+                            amber: 'border-amber-500/20 text-amber-500 bg-amber-500/5',
+                            violet: 'border-violet-500/20 text-violet-500 bg-violet-500/5',
+                        }[module.color];
+
+                        const barClass = {
+                            emerald: 'bg-emerald-500',
+                            blue: 'bg-blue-500',
+                            rose: 'bg-rose-500',
+                            amber: 'bg-amber-500',
+                            violet: 'bg-violet-500',
+                        }[module.color];
+
+                        return (
+                            <motion.div
+                                key={module.name}
+                                whileHover={{ y: -4, scale: 1.02 }}
+                                onClick={() => setActiveTab && setActiveTab(module.tab)}
+                                className={`relative overflow-hidden bg-white dark:bg-[#1a1c2e] border border-slate-100 dark:border-white/5 rounded-[1.5rem] p-6 flex flex-col justify-between h-[160px] cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 group`}
+                            >
+                                {/* Background Gradient */}
+                                <div className={`absolute inset-0 bg-gradient-to-br ${module.gradient} ${module.darkGradient} opacity-50`} />
+
+                                <div className="relative z-10 flex flex-col justify-between h-full">
+                                    <div className="flex items-start justify-between">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${colorClass}`}>
+                                            <Icon size={20} />
+                                        </div>
+                                        <div className={`w-1.5 h-8 rounded-full ${barClass} opacity-80 group-hover:opacity-100 transition-opacity`} />
+                                    </div>
+
+                                    <div>
+                                        <div className="text-3xl font-display font-bold text-slate-800 dark:text-white leading-none">
+                                            {Math.round(module.score)}
+                                        </div>
+                                        <div className="text-sm font-semibold text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-tight">
+                                            {module.name}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <span className={`mt-4 font-bold ${module.iconColor} text-sm tracking-tight`}>{module.name}</span>
-                        </div>
-                    ))}
+
+                                {/* Active Selection Border */}
+                                <div className={`absolute inset-0 border-2 border-transparent group-hover:border-${module.color}-500/20 rounded-[1.5rem] transition-colors pointer-events-none`} />
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </div>
 
