@@ -1,11 +1,18 @@
 import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { IUser } from '../models/User';
 import Habit from '../models/Habit';
 import LifeEvent from '../models/LifeEvent';
 
-const openai = process.env.OPENAI_API_KEY
-    ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-    : null;
+// Initialize AI Providers
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
+
+const SYSTEM_INSTRUCTION = `You are LifeOS AI, the central intelligence of a high-performance personal optimization suite. 
+Your tone is sophisticated, authoritative, yet encouraging—similar to a biological system monitor or an advanced agentic assistant.
+You have access to the user's Health, Wealth, and Habit metrics.
+Your goal is to provide precise, data-driven optimization advice and engage in meaningful conversation about the user's growth.
+Always speak as if the 'Neural Link' is active and you are the digital extension of the user's own intent.`;
 
 export class AIService {
     /**
@@ -14,32 +21,36 @@ export class AIService {
     static async getDailyInsight(user: IUser): Promise<string> {
         const context = await this.getUserContext(user);
 
-        if (!openai) {
-            return this.getSimulatedInsight(user);
+        // Try Gemini First (Highly capable free tier)
+        if (genAI) {
+            try {
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                const prompt = `${SYSTEM_INSTRUCTION}\n\nUser Context Data: ${JSON.stringify(context)}\n\nAction: Provide a 1-sentence analytical insight about the current state of the user's LifeOS.`;
+                const result = await model.generateContent(prompt);
+                return result.response.text();
+            } catch (error) {
+                console.error('Gemini Insight Error:', error);
+            }
         }
 
-        try {
-            const response = await openai.chat.completions.create({
-                model: "gpt-4o",
-                messages: [
-                    {
-                        role: "system",
-                        content: "You are LifeOS AI, a sophisticated personal optimization coach. Your goal is to provide 1-2 sentences of highly actionable, slightly philosophical, and motivating advice based on the user's current data. Speak as if you are a system monitor reporting on human performance."
-                    },
-                    {
-                        role: "user",
-                        content: `User Context: ${JSON.stringify(context)}`
-                    }
-                ],
-                temperature: 0.7,
-                max_tokens: 150
-            });
-
-            return response.choices[0]?.message.content || "System calibration required.";
-        } catch (error) {
-            console.error('AI Insight Error:', error);
-            return this.getSimulatedInsight(user);
+        // Try OpenAI Second
+        if (openai) {
+            try {
+                const response = await openai.chat.completions.create({
+                    model: "gpt-4o",
+                    messages: [
+                        { role: "system", content: SYSTEM_INSTRUCTION },
+                        { role: "user", content: `Context: ${JSON.stringify(context)}. Provide a daily optimization insight.` }
+                    ],
+                    max_tokens: 100
+                });
+                return response.choices[0]?.message.content || "System calibration required.";
+            } catch (error) {
+                console.error('OpenAI Insight Error:', error);
+            }
         }
+
+        return this.getSimulatedInsight(user);
     }
 
     /**
@@ -48,25 +59,41 @@ export class AIService {
     static async chat(user: IUser, message: string): Promise<string> {
         const context = await this.getUserContext(user);
 
-        if (!openai) {
-            return this.generateNeuralResponse(context, message);
+        // Try Gemini First
+        if (genAI) {
+            try {
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                const chat = model.startChat({
+                    history: [
+                        { role: "user", parts: [{ text: `System Core Active. ${SYSTEM_INSTRUCTION}` }] },
+                        { role: "model", parts: [{ text: "Neural Link Synchronized. Ready for biological optimization." }] },
+                    ],
+                });
+                const prompt = `User Data: ${JSON.stringify(context)}\nUser Message: ${message}`;
+                const result = await chat.sendMessage(prompt);
+                return result.response.text();
+            } catch (error) {
+                console.error('Gemini Chat Error:', error);
+            }
         }
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o",
-            messages: [
-                {
-                    role: "system",
-                    content: "You are the LifeOS Copilot. You have access to the user's life metrics (Health, Wealth, Habits). Help them optimize their life system. Be concise, direct, and encouraging."
-                },
-                {
-                    role: "user",
-                    content: `Current User Metrics: ${JSON.stringify(context)}. User Message: ${message}`
-                }
-            ]
-        });
+        // Try OpenAI Second
+        if (openai) {
+            try {
+                const response = await openai.chat.completions.create({
+                    model: "gpt-4o",
+                    messages: [
+                        { role: "system", content: SYSTEM_INSTRUCTION },
+                        { role: "user", content: `Metrics: ${JSON.stringify(context)}. User: ${message}` }
+                    ]
+                });
+                return response.choices[0]?.message.content || "Neural response failed.";
+            } catch (error) {
+                console.error('OpenAI Chat Error:', error);
+            }
+        }
 
-        return response.choices[0]?.message.content || "System error in response generation.";
+        return this.generateNeuralResponse(context, message);
     }
 
     private static async getUserContext(user: IUser) {
@@ -75,10 +102,10 @@ export class AIService {
 
         return {
             scores: {
-                life: user.lifeScore,
-                health: user.healthScore,
-                wealth: user.wealthScore,
-                habits: user.habitScore
+                life: user.lifeScore || 0,
+                health: user.healthScore || 0,
+                wealth: user.wealthScore || 0,
+                habits: user.habitScore || 0
             },
             activeHabits: habits.map(h => ({ name: h.name, streak: h.streak })),
             recentActivity: recentEvents.map(e => e.title)
@@ -89,49 +116,61 @@ export class AIService {
         const msg = message.toLowerCase();
         const { scores } = context;
 
-        // Intent detection
+        // More advanced intent detection for better "Simulated AI" experience
+        if (msg.includes('who are you') || msg.includes('identity')) {
+            return "I am the LifeOS Intelligence, your system monitor and biological optimization coach. I monitor your data nodes to ensure maximum human output and life balance.";
+        }
+
+        if (msg.includes('status') || msg.includes('how am i')) {
+            return `System Scan: Your Life Score is ${scores.life}%. Your ${scores.health < 75 ? 'Health core is reporting warnings' : 'biological systems are stable'}. I recommend focusing on ${scores.health < 80 ? 'Health' : scores.wealth < 80 ? 'Capital Flow' : 'Neural Habit Loops'} to unlock next-level efficiency.`;
+        }
+
         if (msg.includes('aspects') || msg.includes('important')) {
-            return "In your current LifeOS configuration, the 3 vital anchors are Health Synchronization, Capital Liquidity, and Neural Habit Loops. Your Health Score (${scores.health}%) is the current primary driver.";
+            return `In your current configuration, the 3 vital anchors are Health Synchronization, Capital Liquidity, and Neural Habit Loops. Your Health Score (${scores.health}%) is the current primary driver.`;
         }
 
         if (msg.includes('health') || msg.includes('sleep') || msg.includes('tired')) {
             if (scores.health < 80) {
-                return `Biological systems reporting sub-optimal recovery. With a Health Score of ${scores.health}%, I recommend initiating a 'Deep Rest Protocol'—aim for 8 hours of sleep and zero late-cycle caffeine.`;
+                return `Biological systems reporting sub-optimal recovery. With a Health Score of ${scores.health}%, I recommend initiating a 'Deep Rest Protocol' tonight. Zero late-cycle stimulants detected.`;
             }
-            return "Your physiological metrics are in the optimal zone. Continue your current activity protocols to maintain high-output capability.";
+            return "Physiological metrics are in the optimal zone. Your current protocols are sustaining 100% capacity.";
         }
 
         if (msg.includes('wealth') || msg.includes('money') || msg.includes('spend')) {
             if (scores.wealth < 70) {
-                return `Financial module analysis: Resource leakage detected. With a Wealth Score of ${scores.wealth}%, prioritize capital preservation and audit your 'Subscription' nodes this week.`;
+                return `Financial node audit: Resource leakage detected. With a Wealth Score of ${scores.wealth}%, prioritize capital preservation this cycle.`;
             }
-            return "Wealth accumulation is currently stable. Your capital allocation patterns are supporting long-term system growth.";
+            return "Wealth accumulation is stable. Your capital allocation patterns are supporting long-term system scaling.";
         }
 
         if (msg.includes('habit') || msg.includes('routine')) {
             const topHabit = context.activeHabits[0];
             if (topHabit) {
-                return `Consistency analysis: Your '${topHabit.name}' loop has a ${topHabit.streak}-unit streak. Every node counts towards permanent neurological automation. Don't break the chain today.`;
+                return `Neural Consistency: Your '${topHabit.name}' loop has a ${topHabit.streak}-unit streak. Continue the protocol to reach permanent automation.`;
             }
-            return "No active neural loops detected. I recommend initializing a 'Micro-Habit' protocol to start raising your Habit Score from ${scores.habits}%.";
+            return "No active neural loops detected. Register a new habit node to begin building your Habit Score.";
+        }
+
+        if (msg.includes('hello') || msg.includes('hi')) {
+            return "Neural Link Synchronized. Biological subject recognized. How can I optimize your system today?";
         }
 
         // Default "Smart" response
-        return `System analysis complete. Optimization recommendation: Focus on your ${scores.health < 80 ? 'Health' : scores.wealth < 80 ? 'Wealth' : 'Habit'} module today. Your Global Life Score is currently ${scores.life}%—steady but capable of expansion.`;
+        return `Observation: Your message intent is being analyzed. Based on current system state (${scores.life}% efficiency), I suggest we review your ${scores.health < 80 ? 'Health' : scores.wealth < 80 ? 'Wealth' : 'Habit'} protocols. Please clarify your request.`;
     }
 
     private static getSimulatedInsight(user: IUser): string {
         const insights = [
-            "Your consistency in morning nodes is establishing a powerful foundation. Maintain this trajectory.",
-            "Health metrics show a slight decline. Reclaiming 30 minutes of sleep tonight will optimize tomorrow's output.",
-            "Wealth accumulation is steady. Consider reviewing capital allocation to align with your long-term roadmap.",
-            "Social connectivity is high. Your relationship health is acting as a multiplier for emotional stability.",
-            "System prediction: You are 15% away from a major breakthrough in your productivity goal module."
+            "Consistency in current nodes is establishing a powerful foundation. Maintain trajectory.",
+            "Health core reporting sub-optimal recovery. Reclaiming 30 minutes of sleep will maximize output.",
+            "Wealth accumulation is steady. review capital allocation to align with your long-term roadmap.",
+            "Social connectivity is high, acting as a multiplier for emotional stability nodes.",
+            "System prediction: You are 15% away from a significant breakthrough in your productivity module."
         ];
 
-        if (user.healthScore < 75) return insights[1]!;
-        if (user.wealthScore < 70) return insights[2]!;
-        if (user.lifeScore > 85) return insights[0]!;
+        if ((user.healthScore || 0) < 75) return insights[1]!;
+        if ((user.wealthScore || 0) < 70) return insights[2]!;
+        if ((user.lifeScore || 0) > 85) return insights[0]!;
         return insights[Math.floor(Math.random() * insights.length)]!;
     }
 }
