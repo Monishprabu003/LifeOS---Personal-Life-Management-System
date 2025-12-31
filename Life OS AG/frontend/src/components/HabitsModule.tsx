@@ -81,19 +81,13 @@ export function HabitsModule({ onUpdate, user }: { onUpdate?: () => void, user?:
     };
 
     const handleDeleteHabit = async (id: string, e: React.MouseEvent) => {
-        console.log('Delete habit clicked for ID:', id);
         e.preventDefault();
         e.stopPropagation();
 
-        if (!window.confirm('Are you sure you want to delete this habit?')) {
-            console.log('Delete cancelled by user');
-            return;
-        }
+        if (!window.confirm('Are you sure you want to delete this habit?')) return;
 
         try {
-            console.log('Sending delete request for habit:', id);
-            const res = await habitsAPI.deleteHabit(id);
-            console.log('Delete response:', res.data);
+            await habitsAPI.deleteHabit(id);
             await fetchHabits();
             await fetchRecentActivity();
             if (onUpdate) onUpdate();
