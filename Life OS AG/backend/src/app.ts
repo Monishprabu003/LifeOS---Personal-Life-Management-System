@@ -11,7 +11,6 @@ import financeRoutes from './routes/financeRoutes';
 import goalRoutes from './routes/goalRoutes';
 import healthRoutes from './routes/healthRoutes';
 import relationshipRoutes from './routes/relationshipRoutes';
-import aiRoutes from './routes/aiRoutes';
 import userRoutes from './routes/userRoutes';
 import taskRoutes from './routes/taskRoutes';
 
@@ -33,7 +32,6 @@ app.use('/api/finance', financeRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/social', relationshipRoutes);
-app.use('/api/ai', aiRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
 

@@ -7,6 +7,9 @@ export interface AuthRequest extends Request {
 }
 
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    // Handle preflight
+    if (req.method === 'OPTIONS') return next();
+
     let token;
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {

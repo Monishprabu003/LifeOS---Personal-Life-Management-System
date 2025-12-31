@@ -65,9 +65,4 @@ export const tasksAPI = {
     toggleTask: (id: string) => api.post(`/tasks/${id}/toggle`),
 };
 
-export const aiAPI = {
-    getInsight: () => api.get('/ai/insight'),
-    chat: (message: string) => api.post('/ai/chat', { message }),
-};
-
 export default api;

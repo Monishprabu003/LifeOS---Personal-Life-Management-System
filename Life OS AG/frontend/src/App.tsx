@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { AIInsightsModule } from './components/AIInsightsModule';
 import {
   LayoutDashboard,
   Heart,
   Wallet,
   Zap,
   Users,
-  MessageSquare,
   Plus,
   RefreshCw,
   Activity,
@@ -18,7 +16,6 @@ import {
   Compass,
   PanelLeftClose,
   PanelLeftOpen,
-  Sparkles,
   Sun,
   Moon,
   Monitor,
@@ -26,7 +23,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, habitsAPI, goalsAPI } from './api';
-import { AICopilot } from './components/AICopilot';
 import { HealthModule } from './components/HealthModule';
 import { WealthModule } from './components/WealthModule';
 import { GoalsModule } from './components/GoalsModule';
@@ -43,7 +39,6 @@ function App() {
   const [habits, setHabits] = useState<any[]>([]);
   const [goals, setGoals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [token, setToken] = useState<string | null>(localStorage.getItem('lifeos_token'));
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'system');
@@ -232,7 +227,7 @@ function App() {
         </motion.div>
 
         {/* Footer Text */}
-        <p className="mt-12 text-center text-slate-500 text-sm max-w-[400px] leading-relaxed">
+        <p className="mt-12 text-center text-slate-500 text-sm max-w-[400px] lifestyle-relaxed">
           Your personal Life Operating System for tracking health, wealth, relationships, and more.
         </p>
       </div>
@@ -253,8 +248,7 @@ function App() {
     { id: 'wealth', name: 'Wealth', icon: Wallet, color: 'text-wealth' },
     { id: 'relationships', name: 'Relationships', icon: Users, color: 'text-relationships' },
     { id: 'habits', name: 'Habits', icon: Zap, color: 'text-habits' },
-    { id: 'goals', name: 'Purpose', icon: Compass, color: 'text-goals' },
-    { id: 'ai-insights', name: 'AI Insights', icon: Sparkles, color: 'text-accent' }
+    { id: 'goals', name: 'Purpose', icon: Compass, color: 'text-goals' }
   ];
 
   const accountItems = [
@@ -452,7 +446,6 @@ function App() {
               {activeTab === 'wealth' && <WealthModule onUpdate={fetchAppData} user={user} />}
               {activeTab === 'habits' && <HabitsModule onUpdate={fetchAppData} user={user} />}
               {activeTab === 'goals' && <GoalsModule onUpdate={fetchAppData} user={user} />}
-              {activeTab === 'ai-insights' && <AIInsightsModule user={user} />}
               {activeTab === 'relationships' && <SocialModule onUpdate={fetchAppData} user={user} />}
               {activeTab === 'profile' && <ProfileModule user={user} />}
               {activeTab === 'settings' && <SettingsModule />}
@@ -460,19 +453,6 @@ function App() {
           </AnimatePresence>
         </div>
       </main>
-
-      {/* AI Floating Assistant */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsAIChatOpen(true)}
-        className="fixed bottom-8 right-8 w-14 h-14 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-2xl z-50 group hover:shadow-accent/40 transition-all"
-      >
-        <MessageSquare className="text-white group-hover:rotate-12 transition-transform" />
-      </motion.button>
-
-      {/* AI Chat Modal */}
-      <AICopilot isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
 
       {/* Unified Log Modal */}
       <UnifiedLogModal
