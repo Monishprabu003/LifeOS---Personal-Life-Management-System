@@ -10,7 +10,7 @@ import {
     Layout,
     Trash2
 } from 'lucide-react';
-import { habitsAPI } from '../api';
+import api, { habitsAPI } from '../api';
 
 interface Habit {
     _id: string;
@@ -33,14 +33,35 @@ export function HabitsModule({ onUpdate, user }: { onUpdate?: () => void, user?:
     const fetchHabits = async () => {
         try {
             const res = await habitsAPI.getHabits();
-            setHabits(res.data);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const habitsWithCompletion = res.data.map((h: any) => ({
+                ...h,
+                completedToday: h.lastCompleted && new Date(h.lastCompleted) >= today
+            }));
+
+            setHabits(habitsWithCompletion);
         } catch (err) {
             console.error('Failed to fetch habits', err);
         }
     };
 
+    const [recentActivity, setRecentActivity] = useState<any[]>([]);
+    const fetchRecentActivity = async () => {
+        try {
+            const res = await api.get('/kernel/events');
+            // Filter only habit events
+            const habitEvents = res.data.filter((e: any) => e.type === 'habit').slice(0, 10);
+            setRecentActivity(habitEvents);
+        } catch (err) {
+            console.error('Failed to fetch habit activity', err);
+        }
+    };
+
     useEffect(() => {
         fetchHabits();
+        fetchRecentActivity();
     }, [user]);
 
     const handleCreateHabit = async (e: React.FormEvent) => {
@@ -52,20 +73,44 @@ export function HabitsModule({ onUpdate, user }: { onUpdate?: () => void, user?:
             setFrequency('daily');
             setDescription('');
             fetchHabits();
+            fetchRecentActivity();
             if (onUpdate) onUpdate();
         } catch {
             alert('Failed to initialize habit.');
         }
     };
 
-    const handleDeleteHabit = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this habit?')) return;
+    const handleDeleteHabit = async (id: string, e: React.MouseEvent) => {
+        console.log('Delete habit clicked for ID:', id);
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!window.confirm('Are you sure you want to delete this habit?')) {
+            console.log('Delete cancelled by user');
+            return;
+        }
+
         try {
-            await habitsAPI.deleteHabit(id);
-            fetchHabits();
+            console.log('Sending delete request for habit:', id);
+            const res = await habitsAPI.deleteHabit(id);
+            console.log('Delete response:', res.data);
+            await fetchHabits();
+            await fetchRecentActivity();
             if (onUpdate) onUpdate();
         } catch (err) {
             console.error('Failed to delete habit', err);
+        }
+    };
+
+    const handleDeleteActivity = async (id: string) => {
+        if (!confirm('Delete this completion log?')) return;
+        try {
+            await api.delete(`/kernel/events/${id}`);
+            fetchRecentActivity();
+            fetchHabits();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Failed to delete activity', err);
         }
     };
 
@@ -73,6 +118,7 @@ export function HabitsModule({ onUpdate, user }: { onUpdate?: () => void, user?:
         try {
             await habitsAPI.completeHabit(id);
             fetchHabits();
+            fetchRecentActivity();
             if (onUpdate) onUpdate();
         } catch (err) {
             console.error('Completion failed', err);
@@ -297,7 +343,7 @@ export function HabitsModule({ onUpdate, user }: { onUpdate?: () => void, user?:
 
                                     <div className="flex items-center space-x-2">
                                         <button
-                                            onClick={(e) => { e.stopPropagation(); handleDeleteHabit(habit._id); }}
+                                            onClick={(e) => handleDeleteHabit(habit._id, e)}
                                             className="p-2 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
                                             title="Delete Habit"
                                         >
@@ -330,6 +376,46 @@ export function HabitsModule({ onUpdate, user }: { onUpdate?: () => void, user?:
                     })}
                 </div>
             </div>
+
+            {/* Recent Activity Section */}
+            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Recent Habit Logs</h3>
+                {recentActivity.length > 0 ? (
+                    <div className="space-y-4">
+                        {recentActivity.map((activity) => (
+                            <div key={activity._id} className="flex items-center justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group hover:bg-slate-100 transition-colors">
+                                <div className="flex items-center space-x-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-[#f59e0b] shadow-sm">
+                                        <Flame size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-bold text-[#0f172a] dark:text-white">
+                                            {activity.title}
+                                        </h4>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">
+                                            {new Date(activity.createdAt).toLocaleString(undefined, { weekday: 'long', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                        </p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleDeleteActivity(activity._id)}
+                                    className="p-2.5 bg-white dark:bg-slate-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-700"
+                                    title="Delete Activity Log"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="py-12 text-center opacity-40">
+                        <Flame size={40} className="mx-auto mb-4 text-slate-200" />
+                        <p className="text-slate-500 font-medium text-sm">No activity logs found. Complete a habit to see it here!</p>
+                    </div>
+                )}
+            </div>
         </div >
     );
 }
+
+
