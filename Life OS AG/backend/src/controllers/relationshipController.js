@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middleware/authMiddleware';
-import Relationship from '../models/Relationship';
-import { Kernel } from '../services/Kernel';
-import { EventType } from '../models/LifeEvent';
+import { AuthRequest } from '../middleware/authMiddleware.js';
+import Relationship from '../models/Relationship.js';
+import { Kernel } from '../services/Kernel.js';
+import { EventType } from '../models/LifeEvent.js';
 
 export const createRelationship = async (req: AuthRequest, res: Response) => {
     try {

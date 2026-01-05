@@ -1,6 +1,6 @@
 import express from 'express';
-import { createEvent, getEvents, getLifeStatus, deleteEvent, deleteAllData } from '../controllers/lifeEventController';
-import { protect } from '../middleware/authMiddleware';
+import { createEvent, getEvents, getLifeStatus, deleteEvent, deleteAllData } from '../controllers/lifeEventController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 

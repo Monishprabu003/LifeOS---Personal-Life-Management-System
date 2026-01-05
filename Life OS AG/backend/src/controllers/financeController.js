@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middleware/authMiddleware';
-import Finance from '../models/Finance';
-import { Kernel } from '../services/Kernel';
-import { EventType } from '../models/LifeEvent';
+import { AuthRequest } from '../middleware/authMiddleware.js';
+import Finance from '../models/Finance.js';
+import { Kernel } from '../services/Kernel.js';
+import { EventType } from '../models/LifeEvent.js';
 
 export const createTransaction = async (req: AuthRequest, res: Response) => {
     try {

@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middleware/authMiddleware';
-import Habit from '../models/Habit';
-import { Kernel } from '../services/Kernel';
-import { EventType } from '../models/LifeEvent';
+import { AuthRequest } from '../middleware/authMiddleware.js';
+import Habit from '../models/Habit.js';
+import { Kernel } from '../services/Kernel.js';
+import { EventType } from '../models/LifeEvent.js';
 
 export const createHabit = async (req: AuthRequest, res: Response) => {
     try {

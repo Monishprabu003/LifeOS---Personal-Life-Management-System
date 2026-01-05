@@ -22,15 +22,8 @@ import {
 } from 'recharts';
 import { kernelAPI, tasksAPI } from '../api';
 
-interface CircularProgressProps {
-    value: number;
-    color: string;
-    size?: number;
-    strokeWidth?: number;
-    showLabel?: boolean;
-}
 
-const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabel = true }: CircularProgressProps) => {
+const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabel = true }) => {
     const radius = (size - strokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
     const offset = circumference - (value / 100) * circumference;
@@ -75,10 +68,10 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabe
     );
 };
 
-export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
-    const [events, setEvents] = useState<any[]>([]);
-    const [tasks, setTasks] = useState<any[]>([]);
-    const [trendPeriod, setTrendPeriod] = useState<'daily' | 'weekly'>('daily');
+export function DashboardModule({ user, setActiveTab, onUpdate }) {
+    const [events, setEvents] = useState([]);
+    const [tasks, setTasks] = useState([]);
+    const [trendPeriod, setTrendPeriod] = useState('daily');
 
     const fetchEvents = async () => {
         try {
@@ -97,7 +90,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
         fetchEvents();
     }, [user]);
 
-    const handleDeleteEvent = async (id: string) => {
+    const handleDeleteEvent = async (id) => {
         if (!confirm('Delete this event log?')) return;
         try {
             await kernelAPI.deleteEvent(id);
@@ -108,7 +101,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
         }
     };
 
-    const handleToggleTask = async (id: string) => {
+    const handleToggleTask = async (id) => {
         try {
             await tasksAPI.toggleTask(id);
             fetchEvents();
@@ -157,7 +150,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
                 return d.toLocaleDateString('en-US', { weekday: 'short' });
             });
 
-            const counts = events.reduce((acc: any, event) => {
+            const counts = events.reduce((acc, event) => {
                 const day = new Date(event.timestamp).toLocaleDateString('en-US', { weekday: 'short' });
                 acc[day] = (acc[day] || 0) + (event.impact === 'positive' ? 1 : event.impact === 'negative' ? -1 : 0);
                 return acc;
@@ -436,7 +429,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }: any) {
                                 >
                                     <div className="flex items-center space-x-4">
                                         <div className={`w-3 h-3 rounded-full ${task.priority === 'high' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]' :
-                                                task.priority === 'medium' ? 'bg-amber-500' : 'bg-slate-300'
+                                            task.priority === 'medium' ? 'bg-amber-500' : 'bg-slate-300'
                                             }`} />
                                         <span className={`text-sm font-bold transition-all ${task.status === 'done' ? 'text-slate-400 line-through opacity-50' : 'text-[#0f172a] dark:text-white'}`}>
                                             {task.title}

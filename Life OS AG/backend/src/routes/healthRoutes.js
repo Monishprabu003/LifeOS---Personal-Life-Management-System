@@ -1,6 +1,6 @@
 import express from 'express';
-import { createHealthLog, getHealthLogs, deleteHealthLog } from '../controllers/healthController';
-import { protect } from '../middleware/authMiddleware';
+import { createHealthLog, getHealthLogs, deleteHealthLog } from '../controllers/healthController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 

@@ -36,21 +36,21 @@ import { NotificationPanel } from './components/NotificationPanel';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [user, setUser] = useState<any>(null); // TODO: Define User interface
-  const [habits, setHabits] = useState<any[]>([]);
-  const [goals, setGoals] = useState<any[]>([]);
+  const [user, setUser] = useState(null);
+  const [habits, setHabits] = useState([]);
+  const [goals, setGoals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('lifeos_token'));
+  const [token, setToken] = useState(localStorage.getItem('lifeos_token'));
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'system');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState([]);
   const [totalEvents, setTotalEvents] = useState(0);
 
   useEffect(() => {
     const root = window.document.documentElement;
 
-    const applyTheme = (t: string) => {
+    const applyTheme = (t) => {
       root.classList.remove('light', 'dark');
 
       if (t === 'system') {
@@ -74,7 +74,7 @@ function App() {
 
 
   // Auth Flow State
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [authMode, setAuthMode] = useState('signin');
   const [email, setEmail] = useState('demo@lifeos.com');
   const [password, setPassword] = useState('password123');
   const [name, setName] = useState('');
@@ -96,7 +96,7 @@ function App() {
       setTotalEvents(eventsRes.data.length);
     } catch (err) {
       console.error('Failed to fetch data', err);
-      if ((err as any).response?.status === 401) {
+      if (err.response?.status === 401) {
         handleLogout();
       }
     } finally {
@@ -112,7 +112,7 @@ function App() {
     }
   }, [token, fetchAppData]);
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleAuth = async (e) => {
     e.preventDefault();
     try {
       if (authMode === 'signin') {
@@ -126,7 +126,7 @@ function App() {
         localStorage.setItem('lifeos_token', newToken);
         setToken(newToken);
       }
-    } catch (err: any) {
+    } catch (err) {
       alert(err.response?.data?.message || 'Authentication failed. Please check your credentials.');
     }
   };

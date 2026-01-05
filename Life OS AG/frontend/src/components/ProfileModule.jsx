@@ -12,14 +12,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [] }: { user: any, totalEvents?: number, habits?: any[], goals?: any[] }) {
+export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [] }) {
     // Real Data Calculations
     const baseXP = (totalEvents * 100) + (Math.round(user?.lifeScore || 0) * 10);
     const xp = baseXP;
     const level = Math.floor(xp / 1000) + 1;
     const progress = ((xp % 1000) / 1000) * 100;
 
-    const getRank = (score: number) => {
+    const getRank = (score) => {
         if (score >= 90) return 'S';
         if (score >= 80) return 'A+';
         if (score >= 70) return 'A';
@@ -143,7 +143,7 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [] }
                             >
                                 {/* Initials with subtle gradient */}
                                 <span className="bg-clip-text text-transparent bg-gradient-to-br from-slate-800 to-slate-500 dark:from-white dark:to-slate-400">
-                                    {user?.name?.split(' ').map((n: string) => n[0]).join('') || 'JD'}
+                                    {user?.name?.split(' ').map((n) => n[0]).join('') || 'JD'}
                                 </span>
 
                                 {/* Shimmer Effect */}

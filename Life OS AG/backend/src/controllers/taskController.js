@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middleware/authMiddleware';
-import Task from '../models/Task';
-import Goal from '../models/Goal';
-import { Kernel } from '../services/Kernel';
+import { AuthRequest } from '../middleware/authMiddleware.js';
+import Task from '../models/Task.js';
+import Goal from '../models/Goal.js';
+import { Kernel } from '../services/Kernel.js';
 
 export const createTask = async (req: AuthRequest, res: Response) => {
     try {

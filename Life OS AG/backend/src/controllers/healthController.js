@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middleware/authMiddleware';
-import HealthLog from '../models/HealthLog';
-import { Kernel } from '../services/Kernel';
-import { EventType } from '../models/LifeEvent';
+import { AuthRequest } from '../middleware/authMiddleware.js';
+import HealthLog from '../models/HealthLog.js';
+import { Kernel } from '../services/Kernel.js';
+import { EventType } from '../models/LifeEvent.js';
 
 export const createHealthLog = async (req: AuthRequest, res: Response) => {
     try {

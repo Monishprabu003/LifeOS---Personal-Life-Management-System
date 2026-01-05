@@ -24,7 +24,7 @@ import {
 import { HealthLogModal } from './HealthLogModal';
 import { healthAPI } from '../api';
 
-const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, label }: any) => {
+const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, label }) => {
     const radius = (size - strokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
     const offset = circumference - (value / 100) * circumference;
@@ -65,9 +65,9 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, label }:
     );
 };
 
-export function HealthModule({ onUpdate, user }: { onUpdate?: () => void, user?: any }) {
+export function HealthModule({ onUpdate, user }) {
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
-    const [logs, setLogs] = useState<any[]>([]);
+    const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchLogs = async () => {
@@ -82,7 +82,7 @@ export function HealthModule({ onUpdate, user }: { onUpdate?: () => void, user?:
         }
     };
 
-    const handleDeleteLog = async (id: string) => {
+    const handleDeleteLog = async (id) => {
         if (!confirm('Are you sure you want to delete this log?')) return;
         try {
             await healthAPI.deleteLog(id);

@@ -1,31 +1,29 @@
-import { Response } from 'express';
-import { Kernel } from '../services/Kernel';
-import { AuthRequest } from '../middleware/authMiddleware';
-import LifeEvent from '../models/LifeEvent';
-import User from '../models/User';
+import { Kernel } from '../services/Kernel.js.js';
+import LifeEvent from '../models/LifeEvent.js.js';
+import User from '../models/User.js.js';
 
-export const createEvent = async (req: AuthRequest, res: Response) => {
+export const createEvent = async (req, res) => {
     try {
         const eventData = req.body;
         const userId = req.user._id;
 
         const event = await Kernel.processEvent(userId, eventData);
         res.status(201).json(event);
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-export const getEvents = async (req: AuthRequest, res: Response) => {
+export const getEvents = async (req, res) => {
     try {
         const events = await LifeEvent.find({ userId: req.user._id }).sort({ timestamp: -1 });
         res.json(events);
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-export const getLifeStatus = async (req: AuthRequest, res: Response) => {
+export const getLifeStatus = async (req, res) => {
     try {
         await Kernel.updateLifeScores(req.user._id);
         const updatedUser = await User.findById(req.user._id).select('-password');
@@ -39,12 +37,12 @@ export const getLifeStatus = async (req: AuthRequest, res: Response) => {
             goalScore: updatedUser.goalScore,
             relationshipScore: updatedUser.relationshipScore,
         });
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-export const deleteEvent = async (req: AuthRequest, res: Response) => {
+export const deleteEvent = async (req, res) => {
     try {
         const event = await LifeEvent.findById(req.params.id);
         if (!event || event.userId.toString() !== req.user._id.toString()) {
@@ -53,23 +51,23 @@ export const deleteEvent = async (req: AuthRequest, res: Response) => {
 
         // Check for associated source data in metadata and delete it
         if (event.metadata) {
-            const metadata = event.metadata as any;
+            const metadata = event.metadata;
 
             // Handle Health Logs
             if (metadata.get('logId')) {
-                const HealthLog = (await import('../models/HealthLog')).default;
+                const HealthLog = (await import('../models/HealthLog.js')).default;
                 await HealthLog.findByIdAndDelete(metadata.get('logId'));
             }
 
             // Handle Transactions
             if (metadata.get('transactionId')) {
-                const Finance = (await import('../models/Finance')).default;
+                const Finance = (await import('../models/Finance.js')).default;
                 await Finance.findByIdAndDelete(metadata.get('transactionId'));
             }
 
             // Handle Goal Rollback
             if (metadata.get('goalId')) {
-                const Goal = (await import('../models/Goal')).default;
+                const Goal = (await import('../models/Goal.js')).default;
                 await Goal.findByIdAndUpdate(metadata.get('goalId'), {
                     status: 'in-progress',
                     progress: 90
@@ -78,13 +76,13 @@ export const deleteEvent = async (req: AuthRequest, res: Response) => {
 
             // Handle Habit Rollback
             if (metadata.get('habitId')) {
-                const Habit = (await import('../models/Habit')).default;
+                const Habit = (await import('../models/Habit.js')).default;
                 const habit = await Habit.findById(metadata.get('habitId'));
                 if (habit && habit.history.length > 0) {
                     habit.history.pop();
                     habit.streak = Math.max(0, habit.streak - 1);
                     const lastComp = habit.history[habit.history.length - 1];
-                    const h = habit as any;
+                    const h = habit;
                     h.lastCompleted = lastComp ? lastComp.date : null;
                     await h.save();
                 }
@@ -94,26 +92,26 @@ export const deleteEvent = async (req: AuthRequest, res: Response) => {
         await LifeEvent.findByIdAndDelete(req.params.id);
 
         // Recalculate scores (some events might affect scores)
-        await Kernel.updateLifeScores(req.user._id as string);
+        await Kernel.updateLifeScores(req.user._id);
 
         res.json({ message: 'Event deleted successfully' });
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-export const deleteAllData = async (req: AuthRequest, res: Response) => {
+export const deleteAllData = async (req, res) => {
     try {
         const userId = req.user._id;
 
         // Import all models dynamically to avoid circular dependencies if any, 
         // but here we can just import them at the top or here.
-        const HealthLog = (await import('../models/HealthLog')).default;
-        const Finance = (await import('../models/Finance')).default;
-        const Habit = (await import('../models/Habit')).default;
-        const Goal = (await import('../models/Goal')).default;
-        const Relationship = (await import('../models/Relationship')).default;
-        const Task = (await import('../models/Task')).default;
+        const HealthLog = (await import('../models/HealthLog.js')).default;
+        const Finance = (await import('../models/Finance.js')).default;
+        const Habit = (await import('../models/Habit.js')).default;
+        const Goal = (await import('../models/Goal.js')).default;
+        const Relationship = (await import('../models/Relationship.js')).default;
+        const Task = (await import('../models/Task.js')).default;
 
         await Promise.all([
             LifeEvent.deleteMany({ userId }),
@@ -126,10 +124,10 @@ export const deleteAllData = async (req: AuthRequest, res: Response) => {
         ]);
 
         // Recalculate and reset scores
-        await Kernel.updateLifeScores(userId as string);
+        await Kernel.updateLifeScores(userId);
 
         res.json({ message: 'All logs and data deleted successfully' });
-    } catch (error: any) {
+    } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };

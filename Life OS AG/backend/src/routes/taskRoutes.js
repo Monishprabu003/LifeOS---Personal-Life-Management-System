@@ -1,6 +1,6 @@
 import express from 'express';
-import { protect } from '../middleware/authMiddleware';
-import { createTask, toggleTask, getTasks } from '../controllers/taskController';
+import { protect } from '../middleware/authMiddleware.js';
+import { createTask, toggleTask, getTasks } from '../controllers/taskController.js';
 
 const router = express.Router();
 
