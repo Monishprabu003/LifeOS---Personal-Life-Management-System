@@ -4,15 +4,15 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 
-import authRoutes from './routes/auth';
-import kernelRoutes from './routes/kernel';
-import habitRoutes from './routes/habitRoutes';
-import financeRoutes from './routes/financeRoutes';
-import goalRoutes from './routes/goalRoutes';
-import healthRoutes from './routes/healthRoutes';
-import relationshipRoutes from './routes/relationshipRoutes';
-import userRoutes from './routes/userRoutes';
-import taskRoutes from './routes/taskRoutes';
+import authRoutes from './routes/auth.js';
+import kernelRoutes from './routes/kernel.js';
+import habitRoutes from './routes/habitRoutes.js';
+import financeRoutes from './routes/financeRoutes.js';
+import goalRoutes from './routes/goalRoutes.js';
+import healthRoutes from './routes/healthRoutes.js';
+import relationshipRoutes from './routes/relationshipRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import taskRoutes from './routes/taskRoutes.js';
 
 dotenv.config();
 

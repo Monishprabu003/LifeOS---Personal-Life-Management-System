@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import User from './models/User';
-import Habit from './models/Habit';
-import LifeEvent, { EventType } from './models/LifeEvent';
+import User from './models/User.js';
+import Habit from './models/Habit.js';
+import LifeEvent from './models/LifeEvent.js';
 
 dotenv.config();
 
@@ -42,7 +42,7 @@ const seed = async () => {
         await LifeEvent.create([
             {
                 userId: user._id,
-                type: EventType.HEALTH,
+                type: 'health',
                 title: '7.5 Hours Sleep',
                 impact: 'positive',
                 value: 7.5,
@@ -50,7 +50,7 @@ const seed = async () => {
             },
             {
                 userId: user._id,
-                type: EventType.PRODUCTIVITY,
+                type: 'productivity',
                 title: 'Completed UI Foundation',
                 impact: 'positive',
                 value: 1,
