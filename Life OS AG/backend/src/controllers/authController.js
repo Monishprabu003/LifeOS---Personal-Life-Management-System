@@ -1,14 +1,13 @@
-import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-const generateToken = (id: string) => {
+const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || 'lifeos_secret', {
         expiresIn: '30d',
     });
 };
 
-export const registerUser = async (req: Request, res: Response) => {
+export const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
@@ -38,7 +37,7 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 };
 
-export const loginUser = async (req: Request, res: Response): Promise<any> => {
+export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -59,7 +58,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
     }
 };
 
-export const getUserId = async (req: any, res: Response) => {
+export const getUserId = async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
         res.json(user);
