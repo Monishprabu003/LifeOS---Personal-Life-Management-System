@@ -18,9 +18,7 @@ import {
   PanelLeftOpen,
   Sun,
   Moon,
-  Monitor,
-  Bell,
-  Eye
+  Bell
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, habitsAPI, goalsAPI, kernelAPI } from './api';
@@ -52,26 +50,12 @@ function App() {
     const root = window.document.documentElement;
 
     const applyTheme = (t) => {
-      root.classList.remove('light', 'dark', 'eye-comfort');
-
-      if (t === 'system') {
-        // Map system theme to eye-comfort for light and dark for dark, or as requested
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'eye-comfort';
-        root.classList.add(systemTheme);
-      } else {
-        root.classList.add(t);
-      }
+      root.classList.remove('light', 'dark');
+      root.classList.add(t);
     };
 
     applyTheme(theme);
     localStorage.setItem('theme', theme);
-
-    if (theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => applyTheme('system');
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
   }, [theme]);
 
 
@@ -266,12 +250,12 @@ function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden text-main transition-colors duration-300">
+    <div className="flex h-screen bg-[#f8fafc] dark:bg-[#0f111a] overflow-hidden text-main transition-colors duration-300">
       {/* Sidebar */}
       <motion.aside
         initial={false}
         animate={{ width: isSidebarCollapsed ? 96 : 288 }}
-        className="bg-surface border-r border-border flex flex-col shadow-sm z-50 overflow-hidden transition-colors duration-300"
+        className="bg-white dark:bg-[#1a1c2e] border-r border-slate-100 dark:border-[#222436] flex flex-col shadow-sm z-50 overflow-hidden transition-colors duration-300"
       >
         <div className="p-8 flex items-center justify-between">
           <div className="flex items-center space-x-3 overflow-hidden">
@@ -317,7 +301,7 @@ function App() {
                       : 'hover:bg-slate-50 dark:hover:bg-[#222436]/50 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                   >
-                    <Icon size={20} className={activeTab === module.id ? 'text-primary' : ''} />
+                    <Icon size={20} className={activeTab === module.id ? 'text-[#10b981]' : ''} />
                     {!isSidebarCollapsed && (
                       <span className="font-bold text-sm whitespace-nowrap">{module.name}</span>
                     )}
@@ -340,11 +324,11 @@ function App() {
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-200 group ${activeTab === item.id
-                      ? 'bg-primary/10 text-primary shadow-sm'
-                      : 'hover:bg-surface/50 text-slate-500 hover:text-main'
+                      ? 'bg-[#ecfdf5] dark:bg-[#222436] text-[#10b981]'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#222436]/50 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                   >
-                    <Icon size={20} className={activeTab === item.id ? 'text-primary' : ''} />
+                    <Icon size={20} className={activeTab === item.id ? 'text-[#10b981]' : ''} />
                     {!isSidebarCollapsed && (
                       <span className="font-bold text-sm whitespace-nowrap">{item.name}</span>
                     )}
@@ -381,7 +365,7 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 relative overflow-y-auto custom-scrollbar">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md px-10 py-6 flex items-center justify-between transition-colors duration-300">
+        <header className="sticky top-0 z-40 bg-[#f8fafc]/80 dark:bg-[#0f111a]/80 backdrop-blur-md px-10 py-6 flex items-center justify-between transition-colors duration-300">
           <div>
             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none mb-1">Welcome back,</p>
             <h2 className="text-xl font-bold text-[#0f172a] dark:text-white">{user?.name || 'John Doe'}</h2>
@@ -391,9 +375,7 @@ function App() {
             <div className="flex items-center bg-slate-100/50 dark:bg-[#1a1c2e]/50 p-1.5 rounded-2xl border border-slate-200/50 dark:border-[#222436]/50 backdrop-blur-sm">
               {[
                 { id: 'light', icon: Sun, label: 'Light' },
-                { id: 'dark', icon: Moon, label: 'Dark' },
-                { id: 'eye-comfort', icon: Eye, label: 'Eye Comfort' },
-                { id: 'system', icon: Monitor, label: 'System' }
+                { id: 'dark', icon: Moon, label: 'Dark' }
               ].map((t) => {
                 const Icon = t.icon;
                 return (
@@ -401,8 +383,8 @@ function App() {
                     key={t.id}
                     onClick={() => setTheme(t.id)}
                     className={`p-2.5 rounded-xl transition-all duration-300 group relative ${theme === t.id
-                      ? 'bg-surface text-primary shadow-sm'
-                      : 'text-muted hover:text-main'
+                      ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
                       }`}
                     title={t.label}
                   >
@@ -416,7 +398,8 @@ function App() {
                     )}
                   </button>
                 )
-              })}
+              })
+              }
             </div>
 
             <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700" />
