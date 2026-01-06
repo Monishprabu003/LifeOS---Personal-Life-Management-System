@@ -35,6 +35,22 @@
     --border: 30, 41, 59;
   }
 
+  .eye-comfort {
+    --background: 245, 240, 230;
+    --surface: 255, 251, 245;
+    --primary: 129, 92, 65;
+    --secondary: 161, 126, 92;
+    --health: 60, 95, 66;
+    --wealth: 178, 101, 15;
+    --habits: 110, 72, 163;
+    --goals: 40, 90, 150;
+    --relationships: 165, 50, 70;
+    --accent: 180, 110, 50;
+    --text-main: 74, 55, 40;
+    --text-muted: 139, 115, 91;
+    --border: 226, 217, 200;
+  }
+
   body {
     @apply bg-background text-main font-sans antialiased transition-colors duration-300;
   }
