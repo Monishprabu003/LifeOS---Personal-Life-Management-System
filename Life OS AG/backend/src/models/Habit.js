@@ -1,24 +1,9 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IHabit extends Document {
-    userId: mongoose.Types.ObjectId;
-    name: string;
-    category?: string;
-    frequency: 'daily' | 'weekly' | 'custom';
-    targetDays: number; // e.g., 5 days a week
-    streak: number;
-    bestStreak: number;
-    lastCompleted: Date;
-    history: {
-        date: Date;
-        completed: boolean;
-    }[];
-    isActive: boolean;
-}
 
-const HabitSchema: Schema = new Schema(
+const HabitSchema = new mongoose.Schema(
     {
-        userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         name: { type: String, required: true },
         category: {
             type: String,
@@ -40,4 +25,4 @@ const HabitSchema: Schema = new Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<IHabit>('Habit', HabitSchema);
+export default mongoose.model('Habit', HabitSchema);
