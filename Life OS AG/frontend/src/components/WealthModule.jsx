@@ -6,7 +6,7 @@ import {
     TrendingUp,
     CreditCard,
     PiggyBank,
-    DollarSign,
+    IndianRupee,
     ArrowUpRight,
     ArrowDownLeft,
     Search,
@@ -142,7 +142,7 @@ export function WealthModule({ onUpdate, user }) {
 
             {/* Top Stat Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-3 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-start">
+                <div className="lg:col-span-3 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200/50 dark:border-slate-800 flex flex-col items-start">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-10">Financial Health</h3>
                     <div className="w-full flex justify-center">
                         <CircularProgress value={savingsRate} label={`${savingsRate}% savings rate`} />
@@ -150,13 +150,13 @@ export function WealthModule({ onUpdate, user }) {
                 </div>
 
                 <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="bg-[#eff6ff] dark:bg-blue-500/10 rounded-[2.5rem] p-8 flex flex-col justify-between">
+                    <div className="bg-[#eff6ff] dark:bg-blue-500/10 rounded-[2.5rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-blue-100/50 dark:border-none flex flex-col justify-between transition-transform hover:scale-[1.02]">
                         <div className="flex justify-between items-start">
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Income</p>
                             <TrendingUp size={20} className="text-[#3b82f6]" />
                         </div>
                         <div className="mt-6">
-                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">${totalIncome.toLocaleString()}</h4>
+                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">₹{totalIncome.toLocaleString()}</h4>
                             <p className="text-[10px] font-bold text-slate-400 mt-2">All time cumulative</p>
                         </div>
                     </div>
@@ -167,7 +167,7 @@ export function WealthModule({ onUpdate, user }) {
                             <CreditCard size={20} className="text-[#3b82f6]" />
                         </div>
                         <div className="mt-6">
-                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">${totalExpense.toLocaleString()}</h4>
+                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">₹{totalExpense.toLocaleString()}</h4>
                             <p className="text-[10px] font-bold text-slate-400 mt-2">All time cumulative</p>
                         </div>
                     </div>
@@ -178,7 +178,7 @@ export function WealthModule({ onUpdate, user }) {
                             <PiggyBank size={20} className="text-[#3b82f6]" />
                         </div>
                         <div className="mt-6">
-                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">${savings.toLocaleString()}</h4>
+                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">₹{savings.toLocaleString()}</h4>
                             <p className="text-[10px] font-bold text-[#10b981] mt-2">Net growth</p>
                         </div>
                     </div>
@@ -186,7 +186,7 @@ export function WealthModule({ onUpdate, user }) {
                     <div className="bg-[#eff6ff] dark:bg-blue-500/10 rounded-[2.5rem] p-8 flex flex-col justify-between">
                         <div className="flex justify-between items-start">
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Savings Rate</p>
-                            <DollarSign size={20} className="text-[#3b82f6]" />
+                            <IndianRupee size={20} className="text-[#3b82f6]" />
                         </div>
                         <div className="mt-6">
                             <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">{savingsRate}%</h4>
@@ -198,7 +198,7 @@ export function WealthModule({ onUpdate, user }) {
 
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200/50 dark:border-slate-800">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Expense Breakdown</h3>
                     <div className="h-[300px] w-full relative">
                         {expenseBreakdownData.length > 0 ? (
@@ -235,7 +235,7 @@ export function WealthModule({ onUpdate, user }) {
                     </div>
                 </div>
 
-                <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm">
+                <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200/50 dark:border-slate-800">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Recent Transactions</h3>
                     {loading ? (
                         <div className="text-center py-12 text-slate-400">Loading...</div>
@@ -255,7 +255,7 @@ export function WealthModule({ onUpdate, user }) {
                                     <div className="flex items-center space-x-4">
                                         <div className="text-right">
                                             <h4 className={`text-sm font-bold ${tx.type === 'income' ? 'text-[#10b981]' : 'text-[#0f172a] dark:text-white'}`}>
-                                                {tx.type === 'income' ? '+' : '-'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                             </h4>
                                         </div>
                                         <button

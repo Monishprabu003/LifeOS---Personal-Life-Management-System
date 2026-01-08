@@ -364,15 +364,22 @@ function App() {
 
       {/* Main Content */}
       <main className="flex-1 relative overflow-y-auto custom-scrollbar">
+        {/* Background Decorative Elements - Visible in Light Mode */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-50 dark:opacity-20 z-0">
+          <div className="blob w-96 h-96 bg-blue-400 top-[-10%] right-[-5%] transition-colors duration-1000" />
+          <div className="blob w-[30rem] h-[30rem] bg-emerald-300 bottom-[-10%] left-[-5%] animation-delay-2000 transition-colors duration-1000" />
+          <div className="blob w-80 h-80 bg-violet-400 top-[40%] left-[20%] animation-delay-4000 transition-colors duration-1000" />
+        </div>
+
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-[#f8fafc]/80 dark:bg-[#0f111a]/80 backdrop-blur-md px-10 py-6 flex items-center justify-between transition-colors duration-300">
-          <div>
+        <header className="sticky top-0 z-40 bg-background/80 dark:bg-[#0f111a]/80 backdrop-blur-md px-10 py-6 flex items-center justify-between transition-colors duration-300">
+          <div className="relative z-10">
             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none mb-1">Welcome back,</p>
             <h2 className="text-xl font-bold text-[#0f172a] dark:text-white">{user?.name || 'John Doe'}</h2>
           </div>
 
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center bg-slate-100/50 dark:bg-[#1a1c2e]/50 p-1.5 rounded-2xl border border-slate-200/50 dark:border-[#222436]/50 backdrop-blur-sm">
+          <div className="flex items-center space-x-6 relative z-10">
+            <div className="flex items-center bg-white dark:bg-[#1a1c2e]/50 p-1.5 rounded-2xl border border-slate-200/60 dark:border-[#222436]/50 shadow-sm backdrop-blur-sm">
               {[
                 { id: 'light', icon: Sun, label: 'Light' },
                 { id: 'dark', icon: Moon, label: 'Dark' }
@@ -383,7 +390,7 @@ function App() {
                     key={t.id}
                     onClick={() => setTheme(t.id)}
                     className={`p-2.5 rounded-xl transition-all duration-300 group relative ${theme === t.id
-                      ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                      ? 'bg-slate-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
                       : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
                       }`}
                     title={t.label}
@@ -392,7 +399,7 @@ function App() {
                     {theme === t.id && (
                       <motion.div
                         layoutId="activeTheme"
-                        className="absolute inset-0 bg-white dark:bg-slate-700 rounded-xl -z-10 shadow-sm"
+                        className="absolute inset-0 bg-slate-50 dark:bg-slate-700 rounded-xl -z-10 shadow-sm"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -430,7 +437,7 @@ function App() {
 
 
         {/* Dashboard Content */}
-        <div className="p-10 max-w-[1600px] mx-auto">
+        <div className="p-10 max-w-[1600px] mx-auto relative z-10">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

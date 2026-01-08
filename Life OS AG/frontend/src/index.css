@@ -4,24 +4,26 @@
 
 @layer base {
   :root {
-    --background: 248, 250, 252;
+    --background: 241, 245, 249;
+    /* Sophisticated light grey */
     --surface: 255, 255, 255;
-    --primary: 99, 102, 241;
+    --primary: 79, 70, 229;
+    /* Deep indigo */
     --secondary: 14, 165, 233;
     --health: 16, 185, 129;
     --wealth: 245, 158, 11;
-    --habits: 139, 92, 246;
-    --goals: 59, 130, 246;
-    --relationships: 244, 63, 94;
-    --accent: 244, 114, 182;
+    --habits: 124, 58, 237;
+    --goals: 37, 99, 235;
+    --relationships: 225, 29, 72;
+    --accent: 219, 39, 119;
     --text-main: 15, 23, 42;
-    --text-muted: 100, 116, 139;
+    --text-muted: 71, 85, 105;
     --border: 226, 232, 240;
   }
 
   .dark {
-    --background: 2, 6, 23;
-    --surface: 15, 23, 42;
+    --background: 3, 7, 18;
+    --surface: 17, 24, 39;
     --primary: 99, 102, 241;
     --secondary: 14, 165, 233;
     --health: 16, 185, 129;
@@ -32,12 +34,38 @@
     --accent: 244, 114, 182;
     --text-main: 241, 245, 249;
     --text-muted: 148, 163, 184;
-    --border: 30, 41, 59;
+    --border: 222, 226, 231;
   }
 
 
   body {
     @apply bg-background text-main font-sans antialiased transition-colors duration-300;
+  }
+
+  .blob {
+    @apply absolute blur-[120px] rounded-full mix-blend-multiply filter opacity-20 animate-blob;
+  }
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
   }
 
   /* Force high contrast for chart text in dark mode */

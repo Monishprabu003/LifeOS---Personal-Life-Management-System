@@ -69,7 +69,7 @@ export function AddTransactionModal({ isOpen, onClose, onSave }) {
 
                     {/* Amount Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Amount</label>
+                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Amount (₹)</label>
                         <input
                             type="number"
                             placeholder="0.00"

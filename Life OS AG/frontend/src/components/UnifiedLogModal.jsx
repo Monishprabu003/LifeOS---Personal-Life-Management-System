@@ -12,7 +12,7 @@ import {
     Meh,
     Laugh,
     Activity,
-    DollarSign,
+    IndianRupee,
     CheckCircle2
 } from 'lucide-react';
 import { healthAPI, financeAPI, habitsAPI, goalsAPI, socialAPI, tasksAPI } from '../api';
@@ -273,7 +273,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }) {
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Amount</label>
                                     <div className="relative">
-                                        <DollarSign size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                        <IndianRupee size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                         <input
                                             type="number"
                                             placeholder="0.00"
