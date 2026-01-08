@@ -209,7 +209,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }) {
                                         type="range" min="0" max="12" step="0.5"
                                         value={sleepDuration}
                                         onChange={(e) => setSleepDuration(parseFloat(e.target.value))}
-                                        className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                                        className="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
                                     />
                                 </div>
                                 <div className="space-y-4">
@@ -220,7 +220,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }) {
                                         type="range" min="0" max="5" step="0.1"
                                         value={waterIntake}
                                         onChange={(e) => setWaterIntake(parseFloat(e.target.value))}
-                                        className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                        className="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
                                     />
                                 </div>
                                 <div className="space-y-4">
@@ -231,7 +231,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }) {
                                         type="range" min="0" max="10" step="1"
                                         value={stressLevel}
                                         onChange={(e) => setStressLevel(parseInt(e.target.value))}
-                                        className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                                        className="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
                                     />
                                 </div>
                                 <div className="space-y-4">
@@ -383,7 +383,7 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess }) {
                                         type="range" min="0" max="100" step="1"
                                         value={goalProgress}
                                         onChange={(e) => setGoalProgress(parseInt(e.target.value))}
-                                        className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-500"
+                                        className="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-500"
                                     />
                                 </div>
                             </div>
