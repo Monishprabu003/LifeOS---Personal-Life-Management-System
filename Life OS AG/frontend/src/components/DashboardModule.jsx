@@ -23,45 +23,49 @@ import {
 import { kernelAPI, tasksAPI } from '../api';
 
 
-const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, showLabel = true }) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = radius * 2 * Math.PI;
-    const offset = circumference - (value / 100) * circumference;
-
+const CircularProgress = ({ value, color, showLabel = true }) => {
     return (
-        <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
-            <svg width={size} height={size} className="transform -rotate-90">
+        <div className="relative w-44 h-44 flex items-center justify-center">
+            <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
+                {/* Visual Depth Well */}
                 <circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    stroke="currentColor"
-                    strokeWidth={strokeWidth}
-                    fill="transparent"
-                    className="text-slate-100 dark:text-slate-800"
+                    cx="50"
+                    cy="50"
+                    r="48"
+                    fill="currentColor"
+                    className="text-white/20 dark:text-slate-800/20"
                 />
-                <motion.circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    stroke={color}
-                    strokeWidth={strokeWidth}
+                {/* Main Track */}
+                <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="currentColor"
+                    strokeWidth="8"
                     fill="transparent"
-                    strokeDasharray={circumference}
-                    initial={{ strokeDashoffset: circumference }}
-                    animate={{ strokeDashoffset: offset }}
+                    className="text-slate-100 dark:text-slate-800/50"
+                />
+                {/* Dynamic Progress Arc */}
+                <motion.circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke={color}
+                    strokeWidth="8"
+                    fill="transparent"
+                    strokeDasharray="251.3"
+                    initial={{ strokeDashoffset: 251.3 }}
+                    animate={{ strokeDashoffset: 251.3 - (251.3 * value) / 100 }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
                     strokeLinecap="round"
                 />
             </svg>
             {showLabel && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span
-                        className="font-display font-bold text-slate-800 dark:text-white"
-                        style={{ fontSize: `${size * 0.22}px` }}
-                    >
+                    <span className="text-4xl font-display font-bold text-slate-800 dark:text-white leading-none">
                         {Number.isInteger(value) ? value : Number(value).toFixed(1)}
                     </span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Score</span>
                 </div>
             )}
         </div>
@@ -224,7 +228,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                 >
                     <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white mb-8">Unified Life Score</h3>
                     <div className="relative p-6 rounded-full bg-white/20 dark:bg-slate-800/20 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 shadow-inner">
-                        <CircularProgress value={user?.lifeScore || 0} color="#10b981" size={180} strokeWidth={14} />
+                        <CircularProgress value={user?.lifeScore || 0} color="#10b981" />
                     </div>
                     <div className="mt-8 text-center">
                         <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold tracking-tight">Your overall life performance</p>

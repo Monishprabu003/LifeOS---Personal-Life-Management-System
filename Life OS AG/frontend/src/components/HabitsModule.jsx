@@ -143,36 +143,49 @@ export function HabitsModule({ onUpdate, user }) {
                 {/* Today's Progress */}
                 <motion.div
                     whileHover={{ y: -8, scale: 1.01 }}
-                    className="md:col-span-1 glass-card p-10 flex flex-col items-center justify-center text-center transition-all duration-500 bg-white/40 dark:bg-[#0f111a]/40"
+                    className="md:col-span-1 glass-card p-8 flex flex-col items-center justify-center text-center transition-all duration-500 bg-white/40 dark:bg-[#0f111a]/40"
                 >
-                    <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white mb-8">Daily Flow</h3>
-                    <div className="relative w-36 h-36 flex items-center justify-center bg-white/20 dark:bg-slate-800/20 backdrop-blur-xl rounded-full border border-white/30 dark:border-slate-700/30 shadow-inner">
-                        <svg className="w-full h-full transform -rotate-90 p-4">
+                    <h3 className="text-lg font-display font-bold text-[#0f172a] dark:text-white mb-6">Daily Flow</h3>
+                    <div className="relative w-32 h-32 flex items-center justify-center">
+                        <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
+                            {/* Outer Glow / Shadow Well */}
                             <circle
-                                cx="72"
-                                cy="72"
-                                r="62"
-                                stroke="currentColor"
-                                strokeWidth="10"
-                                fill="transparent"
-                                className="text-slate-100/50 dark:text-slate-800/50"
+                                cx="50"
+                                cy="50"
+                                r="48"
+                                fill="currentColor"
+                                className="text-white/20 dark:text-slate-800/20"
                             />
-                            <motion.circle
-                                cx="72"
-                                cy="72"
-                                r="62"
-                                stroke="#f59e0b"
-                                strokeWidth="10"
+                            {/* Track Circle */}
+                            <circle
+                                cx="50"
+                                cy="50"
+                                r="42"
+                                stroke="currentColor"
+                                strokeWidth="8"
                                 fill="transparent"
-                                strokeDasharray={389.5}
-                                strokeDashoffset={389.5 - (389.5 * progressPercent) / 100}
+                                className="text-slate-100 dark:text-slate-800/50"
+                            />
+                            {/* Progress Arc */}
+                            <motion.circle
+                                cx="50"
+                                cy="50"
+                                r="42"
+                                stroke="#f59e0b"
+                                strokeWidth="8"
+                                fill="transparent"
+                                strokeDasharray="263.89"
+                                initial={{ strokeDashoffset: 263.89 }}
+                                animate={{ strokeDashoffset: 263.89 - (263.89 * progressPercent) / 100 }}
+                                transition={{ duration: 1.5, ease: "easeOut" }}
                                 strokeLinecap="round"
-                                className="transition-all duration-1000 ease-out"
                             />
                         </svg>
-                        <span className="absolute text-4xl font-display font-bold text-[#0f172a] dark:text-white">{progressPercent}%</span>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">{progressPercent}%</span>
+                        </div>
                     </div>
-                    <p className="mt-8 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{completedCount}/{totalCount} Completed</p>
+                    <p className="mt-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{completedCount}/{totalCount} Completed</p>
                 </motion.div>
 
                 {/* Active Habits */}
@@ -330,11 +343,10 @@ export function HabitsModule({ onUpdate, user }) {
                             <motion.div
                                 key={habit._id}
                                 whileHover={{ y: -8, scale: 1.02 }}
-                                className={`p-8 rounded-[2.5rem] border transition-all duration-500 cursor-pointer relative group glass interactive-hover ${habit.completedToday
+                                className={`p-8 rounded-[2.5rem] border transition-all duration-500 relative group glass interactive-hover ${habit.completedToday
                                     ? 'bg-orange-50/40 border-[#f59e0b] shadow-inner'
                                     : 'border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-slate-700'
                                     }`}
-                                onClick={() => !habit.completedToday && completeHabit(habit._id)}
                             >
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex items-center space-x-4">
@@ -365,12 +377,16 @@ export function HabitsModule({ onUpdate, user }) {
                                         >
                                             <Trash2 size={18} />
                                         </button>
-                                        <div className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${habit.completedToday
-                                            ? 'bg-[#f59e0b] border-[#f59e0b] text-white shadow-lg shadow-orange-200 dark:shadow-none'
-                                            : 'border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 group-hover:border-orange-400'
-                                            }`}>
-                                            {habit.completedToday && <CheckCircle2 size={20} strokeWidth={3} />}
-                                        </div>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); !habit.completedToday && completeHabit(habit._id); }}
+                                            className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${habit.completedToday
+                                                ? 'bg-[#f59e0b] border-[#f59e0b] text-white shadow-lg shadow-orange-200 dark:shadow-none'
+                                                : 'border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 hover:border-[#f59e0b] hover:text-[#f59e0b]'
+                                                }`}
+                                            title={habit.completedToday ? "Completed" : "Mark as complete"}
+                                        >
+                                            {habit.completedToday ? <CheckCircle2 size={20} strokeWidth={3} /> : <div className="w-5 h-5 rounded-full border-2 border-slate-200 group-hover:border-[#f59e0b]/50" />}
+                                        </button>
                                     </div>
                                 </div>
 

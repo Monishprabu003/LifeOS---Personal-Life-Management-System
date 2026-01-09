@@ -15,44 +15,48 @@ import { AddConnectionModal } from './AddConnectionModal';
 import { socialAPI, kernelAPI } from '../api';
 
 const CircularProgress = ({ value, label }) => {
-    const size = 160;
-    const strokeWidth = 12;
-    const radius = (size - strokeWidth) / 2;
-    const circumference = radius * 2 * Math.PI;
-    const offset = circumference - (value / 100) * circumference;
-
     return (
         <div className="flex flex-col items-center">
-            <div className="relative" style={{ width: size, height: size }}>
-                <svg width={size} height={size} className="transform -rotate-90">
+            <div className="relative w-40 h-40 flex items-center justify-center">
+                <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
+                    {/* Shadow Outer Ring */}
                     <circle
-                        cx={size / 2}
-                        cy={size / 2}
-                        r={radius}
+                        cx="50"
+                        cy="50"
+                        r="48"
+                        fill="currentColor"
+                        className="text-white/20 dark:text-slate-800/20"
+                    />
+                    {/* Background Track */}
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
                         stroke="currentColor"
-                        strokeWidth={strokeWidth}
+                        strokeWidth="8"
                         fill="transparent"
                         className="text-slate-100 dark:text-slate-800"
                     />
+                    {/* Primary Progress Arc */}
                     <motion.circle
-                        cx={size / 2}
-                        cy={size / 2}
-                        r={radius}
+                        cx="50"
+                        cy="50"
+                        r="40"
                         stroke="#f43f5e"
-                        strokeWidth={strokeWidth}
+                        strokeWidth="8"
                         fill="transparent"
-                        strokeDasharray={circumference}
-                        initial={{ strokeDashoffset: circumference }}
-                        animate={{ strokeDashoffset: offset }}
+                        strokeDasharray="251.3"
+                        initial={{ strokeDashoffset: 251.3 }}
+                        animate={{ strokeDashoffset: 251.3 - (251.3 * value) / 100 }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
                         strokeLinecap="round"
                     />
                 </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{value}</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-4xl font-display font-bold text-[#0f172a] dark:text-white leading-none">{value}</span>
                 </div>
             </div>
-            {label && <p className="mt-4 text-xs font-bold text-slate-400 text-center">{label}</p>}
+            {label && <p className="mt-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center max-w-[200px] leading-relaxed">{label}</p>}
         </div>
     );
 };

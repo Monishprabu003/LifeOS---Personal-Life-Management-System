@@ -13,43 +13,49 @@ import {
 } from 'lucide-react';
 import { goalsAPI, tasksAPI } from '../api';
 
-const CircularProgress = ({ value, label, size = 160, strokeWidth = 12, color = '#8b5cf6' }) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = radius * 2 * Math.PI;
-    const offset = circumference - (value / 100) * circumference;
-
+const CircularProgress = ({ value, label, size = 160, color = '#8b5cf6' }) => {
     return (
         <div className="flex flex-col items-center">
-            <div className="relative" style={{ width: size, height: size }}>
-                <svg width={size} height={size} className="transform -rotate-90">
+            <div className="relative w-40 h-40 flex items-center justify-center">
+                <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
+                    {/* Depth Well */}
                     <circle
-                        cx={size / 2}
-                        cy={size / 2}
-                        r={radius}
-                        stroke="currentColor"
-                        strokeWidth={strokeWidth}
-                        fill="transparent"
-                        className="text-slate-100 dark:text-slate-800"
+                        cx="50"
+                        cy="50"
+                        r="48"
+                        fill="currentColor"
+                        className="text-white/20 dark:text-slate-800/20"
                     />
-                    <motion.circle
-                        cx={size / 2}
-                        cy={size / 2}
-                        r={radius}
-                        stroke={color}
-                        strokeWidth={strokeWidth}
+                    {/* Support Track */}
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        stroke="currentColor"
+                        strokeWidth="8"
                         fill="transparent"
-                        strokeDasharray={circumference}
-                        initial={{ strokeDashoffset: circumference }}
-                        animate={{ strokeDashoffset: offset }}
+                        className="text-slate-100 dark:text-slate-800/50"
+                    />
+                    {/* Glowing Progress Arc */}
+                    <motion.circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        stroke={color}
+                        strokeWidth="8"
+                        fill="transparent"
+                        strokeDasharray="251.3"
+                        initial={{ strokeDashoffset: 251.3 }}
+                        animate={{ strokeDashoffset: 251.3 - (251.3 * value) / 100 }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
                         strokeLinecap="round"
                     />
                 </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{value}</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-4xl font-display font-bold text-[#0f172a] dark:text-white leading-none">{value}</span>
                 </div>
             </div>
-            {label && <p className="mt-4 text-xs font-bold text-slate-400 text-center uppercase tracking-widest">{label}</p>}
+            {label && <p className="mt-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center max-w-[200px] leading-relaxed">{label}</p>}
         </div>
     );
 };
@@ -291,7 +297,7 @@ export function GoalsModule({ onUpdate, user }) {
                                         <motion.div
                                             key={idx}
                                             whileHover={{ x: 5 }}
-                                            onClick={() => handleToggleTask(goal._id, idx)}
+                                            onClick={() => handleToggleTask(task._id)}
                                             className="flex items-center justify-between p-5 glass rounded-2xl group interactive-hover cursor-pointer border-transparent"
                                         >
                                             <div className="flex items-center space-x-4">
