@@ -162,7 +162,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
 
             return last7Days.map(day => ({
                 name: day,
-                performance: 50 + (counts[day] || 0) * 10 // Baseline of 50 + impact
+                performance: Math.min(100, Math.max(0, (counts[day] || 0) * 20))
             }));
         } else {
             // Weekly logic (group by week start)
@@ -174,7 +174,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
 
             return weeks.map(w => ({
                 name: w,
-                performance: Math.floor(Math.random() * 20) + 40 // Simulated weekly data for now as fallback
+                performance: Math.floor(Math.random() * 80) // Simulated weekly data starting from 0 baseline
             }));
         }
     };
