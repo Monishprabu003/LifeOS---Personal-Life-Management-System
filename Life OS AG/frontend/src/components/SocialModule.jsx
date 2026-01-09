@@ -180,54 +180,63 @@ export function SocialModule({ onUpdate, user }) {
             {/* Top Stat Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <motion.div
-                    whileHover={{ y: -5, scale: 1.01 }}
-                    className="lg:col-span-3 glass-card p-10 flex flex-col items-center justify-center text-center transition-all duration-500 border-rose-50 dark:border-rose-900/10"
+                    whileHover={{ y: -8, scale: 1.01 }}
+                    className="lg:col-span-3 glass-card p-10 flex flex-col items-center justify-center text-center transition-all duration-500 bg-white/40 dark:bg-[#0f111a]/40"
                 >
-                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Relationship Wellness</h3>
-                    <CircularProgress value={socialScore} label={connections.length > 0 ? "Building meaningful connections" : "No connections logged"} />
+                    <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white mb-8">Relationship Wellness</h3>
+                    <div className="relative p-4 rounded-full bg-white/20 dark:bg-slate-800/20 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 shadow-inner">
+                        <CircularProgress value={socialScore} label={connections.length > 0 ? "Building meaningful connections" : "No connections logged"} />
+                    </div>
                 </motion.div>
 
                 <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-6">
                     <motion.div
-                        whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500"
+                        whileHover={{ y: -12, scale: 1.05 }}
+                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500 shadow-rose-200/20 dark:shadow-none"
                     >
                         <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Connections</p>
-                            <Users size={20} className="text-[#f43f5e] opacity-60" />
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Connections</p>
+                            <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
+                                <Users size={20} />
+                            </div>
                         </div>
-                        <div className="mt-6">
-                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{connections.length}</h4>
+                        <div className="mt-8">
+                            <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{connections.length}</h4>
+                            <p className="text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-widest">Active circle members</p>
                         </div>
                     </motion.div>
 
                     <motion.div
-                        whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500"
+                        whileHover={{ y: -12, scale: 1.05 }}
+                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500 shadow-rose-200/20 dark:shadow-none"
                     >
                         <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Interactions This Week</p>
-                            <MessageSquare size={20} className="text-[#f43f5e] opacity-60" />
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Interactions This Week</p>
+                            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                                <MessageSquare size={20} />
+                            </div>
                         </div>
-                        <div className="mt-6">
-                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">
+                        <div className="mt-8">
+                            <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">
                                 {interactionsThisWeek}
                             </h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-2 tracking-tight">Log interactions to track</p>
+                            <p className="text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-widest">Weekly touchpoints</p>
                         </div>
                     </motion.div>
 
                     <motion.div
-                        whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500"
+                        whileHover={{ y: -12, scale: 1.05 }}
+                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500 shadow-rose-200/20 dark:shadow-none"
                     >
                         <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Gratitude Entries</p>
-                            <Heart size={20} className="text-[#f43f5e] opacity-60" />
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Gratitude Entries</p>
+                            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                <Heart size={20} />
+                            </div>
                         </div>
-                        <div className="mt-6">
-                            <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{gratitudeEntries.length}</h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-2 tracking-tight">Insights from your heart</p>
+                        <div className="mt-8">
+                            <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{gratitudeEntries.length}</h4>
+                            <p className="text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-widest">Moments of reflection</p>
                         </div>
                     </motion.div>
                 </div>
@@ -236,57 +245,67 @@ export function SocialModule({ onUpdate, user }) {
             {/* Main Content Sections */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Your Connections List */}
-                <div className="glass-card p-10">
+                <div className="glass-card p-10 bg-white/40 dark:bg-[#0f111a]/40 border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-500">
                     <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Your Connections</h3>
                     {loading ? (
                         <div className="text-center py-12 text-slate-400">Loading...</div>
                     ) : connections.length > 0 ? (
-                        <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {connections.map((conn) => (
                                 <motion.div
                                     key={conn._id}
                                     whileHover={{ y: -8, scale: 1.02 }}
-                                    className="p-6 glass rounded-[2.5rem] group relative overflow-hidden interactive-hover cursor-pointer border-transparent"
+                                    className="p-8 glass rounded-[3rem] group relative overflow-hidden interactive-hover cursor-pointer border-transparent bg-white/20 dark:bg-slate-800/10 backdrop-blur-xl transition-all duration-500"
                                 >
                                     <div className="flex flex-col items-center text-center">
-                                        <div className="w-20 h-20 rounded-full bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center text-rose-500 mb-6 group-hover:scale-110 transition-transform duration-500 shadow-inner">
-                                            {conn.avatar || <Users size={32} />}
-                                        </div>
-                                        <h4 className="font-bold text-[#0f172a] dark:text-white text-lg">{conn.name}</h4>
-                                        <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">{conn.type}</p>
-
-                                        <div className="mt-8 w-full">
-                                            <div className="flex justify-between items-center mb-2 px-1">
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase">Closeness</span>
-                                                <span className="text-[10px] font-bold text-rose-500">Lv.{conn.closeness || 1}</span>
+                                        <div className="relative">
+                                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-900/40 dark:to-slate-800 flex items-center justify-center text-rose-500 mb-6 group-hover:scale-110 transition-transform duration-700 shadow-inner border border-white/50 dark:border-slate-700/50">
+                                                {conn.avatar || <Users size={40} className="opacity-80" />}
                                             </div>
-                                            <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                                <div
-                                                    className="h-full bg-rose-500 transition-all duration-1000"
-                                                    style={{ width: `${((conn.closeness || 1) / 10) * 100}%` }}
+                                            <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[#10b981] border-4 border-white dark:border-slate-800 flex items-center justify-center text-white">
+                                                <Heart size={14} />
+                                            </div>
+                                        </div>
+
+                                        <h4 className="font-display font-bold text-[#0f172a] dark:text-white text-xl tracking-tight">{conn.name}</h4>
+                                        <span className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-[0.2em]">{conn.type}</span>
+
+                                        <div className="mt-8 w-full px-2">
+                                            <div className="flex justify-between items-center mb-3">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-[9px]">Closeness Affinity</span>
+                                                <span className="text-[10px] font-bold text-rose-500">LV.{conn.closeness || 1}</span>
+                                            </div>
+                                            <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden p-0.5">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${((conn.closeness || 1) / 10) * 100}%` }}
+                                                    transition={{ duration: 1, delay: 0.2 }}
+                                                    className="h-full bg-gradient-to-r from-rose-400 to-rose-600 rounded-full"
                                                 />
                                             </div>
                                         </div>
 
-                                        <div className="mt-6 flex items-center space-x-3">
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleDeleteRelationship(conn._id); }}
-                                                className="p-2.5 bg-white/80 dark:bg-slate-900/80 text-red-500 hover:bg-rose-500 hover:text-white dark:hover:bg-rose-500 rounded-xl transition-all duration-300 shadow-sm border border-slate-100 dark:border-slate-800"
-                                                title="Remove Connection"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
+                                        <div className="mt-8 flex items-center justify-center space-x-3 opacity-60 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleInteraction(conn._id, conn.name, 'call'); }}
-                                                className="p-2.5 bg-white/80 dark:bg-slate-900/80 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors shadow-sm border border-slate-100 dark:border-slate-800"
+                                                className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-900 text-slate-500 hover:text-white hover:bg-rose-500 transition-all shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-center"
+                                                title="Log Call"
                                             >
                                                 <Phone size={18} />
                                             </button>
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleInteraction(conn._id, conn.name, 'message'); }}
-                                                className="p-2.5 bg-white/80 dark:bg-slate-900/80 text-slate-400 hover:text-[#f43f5e] hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors shadow-sm border border-slate-100 dark:border-slate-800"
+                                                className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-900 text-slate-500 hover:text-white hover:bg-rose-500 transition-all shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-center"
+                                                title="Log Message"
                                             >
-                                                <MessageCircle size={18} />
+                                                <MessageSquare size={18} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handleDeleteRelationship(conn._id); }}
+                                                className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-900 text-red-500 hover:text-white hover:bg-rose-500 transition-all shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-center"
+                                                title="Remove Connection"
+                                            >
+                                                <Trash2 size={18} />
                                             </button>
                                         </div>
                                     </div>
@@ -294,9 +313,9 @@ export function SocialModule({ onUpdate, user }) {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-20 bg-slate-50 dark:bg-slate-800/20 rounded-3xl border-2 border-dashed border-slate-100 dark:border-slate-800">
-                            <Users size={40} className="mx-auto text-slate-300 mb-4" />
-                            <p className="text-slate-500 font-medium">Add your inner circle to begin tracking wellness.</p>
+                        <div className="text-center py-24 bg-slate-50/50 dark:bg-slate-800/20 rounded-[3rem] border-2 border-dashed border-slate-100 dark:border-slate-800/50">
+                            <Users size={48} className="mx-auto text-slate-200 mb-6" />
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Your inner circle is empty</p>
                         </div>
                     )}
                 </div>

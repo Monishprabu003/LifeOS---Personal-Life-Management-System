@@ -62,6 +62,7 @@ export function GoalsModule({ onUpdate, user }) {
 
     // Form State
     const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
     const [category, setCategory] = useState('Career');
     const [deadline, setDeadline] = useState('');
     const [priority, setPriority] = useState('high');
@@ -84,6 +85,7 @@ export function GoalsModule({ onUpdate, user }) {
         try {
             await goalsAPI.createGoal({
                 title,
+                description,
                 category,
                 deadline: deadline ? new Date(deadline) : undefined,
                 priority,
@@ -92,6 +94,7 @@ export function GoalsModule({ onUpdate, user }) {
             });
             setShowForm(false);
             setTitle('');
+            setDescription('');
             setCategory('Career');
             setDeadline('');
             setPriority('high');

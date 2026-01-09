@@ -219,21 +219,26 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
             {/* Top Row: Unified Score & Weekly Performance */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <motion.div
-                    whileHover={{ y: -5, scale: 1.01 }}
-                    className="lg:col-span-4 glass-card p-10 flex flex-col items-center justify-center transition-all duration-500"
+                    whileHover={{ y: -8, scale: 1.01 }}
+                    className="lg:col-span-4 glass-card p-10 flex flex-col items-center justify-center transition-all duration-500 bg-white/40 dark:bg-[#0f111a]/40"
                 >
-                    <h3 className="text-lg font-bold text-[#0f172a] dark:text-white mb-8">Unified Life Score</h3>
-                    <CircularProgress value={user?.lifeScore || 0} color="#10b981" size={180} strokeWidth={14} />
+                    <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white mb-8">Unified Life Score</h3>
+                    <div className="relative p-6 rounded-full bg-white/20 dark:bg-slate-800/20 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 shadow-inner">
+                        <CircularProgress value={user?.lifeScore || 0} color="#10b981" size={180} strokeWidth={14} />
+                    </div>
                     <div className="mt-8 text-center">
-                        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Your overall life performance</p>
-                        <div className={`flex items-center justify-center space-x-1 mt-2 font-bold text-sm ${trend.status === 'positive' ? 'text-green-500' : trend.status === 'negative' ? 'text-rose-500' : 'text-slate-400'}`}>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold tracking-tight">Your overall life performance</p>
+                        <div className={`flex items-center justify-center space-x-1 mt-3 font-bold text-sm ${trend.status === 'positive' ? 'text-green-500' : trend.status === 'negative' ? 'text-rose-500' : 'text-slate-400'}`}>
                             {trend.status !== 'neutral' && <TrendingUp size={16} className={trend.status === 'negative' ? 'rotate-180' : ''} />}
-                            <span>{trend.label}</span>
+                            <span className="uppercase tracking-widest text-[10px]">{trend.label}</span>
                         </div>
                     </div>
                 </motion.div>
 
-                <div className="lg:col-span-8 glass-card p-10 min-h-[400px]">
+                <motion.div
+                    whileHover={{ y: -5 }}
+                    className="lg:col-span-8 glass-card p-10 min-h-[400px] bg-white/40 dark:bg-[#0f111a]/40 transition-all duration-500"
+                >
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">{trendPeriod === 'daily' ? 'Daily' : 'Weekly'} Performance</h3>
@@ -254,57 +259,55 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                             </button>
                         </div>
                     </div>
-                    <div className="h-[280px] w-full">
+                    <div className="h-[280px] w-full mt-4">
                         {events.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorPerf" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
                                             <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="text-slate-100 dark:text-white/10" />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.1)" />
                                     <XAxis
                                         dataKey="name"
                                         axisLine={false}
                                         tickLine={false}
                                         tick={{ fill: 'rgba(148, 163, 184, 0.8)', fontSize: 10, fontWeight: 700 }}
                                         dy={10}
-                                        className="recharts-cartesian-axis-tick-text"
                                     />
                                     <YAxis
                                         axisLine={false}
                                         tickLine={false}
                                         tick={{ fill: 'rgba(148, 163, 184, 0.8)', fontSize: 10, fontWeight: 700 }}
                                         domain={[0, 100]}
-                                        className="recharts-cartesian-axis-tick-text"
                                     />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', fontSize: '12px', fontWeight: 'bold' }}
+                                        contentStyle={{ borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', fontSize: '12px', fontWeight: 'bold' }}
                                         itemStyle={{ color: '#3b82f6' }}
-                                        cursor={{ stroke: '#3b82f6', strokeWidth: 2, strokeDasharray: '5 5' }}
                                     />
                                     <Area
-                                        type="monotone"
+                                        type="monotoneX"
                                         dataKey="performance"
                                         stroke="#3b82f6"
-                                        strokeWidth={4}
+                                        strokeWidth={5}
                                         fillOpacity={1}
                                         fill="url(#colorPerf)"
-                                        dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }}
-                                        activeDot={{ r: 6, strokeWidth: 0 }}
+                                        dot={{ r: 5, fill: '#3b82f6', strokeWidth: 3, stroke: '#fff' }}
+                                        activeDot={{ r: 8, strokeWidth: 0 }}
+                                        animationDuration={2000}
                                     />
                                 </AreaChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
-                                <TrendingUp size={48} className="mx-auto mb-4 text-slate-300" />
-                                <p className="text-slate-500 font-medium italic">Perform some life actions to generate performance metrics</p>
+                            <div className="h-full flex flex-col items-center justify-center text-center opacity-30">
+                                <Activity size={48} className="mx-auto mb-4 text-slate-300" />
+                                <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Collect data to see metrics</p>
                             </div>
                         )}
                     </div>
-                </div>
+                </motion.div>
             </div>
 
             {/* Middle Row: Module Scores */}
@@ -320,8 +323,8 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                             color: 'emerald',
                             icon: Heart,
                             tab: 'health',
-                            gradient: 'from-emerald-500/10 to-transparent',
-                            darkGradient: 'dark:from-emerald-500/5 dark:to-[#1a1c2e]'
+                            gradient: 'from-emerald-500/20 to-emerald-500/5',
+                            shadow: 'shadow-emerald-200/40 dark:shadow-none'
                         },
                         {
                             name: 'Wealth',
@@ -329,8 +332,8 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                             color: 'blue',
                             icon: Wallet,
                             tab: 'wealth',
-                            gradient: 'from-blue-500/10 to-transparent',
-                            darkGradient: 'dark:from-blue-500/5 dark:to-[#1a1c2e]'
+                            gradient: 'from-blue-500/20 to-blue-500/5',
+                            shadow: 'shadow-blue-200/40 dark:shadow-none'
                         },
                         {
                             name: 'Relationships',
@@ -338,8 +341,8 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                             color: 'rose',
                             icon: Users,
                             tab: 'relationships',
-                            gradient: 'from-rose-500/10 to-transparent',
-                            darkGradient: 'dark:from-rose-500/5 dark:to-[#1a1c2e]'
+                            gradient: 'from-rose-500/20 to-rose-500/5',
+                            shadow: 'shadow-rose-200/40 dark:shadow-none'
                         },
                         {
                             name: 'Habits',
@@ -347,8 +350,8 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                             color: 'amber',
                             icon: CheckSquare,
                             tab: 'habits',
-                            gradient: 'from-amber-500/10 to-transparent',
-                            darkGradient: 'dark:from-amber-500/5 dark:to-[#1a1c2e]'
+                            gradient: 'from-amber-500/20 to-amber-500/5',
+                            shadow: 'shadow-amber-200/40 dark:shadow-none'
                         },
                         {
                             name: 'Purpose',
@@ -356,17 +359,17 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                             color: 'violet',
                             icon: Target,
                             tab: 'goals',
-                            gradient: 'from-violet-500/10 to-transparent',
-                            darkGradient: 'dark:from-violet-500/5 dark:to-[#1a1c2e]'
+                            gradient: 'from-violet-500/20 to-violet-500/5',
+                            shadow: 'shadow-violet-200/40 dark:shadow-none'
                         },
                     ].map((module) => {
                         const Icon = module.icon;
                         const colorClass = {
-                            emerald: 'border-emerald-500/20 text-emerald-500 bg-emerald-500/5',
-                            blue: 'border-blue-500/20 text-blue-500 bg-blue-500/5',
-                            rose: 'border-rose-500/20 text-rose-500 bg-rose-500/5',
-                            amber: 'border-amber-500/20 text-amber-500 bg-amber-500/5',
-                            violet: 'border-violet-500/20 text-violet-500 bg-violet-500/5',
+                            emerald: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+                            blue: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+                            rose: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+                            amber: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+                            violet: 'bg-violet-500/10 text-violet-500 border-violet-500/20',
                         }[module.color];
 
                         const barClass = {
@@ -380,33 +383,30 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                         return (
                             <motion.div
                                 key={module.name}
-                                whileHover={{ y: -8, scale: 1.02 }}
+                                whileHover={{ y: -12, scale: 1.05 }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={() => setActiveTab && setActiveTab(module.tab)}
-                                className={`relative overflow-hidden glass rounded-[2rem] p-6 flex flex-col justify-between h-[160px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 group overflow-hidden`}
+                                className={`relative group cursor-pointer glass p-8 rounded-[2.5rem] h-[180px] transition-all duration-500 ${module.shadow}`}
                             >
-                                {/* Background Gradient */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${module.gradient} ${module.darkGradient} opacity-50`} />
+                                <div className={`absolute inset-0 bg-gradient-to-br ${module.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem]`} />
 
                                 <div className="relative z-10 flex flex-col justify-between h-full">
                                     <div className="flex items-start justify-between">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${colorClass}`}>
-                                            <Icon size={20} />
+                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border backdrop-blur-md transition-all duration-500 group-hover:scale-110 ${colorClass}`}>
+                                            <Icon size={24} />
                                         </div>
-                                        <div className={`w-1.5 h-8 rounded-full ${barClass} opacity-80 group-hover:opacity-100 transition-opacity`} />
+                                        <div className={`w-1.5 h-10 rounded-full ${barClass} opacity-60 group-hover:opacity-100 group-hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all`} />
                                     </div>
 
                                     <div>
-                                        <div className="text-3xl font-display font-bold text-slate-800 dark:text-white leading-none">
+                                        <div className="text-4xl font-display font-bold text-slate-800 dark:text-white leading-none tracking-tight">
                                             {Math.round(module.score)}
                                         </div>
-                                        <div className="text-sm font-semibold text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-tight">
+                                        <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-2 uppercase tracking-[0.2em] transition-colors group-hover:text-slate-500">
                                             {module.name}
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Active Selection Border */}
-                                <div className={`absolute inset-0 border-2 border-transparent group-hover:border-${module.color}-500/20 rounded-[1.5rem] transition-colors pointer-events-none`} />
                             </motion.div>
                         );
                     })}

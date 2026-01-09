@@ -295,7 +295,10 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Left: Edit Profile */}
                 <div className="lg:col-span-7 space-y-8">
-                    <div className="bg-white dark:bg-[#1a1c2e] rounded-[2.5rem] p-8 border border-slate-100 dark:border-[#222436] shadow-sm">
+                    <motion.div
+                        whileHover={{ y: -5 }}
+                        className="glass-card p-10 bg-white/40 dark:bg-[#0f111a]/40 border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-500"
+                    >
                         <h3 className="text-xl font-bold text-[#0f172a] dark:text-white mb-8">Edit Profile</h3>
 
                         <form onSubmit={handleSave} className="space-y-6">
@@ -364,12 +367,15 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], 
                                 )}
                             </motion.button>
                         </form>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* Right: Achievements */}
                 <div className="lg:col-span-5 space-y-8">
-                    <div className="bg-white dark:bg-[#1a1c2e] rounded-[2.5rem] p-8 border border-slate-100 dark:border-[#222436] shadow-sm h-full">
+                    <motion.div
+                        whileHover={{ y: -5 }}
+                        className="glass-card p-10 bg-white/40 dark:bg-[#0f111a]/40 border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-500 h-full"
+                    >
                         <div className="flex items-center space-x-3 mb-8">
                             <Award className="text-amber-500" size={20} />
                             <h3 className="text-lg font-bold text-[#0f172a] dark:text-white">Achievements</h3>
@@ -399,9 +405,10 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], 
                                 );
                             })}
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </div>
     );
 }
+

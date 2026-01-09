@@ -142,91 +142,106 @@ export function HabitsModule({ onUpdate, user }) {
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                 {/* Today's Progress */}
                 <motion.div
-                    whileHover={{ y: -5, scale: 1.01 }}
-                    className="md:col-span-1 glass-card p-8 flex flex-col items-center justify-center text-center transition-all duration-500"
+                    whileHover={{ y: -8, scale: 1.01 }}
+                    className="md:col-span-1 glass-card p-10 flex flex-col items-center justify-center text-center transition-all duration-500 bg-white/40 dark:bg-[#0f111a]/40"
                 >
-                    <h3 className="text-sm font-bold text-[#0f172a] dark:text-white mb-6">Today's Progress</h3>
-                    <div className="relative w-32 h-32 flex items-center justify-center">
-                        <svg className="w-full h-full transform -rotate-90">
+                    <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white mb-8">Daily Flow</h3>
+                    <div className="relative w-36 h-36 flex items-center justify-center bg-white/20 dark:bg-slate-800/20 backdrop-blur-xl rounded-full border border-white/30 dark:border-slate-700/30 shadow-inner">
+                        <svg className="w-full h-full transform -rotate-90 p-4">
                             <circle
-                                cx="64"
-                                cy="64"
-                                r="58"
+                                cx="72"
+                                cy="72"
+                                r="62"
                                 stroke="currentColor"
-                                strokeWidth="8"
+                                strokeWidth="10"
                                 fill="transparent"
-                                className="text-orange-50 dark:text-slate-800"
+                                className="text-slate-100/50 dark:text-slate-800/50"
                             />
-                            <circle
-                                cx="64"
-                                cy="64"
-                                r="58"
+                            <motion.circle
+                                cx="72"
+                                cy="72"
+                                r="62"
                                 stroke="#f59e0b"
-                                strokeWidth="8"
+                                strokeWidth="10"
                                 fill="transparent"
-                                strokeDasharray={364.4}
-                                strokeDashoffset={364.4 - (364.4 * progressPercent) / 100}
+                                strokeDasharray={389.5}
+                                strokeDashoffset={389.5 - (389.5 * progressPercent) / 100}
                                 strokeLinecap="round"
                                 className="transition-all duration-1000 ease-out"
                             />
                         </svg>
-                        <span className="absolute text-4xl font-display font-bold text-[#0f172a] dark:text-white">{progressPercent}</span>
+                        <span className="absolute text-4xl font-display font-bold text-[#0f172a] dark:text-white">{progressPercent}%</span>
                     </div>
-                    <p className="mt-6 text-xs font-bold text-slate-400 uppercase tracking-wider">{completedCount}/{totalCount} habits completed</p>
+                    <p className="mt-8 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{completedCount}/{totalCount} Completed</p>
                 </motion.div>
 
                 {/* Active Habits */}
                 <motion.div
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500"
+                    whileHover={{ y: -12, scale: 1.05 }}
+                    className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500 shadow-orange-200/20 dark:shadow-none"
                 >
                     <div className="flex justify-between items-start">
-                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Active Habits</p>
-                        <Layout size={20} className="text-[#f59e0b] opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Active Rituals</p>
+                        <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-[#f59e0b]">
+                            <Layout size={20} />
+                        </div>
                     </div>
-                    <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">{totalCount}</h4>
+                    <div className="mt-8">
+                        <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{totalCount}</h4>
+                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Ongoing commitments</p>
+                    </div>
                 </motion.div>
 
                 {/* Completed Today */}
                 <motion.div
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500"
+                    whileHover={{ y: -12, scale: 1.05 }}
+                    className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500 shadow-orange-200/20 dark:shadow-none"
                 >
                     <div className="flex justify-between items-start">
-                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Completed Today</p>
-                        <Target size={20} className="text-[#f59e0b] opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Completed Today</p>
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                            <Target size={20} />
+                        </div>
                     </div>
-                    <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">{completedCount}</h4>
+                    <div className="mt-8">
+                        <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{completedCount}</h4>
+                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Wins documented</p>
+                    </div>
                 </motion.div>
 
                 {/* Longest Streak */}
                 <motion.div
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500"
+                    whileHover={{ y: -12, scale: 1.05 }}
+                    className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500 shadow-orange-200/20 dark:shadow-none"
                 >
                     <div className="flex justify-between items-start">
-                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Longest Streak</p>
-                        <Flame size={20} className="text-[#f59e0b] opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Mastery Streak</p>
+                        <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
+                            <Flame size={20} />
+                        </div>
                     </div>
-                    <div className="mt-4">
-                        <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{longestStreak} days</h4>
+                    <div className="mt-8">
+                        <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{longestStreak} Days</h4>
+                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Personal record</p>
                     </div>
                 </motion.div>
 
                 {/* Weekly Score */}
                 <motion.div
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500"
+                    whileHover={{ y: -12, scale: 1.05 }}
+                    className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500 shadow-orange-200/20 dark:shadow-none"
                 >
                     <div className="flex justify-between items-start">
-                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Weekly Score</p>
-                        <TrendingUp size={20} className="text-[#f59e0b] opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Session Accuracy</p>
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                            <TrendingUp size={20} />
+                        </div>
                     </div>
-                    <div className="mt-4">
-                        <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">
+                    <div className="mt-8">
+                        <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white italic tracking-tight">
                             {progressPercent}%
                         </h4>
-                        <p className="text-[10px] font-bold text-slate-400 mt-2">Active session accuracy</p>
+                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Consistency rating</p>
                     </div>
                 </motion.div>
             </div>
