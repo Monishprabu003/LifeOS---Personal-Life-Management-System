@@ -8,9 +8,51 @@ import {
     BookOpen,
     CheckCircle2,
     Circle,
-    Trash2
+    Trash2,
+    Trophy
 } from 'lucide-react';
 import { goalsAPI, tasksAPI } from '../api';
+
+const CircularProgress = ({ value, label, size = 160, strokeWidth = 12, color = '#8b5cf6' }) => {
+    const radius = (size - strokeWidth) / 2;
+    const circumference = radius * 2 * Math.PI;
+    const offset = circumference - (value / 100) * circumference;
+
+    return (
+        <div className="flex flex-col items-center">
+            <div className="relative" style={{ width: size, height: size }}>
+                <svg width={size} height={size} className="transform -rotate-90">
+                    <circle
+                        cx={size / 2}
+                        cy={size / 2}
+                        r={radius}
+                        stroke="currentColor"
+                        strokeWidth={strokeWidth}
+                        fill="transparent"
+                        className="text-slate-100 dark:text-slate-800"
+                    />
+                    <motion.circle
+                        cx={size / 2}
+                        cy={size / 2}
+                        r={radius}
+                        stroke={color}
+                        strokeWidth={strokeWidth}
+                        fill="transparent"
+                        strokeDasharray={circumference}
+                        initial={{ strokeDashoffset: circumference }}
+                        animate={{ strokeDashoffset: offset }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        strokeLinecap="round"
+                    />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{value}</span>
+                </div>
+            </div>
+            {label && <p className="mt-4 text-xs font-bold text-slate-400 text-center uppercase tracking-widest">{label}</p>}
+        </div>
+    );
+};
 
 
 export function GoalsModule({ onUpdate, user }) {
@@ -99,12 +141,20 @@ export function GoalsModule({ onUpdate, user }) {
         }
     };
 
+    const calculateProgress = (goal) => {
+        if (!goal.tasks || goal.tasks.length === 0) return goal.progress || 0;
+        const completed = goal.tasks.filter(t => t.status === 'completed').length;
+        return Math.round((completed / goal.tasks.length) * 100);
+    };
+
     const categories = ['Career', 'Skills', 'Health', 'Wealth', 'Personal'];
 
     // Real stats calculation
     const averageProgress = goals.length > 0
-        ? Math.round(goals.reduce((acc, g) => acc + g.progress, 0) / goals.length)
+        ? Math.round(goals.reduce((acc, g) => acc + calculateProgress(g), 0) / goals.length)
         : 0;
+
+    const goalScore = averageProgress;
 
     return (
         <div className="space-y-10 pb-20">
@@ -135,8 +185,7 @@ export function GoalsModule({ onUpdate, user }) {
                     className="md:col-span-1 glass-card p-10 flex flex-col items-center justify-center text-center transition-all duration-500"
                 >
                     <h3 className="text-sm font-bold text-[#0f172a] dark:text-white mb-8">Purpose Score</h3>
-                    <CircularProgress value={goalScore} color="#8b5cf6" size={150} strokeWidth={12} />
-                    <p className="mt-8 text-xs font-bold text-slate-400 uppercase tracking-widest">Vision Alignment</p>
+                    <CircularProgress value={goalScore} label="Vision Alignment" size={150} strokeWidth={12} />
                 </motion.div>
 
                 <motion.div
@@ -145,7 +194,7 @@ export function GoalsModule({ onUpdate, user }) {
                 >
                     <div className="flex justify-between items-start">
                         <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Active Goals</p>
-                        <Target size={20} className="text-violet-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <Target size={20} className="text-[#8b5cf6] opacity-60 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">{goals.length}</h4>
                 </motion.div>
@@ -156,24 +205,27 @@ export function GoalsModule({ onUpdate, user }) {
                 >
                     <div className="flex justify-between items-start">
                         <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Achievements</p>
-                        <Trophy size={20} className="text-violet-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <Trophy size={20} className="text-[#8b5cf6] opacity-60 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">
                         {goals.filter(g => calculateProgress(g) === 100).length}
                     </h4>
                 </motion.div>
 
-                <div className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-purple-50/30 dark:bg-purple-500/5">
+                <motion.div
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-violet-50/20 dark:bg-violet-500/5 transition-all duration-500"
+                >
                     <div className="flex justify-between items-start">
                         <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Total Tasks</p>
-                        <BookOpen size={20} className="text-[#8b5cf6]" />
+                        <BookOpen size={20} className="text-[#8b5cf6] opacity-60 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div className="mt-4">
                         <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white">
                             {goals.reduce((s, g) => s + (g.tasks?.length || 0), 0)}
                         </h4>
                     </div>
-                </div>
+                </motion.div>
             </div>
 
             {/* Goals List Section */}

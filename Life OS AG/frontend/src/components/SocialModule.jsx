@@ -146,6 +146,13 @@ export function SocialModule({ onUpdate, user }) {
     };
 
     const socialScore = connections.length > 0 ? Math.min(connections.length * 10, 100) : 0;
+    const interactionsThisWeek = gratitudeEntries.filter(e => {
+        const entryDate = new Date(e.timestamp || e.createdAt);
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return entryDate >= oneWeekAgo;
+    }).length;
+
     const tasks = [];
 
     return (
@@ -163,7 +170,7 @@ export function SocialModule({ onUpdate, user }) {
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="bg-[#f43f5e] hover:bg-[#e11d48] text-white px-8 py-4 rounded-2xl font-bold flex items-center space-x-3 transition-all shadow-lg shadow-rose-100 dark:shadow-none"
+                    className="bg-[#f43f5e] hover:bg-[#e11d48] text-white px-8 py-4 rounded-2xl font-bold flex items-center space-x-3 transition-all shadow-lg shadow-rose-100 dark:shadow-none active:scale-95"
                 >
                     <Plus size={20} />
                     <span>Add Connection</span>
@@ -183,11 +190,11 @@ export function SocialModule({ onUpdate, user }) {
                 <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-6">
                     <motion.div
                         whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/30 dark:bg-rose-500/5"
+                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500"
                     >
                         <div className="flex justify-between items-start">
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Connections</p>
-                            <Users size={20} className="text-[#f43f5e]" />
+                            <Users size={20} className="text-[#f43f5e] opacity-60" />
                         </div>
                         <div className="mt-6">
                             <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{connections.length}</h4>
@@ -196,31 +203,31 @@ export function SocialModule({ onUpdate, user }) {
 
                     <motion.div
                         whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/30 dark:bg-rose-500/5"
+                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500"
                     >
                         <div className="flex justify-between items-start">
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Interactions This Week</p>
-                            <MessageSquare size={20} className="text-[#f43f5e]" />
+                            <MessageSquare size={20} className="text-[#f43f5e] opacity-60" />
                         </div>
                         <div className="mt-6">
                             <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">
                                 {interactionsThisWeek}
                             </h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-2">Log interactions to track</p>
+                            <p className="text-[10px] font-bold text-slate-400 mt-2 tracking-tight">Log interactions to track</p>
                         </div>
                     </motion.div>
 
                     <motion.div
                         whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/30 dark:bg-rose-500/5"
+                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500"
                     >
                         <div className="flex justify-between items-start">
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Gratitude Entries</p>
-                            <Heart size={20} className="text-[#f43f5e]" />
+                            <Heart size={20} className="text-[#f43f5e] opacity-60" />
                         </div>
                         <div className="mt-6">
                             <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white">{gratitudeEntries.length}</h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-2">Start your journal below</p>
+                            <p className="text-[10px] font-bold text-slate-400 mt-2 tracking-tight">Insights from your heart</p>
                         </div>
                     </motion.div>
                 </div>
