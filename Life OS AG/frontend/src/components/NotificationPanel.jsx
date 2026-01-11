@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Bell, Activity, CheckCircle2, ShoppingCart } from 'lucide-react';
 
 
-export function NotificationPanel({ isOpen, onClose, notifications }) {
+export function NotificationPanel({ isOpen, onClose, notifications, isDarkMode }) {
     return (
         <AnimatePresence>
             {isOpen && (

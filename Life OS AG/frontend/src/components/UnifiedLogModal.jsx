@@ -18,7 +18,7 @@ import {
 import { healthAPI, financeAPI, habitsAPI, goalsAPI, socialAPI, tasksAPI } from '../api';
 
 
-export function UnifiedLogModal({ isOpen, onClose, onSuccess }) {
+export function UnifiedLogModal({ isOpen, onClose, onSuccess, isDarkMode }) {
     const [activeTab, setActiveTab] = useState('health');
     const [loading, setLoading] = useState(false);
 

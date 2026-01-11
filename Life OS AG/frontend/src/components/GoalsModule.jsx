@@ -61,7 +61,7 @@ const CircularProgress = ({ value, label, size = 160, color = '#8b5cf6' }) => {
 };
 
 
-export function GoalsModule({ onUpdate, user }) {
+export function GoalsModule({ onUpdate, user, isDarkMode }) {
     const [goals, setGoals] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [newTaskTitle, setNewTaskTitle] = useState({});
@@ -181,7 +181,7 @@ export function GoalsModule({ onUpdate, user }) {
             {/* Header Section */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-5">
-                    <div className="w-14 h-14 rounded-[1.25rem] bg-[#8b5cf6] flex items-center justify-center text-white shadow-lg shadow-purple-200 dark:shadow-none">
+                    <div className={`w-14 h-14 rounded-[1.25rem] bg-[#8b5cf6] flex items-center justify-center text-white shadow-lg ${isDarkMode ? 'shadow-none' : 'shadow-purple-200'}`}>
                         <Target size={28} />
                     </div>
                     <div>

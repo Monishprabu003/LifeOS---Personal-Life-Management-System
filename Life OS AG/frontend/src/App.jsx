@@ -16,7 +16,9 @@ import {
   Compass,
   PanelLeftClose,
   PanelLeftOpen,
-  Bell
+  Bell,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, habitsAPI, goalsAPI, kernelAPI } from './api';
@@ -42,6 +44,10 @@ function App() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [totalEvents, setTotalEvents] = useState(0);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('lifeos_dark_mode');
+    return saved ? JSON.parse(saved) : false;
+  });
 
   // Auth Flow State
   const [authMode, setAuthMode] = useState('signin');
@@ -49,6 +55,15 @@ function App() {
   const [password, setPassword] = useState('password123');
   const [name, setName] = useState('');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('lifeos_dark_mode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
 
   const fetchAppData = useCallback(async () => {
     try {
@@ -109,37 +124,47 @@ function App() {
 
   if (!token) {
     return (
-      <div className="h-screen w-full bg-[#f8fafc] flex flex-col items-center justify-center p-6 text-[#1e293b]">
+      <div className={`h-screen w-full flex flex-col items-center justify-center p-6 transition-colors duration-300 ${isDarkMode ? 'bg-[#0a0b14] text-white' : 'bg-[#f8fafc] text-[#1e293b]'}`}>
+        {/* Dark Mode Toggle for Login Page */}
+        <div className="absolute top-10 right-10">
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className={`p-3 rounded-2xl transition-all ${isDarkMode ? 'bg-white/10 text-amber-400' : 'bg-slate-100 text-slate-600'}`}
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        </div>
+
         {/* Logo Section */}
         <div className="flex items-center space-x-3 mb-12">
-          <div className="w-12 h-12 rounded-xl bg-[#10b981] flex items-center justify-center shadow-lg shadow-green-200">
+          <div className="w-12 h-12 rounded-xl bg-[#10b981] flex items-center justify-center shadow-lg shadow-green-200 dark:shadow-none">
             <Activity className="text-white" size={28} />
           </div>
-          <span className="text-3xl font-display font-bold tracking-tight text-[#0f172a]">LifeOS</span>
+          <span className={`text-3xl font-display font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-[#0f172a]'}`}>LifeOS</span>
         </div>
 
         {/* Login Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-[440px] bg-white rounded-[2rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100"
+          className={`w-full max-w-[440px] rounded-[2rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border transition-all ${isDarkMode ? 'bg-[#11121d] border-white/5' : 'bg-white border-slate-100'}`}
         >
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-display font-bold text-[#0f172a] mb-3">Welcome</h1>
+            <h1 className={`text-3xl font-display font-bold mb-3 ${isDarkMode ? 'text-white' : 'text-[#0f172a]'}`}>Welcome</h1>
             <p className="text-slate-500 text-sm">Sign in to your account or create a new one to get started</p>
           </div>
 
           {/* Tab Switcher */}
-          <div className="flex p-1.5 bg-slate-100/80 rounded-2xl mb-8">
+          <div className={`flex p-1.5 rounded-2xl mb-8 ${isDarkMode ? 'bg-white/5' : 'bg-slate-100/80'}`}>
             <button
               onClick={() => setAuthMode('signin')}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${authMode === 'signin' ? 'bg-white text-[#0f172a] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${authMode === 'signin' ? (isDarkMode ? 'bg-white/10 text-white shadow-sm' : 'bg-white text-[#0f172a] shadow-sm') : 'text-slate-500 hover:text-slate-700'}`}
             >
               Sign In
             </button>
             <button
               onClick={() => setAuthMode('signup')}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${authMode === 'signup' ? 'bg-white text-[#0f172a] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${authMode === 'signup' ? (isDarkMode ? 'bg-white/10 text-white shadow-sm' : 'bg-white text-[#0f172a] shadow-sm') : 'text-slate-500 hover:text-slate-700'}`}
             >
               Sign Up
             </button>
@@ -148,7 +173,7 @@ function App() {
           <form onSubmit={handleAuth} className="space-y-6">
             {authMode === 'signup' && (
               <div className="space-y-2">
-                <label className="text-xs font-bold text-[#1e293b] ml-1">Full Name</label>
+                <label className={`text-xs font-bold ml-1 ${isDarkMode ? 'text-slate-400' : 'text-[#1e293b]'}`}>Full Name</label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                   <input
@@ -157,14 +182,14 @@ function App() {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     required
-                    className="w-full bg-slate-50 border-none rounded-2xl p-4 pl-12 text-sm focus:ring-2 focus:ring-[#10b981]/20 outline-none transition-all placeholder:text-slate-400"
+                    className={`w-full border-none rounded-2xl p-4 pl-12 text-sm focus:ring-2 focus:ring-[#10b981]/20 outline-none transition-all placeholder:text-slate-400 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-slate-50'}`}
                   />
                 </div>
               </div>
             )}
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-[#1e293b] ml-1">Email</label>
+              <label className={`text-xs font-bold ml-1 ${isDarkMode ? 'text-slate-400' : 'text-[#1e293b]'}`}>Email</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input
@@ -173,13 +198,13 @@ function App() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   required
-                  className="w-full bg-slate-50 border-none rounded-2xl p-4 pl-12 text-sm focus:ring-2 focus:ring-[#10b981]/20 outline-none transition-all placeholder:text-slate-400"
+                  className={`w-full border-none rounded-2xl p-4 pl-12 text-sm focus:ring-2 focus:ring-[#10b981]/20 outline-none transition-all placeholder:text-slate-400 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-slate-50'}`}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-[#1e293b] ml-1">Password</label>
+              <label className={`text-xs font-bold ml-1 ${isDarkMode ? 'text-slate-400' : 'text-[#1e293b]'}`}>Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input
@@ -188,14 +213,14 @@ function App() {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   required
-                  className="w-full bg-slate-50 border-none rounded-2xl p-4 pl-12 text-sm focus:ring-2 focus:ring-[#10b981]/20 outline-none transition-all placeholder:text-slate-400"
+                  className={`w-full border-none rounded-2xl p-4 pl-12 text-sm focus:ring-2 focus:ring-[#10b981]/20 outline-none transition-all placeholder:text-slate-400 ${isDarkMode ? 'bg-white/5 text-white' : 'bg-slate-50'}`}
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#10b981] hover:bg-[#0da271] text-white font-bold py-4 rounded-2xl shadow-lg shadow-green-100 transition-all hover:translate-y-[-1px] active:translate-y-[0px] active:scale-[0.99]"
+              className="w-full bg-[#10b981] hover:bg-[#0da271] text-white font-bold py-4 rounded-2xl shadow-lg transition-all hover:translate-y-[-1px] active:translate-y-[0px] active:scale-[0.99] shadow-green-100 dark:shadow-none"
             >
               {authMode === 'signin' ? 'Sign In' : 'Sign Up'}
             </button>
@@ -233,16 +258,16 @@ function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] overflow-hidden text-main transition-colors duration-300">
+    <div className="flex h-screen bg-background overflow-hidden text-main transition-colors duration-300">
       {/* Sidebar */}
       <motion.aside
         initial={false}
         animate={{ width: isSidebarCollapsed ? 96 : 288 }}
-        className="glass border-r border-slate-100 flex flex-col shadow-sm z-50 overflow-hidden transition-colors duration-300"
+        className="glass border-r border-border flex flex-col shadow-sm z-50 overflow-hidden transition-colors duration-300"
       >
         <div className="p-8 flex items-center justify-between">
           <div className="flex items-center space-x-3 overflow-hidden">
-            <div className="w-10 h-10 min-w-[40px] rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-lg shadow-blue-100">
+            <div className={`w-10 h-10 min-w-[40px] rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-lg ${isDarkMode ? 'shadow-none' : 'shadow-blue-100'}`}>
               <span className="font-display font-bold text-white text-xl">L</span>
             </div>
             {!isSidebarCollapsed && (
@@ -251,7 +276,7 @@ function App() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
               >
-                <h1 className="font-display text-xl font-bold tracking-tight text-[#0f172a] leading-none">
+                <h1 className="font-display text-xl font-bold tracking-tight leading-none">
                   LifeOS
                 </h1>
                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest leading-none">Life Management</p>
@@ -342,21 +367,21 @@ function App() {
           </div>
         </div>
 
-        <div className={`p-6 mt-auto border-t border-slate-100 transition-all ${isSidebarCollapsed ? 'px-4' : 'px-6'}`}>
+        <div className="p-6 mt-auto border-t border-border transition-all px-6">
           <div className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'space-x-4'}`}>
-            <div className={`w-10 h-10 min-w-[40px] rounded-xl bg-gradient-to-br from-[#10b981] to-[#059669] flex items-center justify-center text-white font-bold shadow-md shadow-green-100 transition-all ${isSidebarCollapsed ? 'scale-110' : ''}`}>
+            <div className={`w-10 h-10 min-w-[40px] rounded-xl bg-gradient-to-br from-[#10b981] to-[#059669] flex items-center justify-center text-white font-bold shadow-md transition-all ${isDarkMode ? 'shadow-none' : 'shadow-green-100'} ${isSidebarCollapsed ? 'scale-110' : ''}`}>
               {user?.name?.charAt(0) || 'M'}
             </div>
             {!isSidebarCollapsed && (
               <div className="flex-1 overflow-hidden transition-all duration-300">
-                <p className="text-sm font-bold text-[#0f172a] truncate">{user?.name || 'Monish Prabu'}</p>
+                <p className="text-sm font-bold truncate">{user?.name || 'Monish Prabu'}</p>
                 <p className="text-[10px] font-bold text-slate-400 truncate uppercase tracking-widest">{user?.email || 'moni@lifeos.com'}</p>
               </div>
             )}
             {!isSidebarCollapsed && (
               <button
                 onClick={handleLogout}
-                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
               >
                 <LogOut size={18} />
               </button>
@@ -368,32 +393,43 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 relative overflow-y-auto custom-scrollbar">
         {/* Background Decorative Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.35] z-0 bg-[#f8fafc]">
-          <div className="blob w-[45rem] h-[45rem] bg-indigo-200/50 -top-20 -right-20 animate-blob" />
-          <div className="blob w-[40rem] h-[40rem] bg-sky-200/50 -bottom-20 -left-20 animate-blob animation-delay-2000" />
-          <div className="blob w-[35rem] h-[35rem] bg-rose-100/50 top-[20%] left-[15%] animate-blob animation-delay-4000" />
-          <div className="blob w-[30rem] h-[30rem] bg-emerald-100/50 bottom-[20%] right-[10%] animate-blob animation-delay-2000" />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.35] z-0 bg-background">
+          <div className={`blob w-[45rem] h-[45rem] -top-20 -right-20 animate-blob ${isDarkMode ? 'bg-indigo-900/20' : 'bg-indigo-200/50'}`} />
+          <div className={`blob w-[40rem] h-[40rem] -bottom-20 -left-20 animate-blob animation-delay-2000 ${isDarkMode ? 'bg-sky-900/20' : 'bg-sky-200/50'}`} />
+          <div className={`blob w-[35rem] h-[35rem] top-[20%] left-[15%] animate-blob animation-delay-4000 ${isDarkMode ? 'bg-rose-900/20' : 'bg-rose-100/50'}`} />
+          <div className={`blob w-[30rem] h-[30rem] bottom-[20%] right-[10%] animate-blob animation-delay-2000 ${isDarkMode ? 'bg-emerald-900/20' : 'bg-emerald-100/50'}`} />
         </div>
 
         {/* Header */}
         <header className="sticky top-0 z-40 glass px-10 py-6 flex items-center justify-between transition-colors duration-300 rounded-b-3xl mx-4 mt-2">
           <div className="relative z-10">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Welcome back,</p>
-            <h2 className="text-xl font-bold text-[#0f172a]">{user?.name || 'John Doe'}</h2>
+            <h2 className="text-xl font-bold">{user?.name || 'John Doe'}</h2>
           </div>
 
           <div className="flex items-center space-x-6 relative z-10">
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: 15 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="p-2.5 text-slate-400 hover:text-primary transition-colors bg-white/10 dark:bg-slate-800/50 rounded-xl border border-border"
+            >
+              {isDarkMode ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} />}
+            </motion.button>
+
+            <div className="h-8 w-[1px] bg-border" />
+
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setIsLogModalOpen(true)}
-                className="interactive-hover flex items-center space-x-2 bg-[#10b981] hover:bg-[#0da271] text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-green-100"
+                className={`interactive-hover flex items-center space-x-2 bg-[#10b981] hover:bg-[#0da271] text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg ${isDarkMode ? 'shadow-none' : 'shadow-green-100'}`}
               >
                 <Plus size={18} />
                 <span>Log Event</span>
               </button>
             </div>
 
-            <div className="h-8 w-[1px] bg-slate-200" />
+            <div className="h-8 w-[1px] bg-border" />
 
             <motion.button
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -420,14 +456,14 @@ function App() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'dashboard' && <DashboardModule user={user} habits={habits} goals={goals} onUpdate={fetchAppData} setActiveTab={setActiveTab} />}
-              {activeTab === 'health' && <HealthModule onUpdate={fetchAppData} user={user} />}
-              {activeTab === 'wealth' && <WealthModule onUpdate={fetchAppData} user={user} />}
-              {activeTab === 'habits' && <HabitsModule onUpdate={fetchAppData} user={user} />}
-              {activeTab === 'goals' && <GoalsModule onUpdate={fetchAppData} user={user} />}
-              {activeTab === 'relationships' && <SocialModule onUpdate={fetchAppData} user={user} />}
-              {activeTab === 'profile' && <ProfileModule user={user} totalEvents={totalEvents} habits={habits} goals={goals} onUpdate={fetchAppData} />}
-              {activeTab === 'settings' && <SettingsModule />}
+              {activeTab === 'dashboard' && <DashboardModule user={user} habits={habits} goals={goals} onUpdate={fetchAppData} setActiveTab={setActiveTab} isDarkMode={isDarkMode} />}
+              {activeTab === 'health' && <HealthModule onUpdate={fetchAppData} user={user} isDarkMode={isDarkMode} />}
+              {activeTab === 'wealth' && <WealthModule onUpdate={fetchAppData} user={user} isDarkMode={isDarkMode} />}
+              {activeTab === 'habits' && <HabitsModule onUpdate={fetchAppData} user={user} isDarkMode={isDarkMode} />}
+              {activeTab === 'goals' && <GoalsModule onUpdate={fetchAppData} user={user} isDarkMode={isDarkMode} />}
+              {activeTab === 'relationships' && <SocialModule onUpdate={fetchAppData} user={user} isDarkMode={isDarkMode} />}
+              {activeTab === 'profile' && <ProfileModule user={user} totalEvents={totalEvents} habits={habits} goals={goals} onUpdate={fetchAppData} isDarkMode={isDarkMode} />}
+              {activeTab === 'settings' && <SettingsModule isDarkMode={isDarkMode} />}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -438,12 +474,14 @@ function App() {
         isOpen={isLogModalOpen}
         onClose={() => setIsLogModalOpen(false)}
         onSuccess={fetchAppData}
+        isDarkMode={isDarkMode}
       />
 
       <NotificationPanel
         isOpen={isNotificationOpen}
         onClose={() => setIsNotificationOpen(false)}
         notifications={notifications}
+        isDarkMode={isDarkMode}
       />
     </div>
   );

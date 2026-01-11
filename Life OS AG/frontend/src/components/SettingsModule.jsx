@@ -9,7 +9,7 @@ import {
 import { motion } from 'framer-motion';
 import { userAPI } from '../api';
 
-export function SettingsModule() {
+export function SettingsModule({ isDarkMode }) {
     const [settings, setSettings] = useState({
         email: true,
         reminders: true,

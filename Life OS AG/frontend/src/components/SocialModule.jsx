@@ -61,7 +61,7 @@ const CircularProgress = ({ value, label }) => {
     );
 };
 
-export function SocialModule({ onUpdate, user }) {
+export function SocialModule({ onUpdate, user, isDarkMode }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [gratitudeText, setGratitudeText] = useState('');
     const [connections, setConnections] = useState([]);
@@ -164,7 +164,7 @@ export function SocialModule({ onUpdate, user }) {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-6">
-                    <div className="w-16 h-16 rounded-2xl bg-[#f43f5e] flex items-center justify-center text-white shadow-lg shadow-rose-100">
+                    <div className={`w-16 h-16 rounded-2xl bg-[#f43f5e] flex items-center justify-center text-white shadow-lg ${isDarkMode ? 'shadow-none' : 'shadow-rose-100'}`}>
                         <Users size={32} />
                     </div>
                     <div>

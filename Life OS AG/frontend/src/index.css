@@ -9,9 +9,9 @@
     --primary: 99, 102, 241;
     --secondary: 14, 165, 233;
     --health: 16, 185, 129;
-    --wealth: 245, 158, 11;
-    --habits: 139, 92, 246;
-    --goals: 59, 130, 246;
+    --wealth: 37, 99, 235;
+    --habits: 245, 158, 11;
+    --goals: 139, 92, 246;
     --relationships: 244, 63, 94;
     --accent: 219, 39, 119;
     --text-main: 15, 23, 42;
@@ -25,6 +25,20 @@
     --glass-border: 255, 255, 255;
     --glass-border-opacity: 0.8;
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  }
+
+  .dark {
+    --background: 10, 11, 20;
+    --surface: 17, 18, 30;
+    --text-main: 241, 245, 249;
+    --text-muted: 148, 163, 184;
+    --border: 30, 41, 59;
+
+    --glass-background: 17, 18, 30;
+    --glass-opacity: 0.7;
+    --glass-border: 148, 163, 184;
+    --glass-border-opacity: 0.1;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   }
 
 

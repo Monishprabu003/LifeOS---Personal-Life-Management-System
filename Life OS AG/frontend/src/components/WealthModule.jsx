@@ -70,7 +70,7 @@ const CircularProgress = ({ value, label }) => {
     );
 };
 
-export function WealthModule({ onUpdate, user }) {
+export function WealthModule({ onUpdate, user, isDarkMode }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -127,7 +127,7 @@ export function WealthModule({ onUpdate, user }) {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-6">
-                    <div className="w-16 h-16 rounded-2xl bg-[#3b82f6] flex items-center justify-center text-white shadow-lg shadow-blue-100">
+                    <div className={`w-16 h-16 rounded-2xl bg-[#3b82f6] flex items-center justify-center text-white shadow-lg ${isDarkMode ? 'shadow-none' : 'shadow-blue-100'}`}>
                         <Wallet size={32} />
                     </div>
                     <div>
@@ -233,7 +233,14 @@ export function WealthModule({ onUpdate, user }) {
                                         ))}
                                     </Pie>
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', backgroundColor: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)' }}
+                                        contentStyle={{
+                                            borderRadius: '16px',
+                                            border: 'none',
+                                            boxShadow: isDarkMode ? 'none' : '0 10px 25px rgba(0,0,0,0.05)',
+                                            backgroundColor: isDarkMode ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255,255,255,0.8)',
+                                            backdropFilter: 'blur(8px)',
+                                            color: isDarkMode ? '#fff' : '#0f172a'
+                                        }}
                                     />
                                     <Legend
                                         verticalAlign="bottom"

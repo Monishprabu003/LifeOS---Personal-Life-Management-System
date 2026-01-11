@@ -72,7 +72,7 @@ const CircularProgress = ({ value, color, showLabel = true }) => {
     );
 };
 
-export function DashboardModule({ user, setActiveTab, onUpdate }) {
+export function DashboardModule({ user, setActiveTab, onUpdate, isDarkMode }) {
     const [events, setEvents] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [trendPeriod, setTrendPeriod] = useState('daily');
@@ -258,7 +258,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <motion.div
                     whileHover={{ y: -8, scale: 1.01 }}
-                    className="lg:col-span-4 glass-card p-10 flex flex-col items-center justify-center transition-all duration-500 bg-white/40 dark:bg-surface/40"
+                    className="lg:col-span-4 glass-card p-10 flex flex-col items-center justify-center transition-all duration-500 bg-white/40 dark:bg-slate-800/20"
                 >
                     <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white mb-8">Unified Life Score</h3>
                     <div className="relative p-6 rounded-full bg-white/20 dark:bg-slate-800/20 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 shadow-inner">
@@ -275,7 +275,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
 
                 <motion.div
                     whileHover={{ y: -5 }}
-                    className="lg:col-span-8 glass-card p-10 min-h-[400px] bg-white/40 dark:bg-surface/40 transition-all duration-500"
+                    className="lg:col-span-8 glass-card p-10 min-h-[400px] bg-white/40 dark:bg-slate-800/20 transition-all duration-500"
                 >
                     <div className="flex items-center justify-between mb-8">
                         <div>
@@ -318,11 +318,20 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                                     <YAxis
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fill: 'rgba(148, 163, 184, 0.8)', fontSize: 10, fontWeight: 700 }}
+                                        tick={{ fill: isDarkMode ? '#64748b' : '#94a3b8', fontSize: 10, fontWeight: 700 }}
                                         domain={[0, 100]}
                                     />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', fontSize: '12px', fontWeight: 'bold' }}
+                                        contentStyle={{
+                                            borderRadius: '24px',
+                                            border: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)',
+                                            backgroundColor: isDarkMode ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255,255,255,0.8)',
+                                            backdropFilter: 'blur(12px)',
+                                            boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+                                            fontSize: '12px',
+                                            fontWeight: 'bold',
+                                            color: isDarkMode ? '#fff' : '#0f172a'
+                                        }}
                                         itemStyle={{ color: '#3b82f6' }}
                                     />
                                     <Area
@@ -424,7 +433,7 @@ export function DashboardModule({ user, setActiveTab, onUpdate }) {
                                 whileHover={{ y: -12, scale: 1.05 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => setActiveTab && setActiveTab(module.tab)}
-                                className={`relative group cursor-pointer glass p-8 rounded-[2.5rem] h-[180px] transition-all duration-500 border border-black ${module.shadow}`}
+                                className={`relative group cursor-pointer glass p-8 rounded-[2.5rem] h-[180px] transition-all duration-500 border ${isDarkMode ? 'border-white/5' : 'border-slate-100'} ${module.shadow}`}
                             >
                                 <div className={`absolute inset-0 bg-gradient-to-br ${module.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem]`} />
 

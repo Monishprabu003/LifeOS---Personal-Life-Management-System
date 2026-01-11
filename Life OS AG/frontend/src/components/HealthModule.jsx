@@ -65,7 +65,7 @@ const CircularProgress = ({ value, color, size = 120, strokeWidth = 10, label })
     );
 };
 
-export function HealthModule({ onUpdate, user }) {
+export function HealthModule({ onUpdate, user, isDarkMode }) {
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -228,8 +228,15 @@ export function HealthModule({ onUpdate, user }) {
                                         ticks={[0, 3, 6, 9, 12]}
                                     />
                                     <Tooltip
-                                        cursor={{ fill: 'rgba(148, 163, 184, 0.05)' }}
-                                        contentStyle={{ borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }}
+                                        cursor={{ fill: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(148, 163, 184, 0.05)' }}
+                                        contentStyle={{
+                                            borderRadius: '24px',
+                                            border: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)',
+                                            backgroundColor: isDarkMode ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255,255,255,0.8)',
+                                            backdropFilter: 'blur(12px)',
+                                            boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+                                            color: isDarkMode ? '#fff' : '#0f172a'
+                                        }}
                                     />
                                     <Bar dataKey="hours" fill="#10b981" radius={[12, 12, 4, 4]} barSize={40} />
                                 </BarChart>
@@ -267,7 +274,14 @@ export function HealthModule({ onUpdate, user }) {
                                         ticks={[0, 2, 4, 6, 8, 10]}
                                     />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }}
+                                        contentStyle={{
+                                            borderRadius: '24px',
+                                            border: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)',
+                                            backgroundColor: isDarkMode ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255,255,255,0.8)',
+                                            backdropFilter: 'blur(12px)',
+                                            boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+                                            color: isDarkMode ? '#fff' : '#0f172a'
+                                        }}
                                     />
                                     <Line type="monotoneX" dataKey="mood" stroke="#10b981" strokeWidth={4} dot={{ r: 5, fill: '#10b981', strokeWidth: 3, stroke: '#fff' }} />
                                     <Line type="monotoneX" dataKey="stress" stroke="#f43f5e" strokeWidth={4} dot={{ r: 5, fill: '#f43f5e', strokeWidth: 3, stroke: '#fff' }} />

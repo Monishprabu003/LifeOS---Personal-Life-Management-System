@@ -13,7 +13,7 @@ import {
 import api, { habitsAPI } from '../api';
 
 
-export function HabitsModule({ onUpdate, user }) {
+export function HabitsModule({ onUpdate, user, isDarkMode }) {
     const [habits, setHabits] = useState([]);
     const [showForm, setShowForm] = useState(false);
 
@@ -121,7 +121,7 @@ export function HabitsModule({ onUpdate, user }) {
             {/* Header Section */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-5">
-                    <div className="w-14 h-14 rounded-[1.25rem] bg-[#f59e0b] flex items-center justify-center text-white shadow-lg shadow-orange-200 dark:shadow-none">
+                    <div className={`w-14 h-14 rounded-[1.25rem] bg-[#f59e0b] flex items-center justify-center text-white shadow-lg ${isDarkMode ? 'shadow-none' : 'shadow-orange-200'}`}>
                         <ClipboardList size={28} />
                     </div>
                     <div>

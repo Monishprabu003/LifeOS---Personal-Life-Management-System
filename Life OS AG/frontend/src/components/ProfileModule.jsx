@@ -15,7 +15,7 @@ import {
 import { motion } from 'framer-motion';
 import { userAPI } from '../api';
 
-export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], onUpdate }) {
+export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], onUpdate, isDarkMode }) {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
