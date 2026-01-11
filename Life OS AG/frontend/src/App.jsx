@@ -266,32 +266,26 @@ function App() {
       <motion.aside
         initial={false}
         animate={{ width: isSidebarCollapsed ? 96 : 288 }}
-        className="glass border-r border-border flex flex-col shadow-sm z-50 overflow-hidden transition-colors duration-300"
+        className="bg-white dark:bg-slate-900 border-r border-slate-50 dark:border-white/5 flex flex-col z-50 overflow-hidden transition-colors duration-300"
       >
         <div className="p-8 flex items-center justify-between">
           <div className="flex items-center space-x-3 overflow-hidden">
-            <div className={`w-10 h-10 min-w-[40px] rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-lg ${isDarkMode ? 'shadow-none' : 'shadow-blue-100'}`}>
+            <div className="w-10 h-10 min-w-[40px] rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-none">
               <span className="font-display font-bold text-white text-xl">L</span>
             </div>
             {!isSidebarCollapsed && (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                className="flex flex-col"
               >
-                <h1 className="font-display text-xl font-bold tracking-tight leading-none">
+                <h1 className="font-bold text-xl tracking-tight leading-none text-[#0f172a] dark:text-white">
                   LifeOS
                 </h1>
-                <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest leading-none">Life Management</p>
+                <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest leading-none opacity-60">Life Management</p>
               </motion.div>
             )}
           </div>
-          <button
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 rounded-xl transition-all"
-          >
-            {isSidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
-          </button>
         </div>
 
         <div className="flex-1 px-4 overflow-y-auto custom-scrollbar">
@@ -305,28 +299,22 @@ function App() {
                 const Icon = module.icon;
                 const isActive = activeTab === module.id;
                 return (
-                  <motion.button
+                  <button
                     key={module.id}
-                    whileHover={{ x: isSidebarCollapsed ? 0 : 4, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                     onClick={() => setActiveTab(module.id)}
-                    className={`w-full flex items-center space-x-4 px-5 py-4 rounded-[1.5rem] transition-all duration-300 relative group ${isActive
-                      ? 'nav-active shadow-lg shadow-indigo-100'
-                      : 'nav-hover text-slate-500 hover:text-indigo-600'
+                    className={`w-full flex items-center space-x-4 px-5 py-3.5 rounded-xl transition-all duration-200 relative group truncate ${isActive
+                      ? 'bg-[#dcfce7] text-[#059669]'
+                      : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5'
                       }`}
                   >
-                    <Icon size={22} className={`${isActive ? 'scale-110' : 'group-hover:scale-110 transition-transform duration-300'} relative z-10`} />
-                    {!isSidebarCollapsed && (
-                      <span className="font-bold text-sm tracking-tight relative z-10">{module.name}</span>
-                    )}
                     {isActive && (
-                      <motion.div
-                        layoutId="activeNav"
-                        className="absolute inset-0 bg-white rounded-[1.5rem] -z-0"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      />
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#059669] rounded-r-full" />
                     )}
-                  </motion.button>
+                    <Icon size={20} className={`${isActive ? 'stroke-[2.5px]' : 'stroke-2'}`} />
+                    {!isSidebarCollapsed && (
+                      <span className="font-bold text-[13px] tracking-tight">{module.name}</span>
+                    )}
+                  </button>
                 )
               })}
             </div>
@@ -342,49 +330,40 @@ function App() {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
                 return (
-                  <motion.button
+                  <button
                     key={item.id}
-                    whileHover={{ x: isSidebarCollapsed ? 0 : 4, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                     onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center space-x-4 px-5 py-4 rounded-[1.5rem] transition-all duration-300 relative group ${isActive
-                      ? 'nav-active shadow-lg shadow-indigo-100'
-                      : 'nav-hover text-slate-500 hover:text-indigo-600'
+                    className={`w-full flex items-center space-x-4 px-5 py-3.5 rounded-xl transition-all duration-200 group truncate ${isActive
+                      ? 'bg-[#dcfce7] text-[#059669]'
+                      : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5'
                       }`}
                   >
-                    <Icon size={22} className={`${isActive ? 'scale-110' : 'group-hover:scale-110 transition-transform duration-300'} relative z-10`} />
+                    <Icon size={20} className={`${isActive ? 'stroke-[2.5px]' : 'stroke-2'}`} />
                     {!isSidebarCollapsed && (
-                      <span className="font-bold text-sm tracking-tight relative z-10">{item.name}</span>
+                      <span className="font-bold text-[13px] tracking-tight">{item.name}</span>
                     )}
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeAccountNav"
-                        className="absolute inset-0 bg-white rounded-[1.5rem] -z-0"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                  </motion.button>
+                  </button>
                 )
               })}
             </div>
           </div>
         </div>
 
-        <div className="p-6 mt-auto border-t border-border transition-all px-6">
+        <div className="p-6 mt-auto px-6 border-t border-slate-50 dark:border-white/5">
           <div className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'space-x-4'}`}>
-            <div className={`w-10 h-10 min-w-[40px] rounded-xl bg-gradient-to-br from-[#10b981] to-[#059669] flex items-center justify-center text-white font-bold shadow-md transition-all ${isDarkMode ? 'shadow-none' : 'shadow-green-100'} ${isSidebarCollapsed ? 'scale-110' : ''}`}>
-              {user?.name?.charAt(0) || 'M'}
+            <div className="w-10 h-10 min-w-[40px] rounded-full bg-[#14b8a6] flex items-center justify-center text-white font-black text-sm shadow-md">
+              {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'NI'}
             </div>
             {!isSidebarCollapsed && (
-              <div className="flex-1 overflow-hidden transition-all duration-300">
-                <p className="text-sm font-bold truncate">{user?.name || 'Monish Prabu'}</p>
-                <p className="text-[10px] font-bold text-slate-400 truncate uppercase tracking-widest">{user?.email || 'moni@lifeos.com'}</p>
+              <div className="flex-1 overflow-hidden">
+                <p className="text-[13px] font-bold text-[#0f172a] dark:text-white truncate leading-none mb-1">{user?.name || 'nitin'}</p>
+                <p className="text-[11px] font-medium text-slate-400 truncate opacity-70 leading-none">{user?.email || 'monishprabu39200...'}</p>
               </div>
             )}
             {!isSidebarCollapsed && (
               <button
                 onClick={handleLogout}
-                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                className="p-2 text-slate-400 hover:text-red-500 transition-all"
               >
                 <LogOut size={18} />
               </button>
@@ -394,55 +373,25 @@ function App() {
       </motion.aside>
 
       {/* Main Content */}
-      <main className="flex-1 relative overflow-y-auto custom-scrollbar">
-        {/* Background Decorative Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.35] z-0 bg-background">
-          <div className={`blob w-[45rem] h-[45rem] -top-20 -right-20 animate-blob ${isDarkMode ? 'bg-indigo-900/20' : 'bg-indigo-200/50'}`} />
-          <div className={`blob w-[40rem] h-[40rem] -bottom-20 -left-20 animate-blob animation-delay-2000 ${isDarkMode ? 'bg-sky-900/20' : 'bg-sky-200/50'}`} />
-          <div className={`blob w-[35rem] h-[35rem] top-[20%] left-[15%] animate-blob animation-delay-4000 ${isDarkMode ? 'bg-rose-900/20' : 'bg-rose-100/50'}`} />
-          <div className={`blob w-[30rem] h-[30rem] bottom-[20%] right-[10%] animate-blob animation-delay-2000 ${isDarkMode ? 'bg-emerald-900/20' : 'bg-emerald-100/50'}`} />
-        </div>
+      <main className="flex-1 relative overflow-y-auto custom-scrollbar bg-[#fcfdfe] dark:bg-slate-950">
 
         {/* Header */}
-        <header className="sticky top-0 z-40 glass px-10 py-6 flex items-center justify-between transition-colors duration-300 rounded-b-3xl mx-4 mt-2">
-          <div className="relative z-10">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Welcome back,</p>
-            <h2 className="text-xl font-bold">{user?.name || 'John Doe'}</h2>
+        <header className="z-40 px-10 py-8 flex items-center justify-between mx-4">
+          <div>
+            <p className="text-xs font-semibold text-slate-400 mb-1 opacity-80">Welcome back,</p>
+            <h2 className="text-2xl font-bold text-[#0f172a] dark:text-white tracking-tight">{user?.name || 'John Doe'}</h2>
           </div>
 
           <div className="flex items-center space-x-6 relative z-10">
             <motion.button
-              whileHover={{ scale: 1.1, rotate: 15 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2.5 text-slate-400 hover:text-primary transition-colors bg-white/10 dark:bg-slate-800/50 rounded-xl border border-border"
-            >
-              {isDarkMode ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} />}
-            </motion.button>
-
-            <div className="h-8 w-[1px] bg-border" />
-
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setIsLogModalOpen(true)}
-                className={`interactive-hover flex items-center space-x-2 bg-[#10b981] hover:bg-[#0da271] text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg ${isDarkMode ? 'shadow-none' : 'shadow-green-100'}`}
-              >
-                <Plus size={18} />
-                <span>Log Event</span>
-              </button>
-            </div>
-
-            <div className="h-8 w-[1px] bg-border" />
-
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsNotificationOpen(true)}
-              className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              className="relative p-2.5 text-slate-400 hover:text-slate-600 transition-colors bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-white/10 shadow-sm"
             >
-              <Bell size={24} />
+              <Bell size={22} className="stroke-[2.5px]" />
               {notifications.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full" />
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white dark:border-slate-800 rounded-full" />
               )}
             </motion.button>
           </div>
