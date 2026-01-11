@@ -362,101 +362,67 @@ export function DashboardModule({ user, setActiveTab, onUpdate, isDarkMode }) {
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-display font-bold text-[#0f172a] dark:text-white">Your Modules</h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
                     {[
                         {
                             name: 'Health',
                             score: user?.healthScore || 0,
-                            color: 'emerald',
+                            color: 'text-emerald-500',
+                            bg: 'bg-emerald-500/10',
                             icon: Heart,
-                            tab: 'health',
-                            gradient: 'from-emerald-500/20 to-emerald-500/5',
-                            shadow: 'shadow-emerald-200/40 dark:shadow-none'
+                            tab: 'health'
                         },
                         {
                             name: 'Wealth',
                             score: user?.wealthScore || 0,
-                            color: 'blue',
+                            color: 'text-blue-500',
+                            bg: 'bg-blue-500/10',
                             icon: Wallet,
-                            tab: 'wealth',
-                            gradient: 'from-blue-500/20 to-blue-500/5',
-                            shadow: 'shadow-blue-200/40 dark:shadow-none'
+                            tab: 'wealth'
                         },
                         {
-                            name: 'Relationships',
+                            name: 'Social',
                             score: user?.relationshipScore || 0,
-                            color: 'rose',
+                            color: 'text-rose-500',
+                            bg: 'bg-rose-500/10',
                             icon: Users,
-                            tab: 'relationships',
-                            gradient: 'from-rose-500/20 to-rose-500/5',
-                            shadow: 'shadow-rose-200/40 dark:shadow-none'
+                            tab: 'relationships'
                         },
                         {
                             name: 'Habits',
                             score: user?.habitScore || 0,
-                            color: 'amber',
+                            color: 'text-amber-500',
+                            bg: 'bg-amber-500/10',
                             icon: CheckSquare,
-                            tab: 'habits',
-                            gradient: 'from-amber-500/20 to-amber-500/5',
-                            shadow: 'shadow-amber-200/40 dark:shadow-none'
+                            tab: 'habits'
                         },
                         {
                             name: 'Purpose',
                             score: user?.goalScore || 0,
-                            color: 'violet',
+                            color: 'text-violet-500',
+                            bg: 'bg-violet-500/10',
                             icon: Target,
-                            tab: 'goals',
-                            gradient: 'from-violet-500/20 to-violet-500/5',
-                            shadow: 'shadow-violet-200/40 dark:shadow-none'
+                            tab: 'goals'
                         },
-                    ].map((module) => {
-                        const Icon = module.icon;
-                        const colorClass = {
-                            emerald: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
-                            blue: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-                            rose: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
-                            amber: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-                            violet: 'bg-violet-500/10 text-violet-500 border-violet-500/20',
-                        }[module.color];
-
-                        const barClass = {
-                            emerald: 'bg-emerald-500',
-                            blue: 'bg-blue-500',
-                            rose: 'bg-rose-500',
-                            amber: 'bg-amber-500',
-                            violet: 'bg-violet-500',
-                        }[module.color];
-
-                        return (
-                            <motion.div
-                                key={module.name}
-                                whileHover={{ y: -12, scale: 1.05 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => setActiveTab && setActiveTab(module.tab)}
-                                className={`relative group cursor-pointer glass p-8 rounded-[2.5rem] h-[180px] transition-all duration-500 border ${isDarkMode ? 'border-white/5' : 'border-slate-100'} ${module.shadow}`}
-                            >
-                                <div className={`absolute inset-0 bg-gradient-to-br ${module.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem]`} />
-
-                                <div className="relative z-10 flex flex-col justify-between h-full">
-                                    <div className="flex items-start justify-between">
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border backdrop-blur-md transition-all duration-500 group-hover:scale-110 ${colorClass}`}>
-                                            <Icon size={24} />
-                                        </div>
-                                        <div className={`w-1.5 h-10 rounded-full ${barClass} opacity-60 group-hover:opacity-100 group-hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all`} />
-                                    </div>
-
-                                    <div>
-                                        <div className="text-4xl font-display font-bold text-slate-800 dark:text-white leading-none tracking-tight">
-                                            {Math.round(module.score)}
-                                        </div>
-                                        <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-2 uppercase tracking-[0.2em] transition-colors group-hover:text-slate-500">
-                                            {module.name}
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
+                    ].map((module) => (
+                        <motion.div
+                            key={module.name}
+                            whileHover={{ y: -8, scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setActiveTab && setActiveTab(module.tab)}
+                            className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
+                        >
+                            <div className={`p-4 rounded-2xl ${module.bg} ${module.color} mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500`}>
+                                <module.icon size={26} />
+                            </div>
+                            <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                                {Math.round(module.score)}
+                            </span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                                {module.name}
+                            </span>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
 

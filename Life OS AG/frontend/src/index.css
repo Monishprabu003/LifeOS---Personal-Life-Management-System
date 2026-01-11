@@ -28,17 +28,18 @@
   }
 
   .dark {
-    --background: 10, 11, 20;
-    --surface: 17, 18, 30;
-    --text-main: 241, 245, 249;
-    --text-muted: 148, 163, 184;
+    --background: 11, 15, 26;
+    --surface: 15, 19, 34;
+    --text-main: 248, 250, 252;
+    --text-muted: 100, 116, 139;
     --border: 30, 41, 59;
 
-    --glass-background: 17, 18, 30;
-    --glass-opacity: 0.7;
-    --glass-border: 148, 163, 184;
-    --glass-border-opacity: 0.1;
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    --glass-background: 23, 28, 48;
+    --glass-opacity: 0.55;
+    --glass-blur: 40px;
+    --glass-border: 255, 255, 255;
+    --glass-border-opacity: 0.08;
+    --glass-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
   }
 
 
@@ -111,7 +112,7 @@
   }
 
   .interactive-hover {
-    @apply transition-all duration-500 hover:translate-y-[-8px] hover:shadow-[0_20px_40px_#0000001a] hover:bg-white/80 dark:hover:bg-slate-800/90 active:scale-[0.97];
+    @apply transition-all duration-500 hover:translate-y-[-8px] hover:shadow-[0_30px_60px_-15px_rgba(0, 0, 0, 0.5)] hover:bg-white/80 dark:hover:bg-white/[0.05] active:scale-[0.97];
   }
 
   .nav-active {

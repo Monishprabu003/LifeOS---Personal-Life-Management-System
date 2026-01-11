@@ -188,75 +188,83 @@ export function HabitsModule({ onUpdate, user, isDarkMode }) {
                     <p className="mt-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{completedCount}/{totalCount} Completed</p>
                 </motion.div>
 
-                {/* Active Habits */}
-                <motion.div
-                    whileHover={{ y: -12, scale: 1.05 }}
-                    className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500 shadow-orange-200/20 dark:shadow-none"
-                >
-                    <div className="flex justify-between items-start">
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Active Rituals</p>
-                        <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-[#f59e0b]">
-                            <Layout size={20} />
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+                    <motion.div
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
+                    >
+                        <div className="p-4 rounded-2xl bg-orange-500/10 text-orange-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <Layout size={26} />
                         </div>
-                    </div>
-                    <div className="mt-8">
-                        <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{totalCount}</h4>
-                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Ongoing commitments</p>
-                    </div>
-                </motion.div>
+                        <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            {totalCount}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Rituals
+                        </span>
+                    </motion.div>
 
-                {/* Completed Today */}
-                <motion.div
-                    whileHover={{ y: -12, scale: 1.05 }}
-                    className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500 shadow-orange-200/20 dark:shadow-none"
-                >
-                    <div className="flex justify-between items-start">
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Completed Today</p>
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                            <Target size={20} />
+                    <motion.div
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
+                    >
+                        <div className="p-4 rounded-2xl bg-emerald-500/10 text-emerald-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <Target size={26} />
                         </div>
-                    </div>
-                    <div className="mt-8">
-                        <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{completedCount}</h4>
-                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Wins documented</p>
-                    </div>
-                </motion.div>
+                        <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            {completedCount}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Today
+                        </span>
+                    </motion.div>
 
-                {/* Longest Streak */}
-                <motion.div
-                    whileHover={{ y: -12, scale: 1.05 }}
-                    className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500 shadow-orange-200/20 dark:shadow-none"
-                >
-                    <div className="flex justify-between items-start">
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Mastery Streak</p>
-                        <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
-                            <Flame size={20} />
+                    <motion.div
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
+                    >
+                        <div className="p-4 rounded-2xl bg-rose-500/10 text-rose-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <Flame size={26} />
                         </div>
-                    </div>
-                    <div className="mt-8">
-                        <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{longestStreak} Days</h4>
-                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Personal record</p>
-                    </div>
-                </motion.div>
+                        <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            {longestStreak}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Streak
+                        </span>
+                    </motion.div>
 
-                {/* Weekly Score */}
-                <motion.div
-                    whileHover={{ y: -12, scale: 1.05 }}
-                    className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-orange-50/20 dark:bg-orange-500/5 transition-all duration-500 shadow-orange-200/20 dark:shadow-none"
-                >
-                    <div className="flex justify-between items-start">
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Session Accuracy</p>
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
-                            <TrendingUp size={20} />
+                    <motion.div
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
+                    >
+                        <div className="p-4 rounded-2xl bg-blue-500/10 text-blue-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <TrendingUp size={26} />
                         </div>
-                    </div>
-                    <div className="mt-8">
-                        <h4 className="text-4xl font-display font-bold text-[#0f172a] dark:text-white italic tracking-tight">
+                        <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
                             {progressPercent}%
-                        </h4>
-                        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Consistency rating</p>
-                    </div>
-                </motion.div>
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Accuracy
+                        </span>
+                    </motion.div>
+
+                    <motion.div
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
+                    >
+                        <div className="p-4 rounded-2xl bg-amber-500/10 text-amber-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <CheckCircle2 size={26} />
+                        </div>
+                        <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            {completedCount}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Victory
+                        </span>
+                    </motion.div>
+                </div>
+
             </div>
 
             {/* Weekly Overview */}

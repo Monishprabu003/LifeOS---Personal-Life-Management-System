@@ -154,61 +154,65 @@ export function WealthModule({ onUpdate, user, isDarkMode }) {
                     <CircularProgress value={savingsRate} label={`${savingsRate}% savings rate`} />
                 </motion.div>
 
-                <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="lg:col-span-9 grid grid-cols-2 md:grid-cols-4 gap-6">
                     <motion.div
                         whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-8 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-blue-50/20 dark:bg-blue-500/5 transition-all duration-500"
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                     >
-                        <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Income</p>
-                            <TrendingUp size={20} className="text-[#3b82f6] opacity-60" />
+                        <div className="p-4 rounded-2xl bg-blue-500/10 text-blue-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <TrendingUp size={26} />
                         </div>
-                        <div className="mt-6">
-                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">₹{totalIncome.toLocaleString()}</h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-2">All time cumulative</p>
-                        </div>
+                        <span className="text-2xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            ₹{totalIncome.toLocaleString()}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Income
+                        </span>
                     </motion.div>
 
                     <motion.div
                         whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-8 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-blue-50/20 dark:bg-blue-500/5 transition-all duration-500"
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                     >
-                        <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Expenses</p>
-                            <CreditCard size={20} className="text-[#3b82f6] opacity-60" />
+                        <div className="p-4 rounded-2xl bg-rose-500/10 text-rose-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <CreditCard size={26} />
                         </div>
-                        <div className="mt-6">
-                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">₹{totalExpense.toLocaleString()}</h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-2">All time cumulative</p>
-                        </div>
+                        <span className="text-2xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            ₹{totalExpense.toLocaleString()}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Expenses
+                        </span>
                     </motion.div>
 
                     <motion.div
                         whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-8 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-blue-50/20 dark:bg-blue-500/5 transition-all duration-500"
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                     >
-                        <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Savings</p>
-                            <PiggyBank size={20} className="text-[#3b82f6] opacity-60" />
+                        <div className="p-4 rounded-2xl bg-emerald-500/10 text-emerald-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <PiggyBank size={26} />
                         </div>
-                        <div className="mt-6">
-                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">₹{savings.toLocaleString()}</h4>
-                            <p className="text-[10px] font-bold text-[#10b981] mt-2 font-display">Net growth</p>
-                        </div>
+                        <span className="text-2xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            ₹{savings.toLocaleString()}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Savings
+                        </span>
                     </motion.div>
 
                     <motion.div
                         whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass p-8 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-blue-50/20 dark:bg-blue-500/5 transition-all duration-500"
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                     >
-                        <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Savings Rate</p>
-                            <IndianRupee size={20} className="text-[#3b82f6] opacity-60" />
+                        <div className="p-4 rounded-2xl bg-amber-500/10 text-amber-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <IndianRupee size={26} />
                         </div>
-                        <div className="mt-6">
-                            <h4 className="text-3xl font-display font-bold text-[#0f172a] dark:text-white">{savingsRate}%</h4>
-                            <p className="text-[10px] font-bold text-[#10b981] mt-2 font-display">Efficiency</p>
-                        </div>
+                        <span className="text-2xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            {savingsRate}%
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Rate
+                        </span>
                     </motion.div>
                 </div>
             </div>

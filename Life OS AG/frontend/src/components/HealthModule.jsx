@@ -140,65 +140,80 @@ export function HealthModule({ onUpdate, user, isDarkMode }) {
             </div>
 
             {/* Top Stat Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
                 <motion.div
-                    whileHover={{ y: -5, scale: 1.01 }}
-                    className="md:col-span-1 glass-card p-10 flex flex-col items-center transition-all duration-500 border-emerald-50 dark:border-emerald-900/10"
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                 >
-                    <h3 className="text-sm font-bold text-[#0f172a] dark:text-white mb-8 self-start">Daily Health Score</h3>
-                    <CircularProgress value={dailyScore} color="#10b981" size={120} label={latestLog ? "Based on today's metrics" : "Log data to see score"} />
+                    <div className="p-4 rounded-2xl bg-emerald-500/10 text-emerald-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <Activity size={26} />
+                    </div>
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                        {latestLog?.sleepHours || 0}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Sleep (h)
+                    </span>
                 </motion.div>
 
                 <motion.div
                     whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-emerald-50/20 dark:bg-emerald-500/5 transition-all duration-500"
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                 >
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sleep</p>
-                            <h4 className="text-2xl font-display font-bold text-[#0f172a] dark:text-white mt-2 font-display tracking-tight">{latestLog?.sleepHours || 0}h</h4>
-                        </div>
-                        <Activity size={24} className="text-[#10b981] opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-4 rounded-2xl bg-blue-500/10 text-blue-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <Droplets size={26} />
                     </div>
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                        {latestLog?.waterIntake || 0}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Water (L)
+                    </span>
                 </motion.div>
 
                 <motion.div
                     whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-blue-50/20 dark:bg-blue-500/5 transition-all duration-500"
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                 >
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Water</p>
-                            <h4 className="text-2xl font-display font-bold text-[#0f172a] dark:text-white mt-2 font-display tracking-tight">{latestLog?.waterIntake || 0}L</h4>
-                        </div>
-                        <Droplets size={24} className="text-blue-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-4 rounded-2xl bg-purple-500/10 text-purple-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <Smile size={26} />
                     </div>
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                        {latestLog?.mood || 0}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Mood / 10
+                    </span>
                 </motion.div>
 
                 <motion.div
                     whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-purple-50/20 dark:bg-purple-500/5 transition-all duration-500"
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                 >
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Mood</p>
-                            <h4 className="text-2xl font-display font-bold text-[#0f172a] dark:text-white mt-2 font-display tracking-tight">{latestLog?.mood || 0}/10</h4>
-                        </div>
-                        <Smile size={24} className="text-purple-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-4 rounded-2xl bg-rose-500/10 text-rose-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <Zap size={26} />
                     </div>
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                        {latestLog?.stress || 0}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Stress / 10
+                    </span>
                 </motion.div>
 
                 <motion.div
                     whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500"
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                 >
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Stress</p>
-                            <h4 className="text-2xl font-display font-bold text-[#0f172a] dark:text-white mt-2 font-display tracking-tight">{latestLog?.stress || 0}/10</h4>
-                        </div>
-                        <Zap size={24} className="text-rose-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-4 rounded-2xl bg-emerald-500/10 text-emerald-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <Heart size={26} />
                     </div>
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                        {dailyScore}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Core Score
+                    </span>
                 </motion.div>
             </div>
 

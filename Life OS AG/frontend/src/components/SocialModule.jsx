@@ -193,55 +193,50 @@ export function SocialModule({ onUpdate, user, isDarkMode }) {
                     </div>
                 </motion.div>
 
-                <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="lg:col-span-9 grid grid-cols-2 md:grid-cols-3 gap-6">
                     <motion.div
-                        whileHover={{ y: -12, scale: 1.05 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500 shadow-rose-200/20 dark:shadow-none"
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                     >
-                        <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Connections</p>
-                            <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500">
-                                <Users size={20} />
-                            </div>
+                        <div className="p-4 rounded-2xl bg-rose-500/10 text-rose-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <Users size={26} />
                         </div>
-                        <div className="mt-8">
-                            <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{connections.length}</h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-widest">Active circle members</p>
-                        </div>
+                        <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            {connections.length}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Circle Size
+                        </span>
                     </motion.div>
 
                     <motion.div
-                        whileHover={{ y: -12, scale: 1.05 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500 shadow-rose-200/20 dark:shadow-none"
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                     >
-                        <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Interactions This Week</p>
-                            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                                <MessageSquare size={20} />
-                            </div>
+                        <div className="p-4 rounded-2xl bg-emerald-500/10 text-emerald-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <MessageSquare size={26} />
                         </div>
-                        <div className="mt-8">
-                            <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">
-                                {interactionsThisWeek}
-                            </h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-widest">Weekly touchpoints</p>
-                        </div>
+                        <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            {interactionsThisWeek}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Interactions
+                        </span>
                     </motion.div>
 
                     <motion.div
-                        whileHover={{ y: -12, scale: 1.05 }}
-                        className="glass p-10 flex flex-col justify-between interactive-hover rounded-[2.5rem] bg-rose-50/20 dark:bg-rose-500/5 transition-all duration-500 shadow-rose-200/20 dark:shadow-none"
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                     >
-                        <div className="flex justify-between items-start">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Gratitude Entries</p>
-                            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
-                                <Heart size={20} />
-                            </div>
+                        <div className="p-4 rounded-2xl bg-orange-500/10 text-orange-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <Heart size={26} />
                         </div>
-                        <div className="mt-8">
-                            <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white tracking-tight">{gratitudeEntries.length}</h4>
-                            <p className="text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-widest">Moments of reflection</p>
-                        </div>
+                        <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                            {gratitudeEntries.length}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                            Gratitude
+                        </span>
                     </motion.div>
                 </div>
             </div>

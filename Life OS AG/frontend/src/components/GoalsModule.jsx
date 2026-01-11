@@ -199,52 +199,65 @@ export function GoalsModule({ onUpdate, user, isDarkMode }) {
             </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <motion.div
-                    whileHover={{ y: -5, scale: 1.01 }}
-                    className="md:col-span-1 glass-card p-10 flex flex-col items-center justify-center text-center transition-all duration-500"
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                 >
-                    <h3 className="text-sm font-bold text-[#0f172a] dark:text-white mb-8">Purpose Score</h3>
-                    <CircularProgress value={goalScore} label="Vision Alignment" size={150} strokeWidth={12} />
+                    <div className="p-4 rounded-2xl bg-violet-500/10 text-violet-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <Target size={26} />
+                    </div>
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                        {goals.length}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Active Goals
+                    </span>
                 </motion.div>
 
                 <motion.div
                     whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-violet-50/20 dark:bg-violet-500/5 transition-all duration-500"
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                 >
-                    <div className="flex justify-between items-start">
-                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Active Goals</p>
-                        <Target size={20} className="text-[#8b5cf6] opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-4 rounded-2xl bg-amber-500/10 text-amber-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <Trophy size={26} />
                     </div>
-                    <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">{goals.length}</h4>
-                </motion.div>
-
-                <motion.div
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-violet-50/20 dark:bg-violet-500/5 transition-all duration-500"
-                >
-                    <div className="flex justify-between items-start">
-                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Achievements</p>
-                        <Trophy size={20} className="text-[#8b5cf6] opacity-60 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white mt-4">
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
                         {goals.filter(g => calculateProgress(g) === 100).length}
-                    </h4>
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Achievements
+                    </span>
                 </motion.div>
 
                 <motion.div
                     whileHover={{ y: -8, scale: 1.02 }}
-                    className="glass p-8 relative group cursor-pointer interactive-hover rounded-[2.5rem] bg-violet-50/20 dark:bg-violet-500/5 transition-all duration-500"
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
                 >
-                    <div className="flex justify-between items-start">
-                        <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">Total Tasks</p>
-                        <BookOpen size={20} className="text-[#8b5cf6] opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-4 rounded-2xl bg-blue-500/10 text-blue-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <BookOpen size={26} />
                     </div>
-                    <div className="mt-4">
-                        <h4 className="text-5xl font-display font-bold text-[#0f172a] dark:text-white">
-                            {goals.reduce((s, g) => s + (g.tasks?.length || 0), 0)}
-                        </h4>
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                        {goals.reduce((s, g) => s + (g.tasks?.length || 0), 0)}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Total Tasks
+                    </span>
+                </motion.div>
+
+                <motion.div
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] transition-all duration-500 bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/[0.05] group cursor-pointer interactive-hover"
+                >
+                    <div className="p-4 rounded-2xl bg-emerald-500/10 text-emerald-500 mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                        <Target size={26} />
                     </div>
+                    <span className="text-3xl font-display font-bold text-[#0f172a] dark:text-white leading-none">
+                        {goalScore}%
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mt-3">
+                        Mission Score
+                    </span>
                 </motion.div>
             </div>
 
