@@ -26,21 +26,55 @@ const seed = async () => {
         await Relationship.deleteMany({});
         await Task.deleteMany({});
 
-        // 1. Create a demo user with zero scores
+        // 1. Create a demo user with exact scores from mockup
         const user = await User.create({
-            name: 'Human 001',
+            name: 'John Doe',
             email: 'demo@lifeos.com',
             password: 'password123',
-            lifeScore: 0,
-            healthScore: 0,
-            wealthScore: 0,
-            habitScore: 0,
-            goalScore: 0,
-            relationshipScore: 0,
+            lifeScore: 78,
+            healthScore: 85,
+            wealthScore: 72,
+            habitScore: 91,
+            goalScore: 76,
+            relationshipScore: 88,
         });
 
-        console.log('Clean demo user created:', user.email);
-        console.log('Comprehensive seeding complete (Initial State)!');
+        const userId = user._id;
+
+        // 2. Create today's health log to match quick stats
+        await HealthLog.create({
+            userId,
+            sleepHours: 7.5,
+            sleepQuality: 8.5,
+            waterIntake: 2.1,
+            mood: 8,
+            stress: 3,
+            timestamp: new Date()
+        });
+
+        // 3. Create some past logs for a realistic trend line
+        const pastDays = [1, 2, 3, 4, 5, 6];
+        for (const day of pastDays) {
+            await HealthLog.create({
+                userId,
+                sleepHours: 7 + Math.random(),
+                sleepQuality: 7 + Math.random() * 2,
+                waterIntake: 2 + Math.random(),
+                mood: 7 + Math.random() * 2,
+                stress: 2 + Math.random() * 2,
+                timestamp: new Date(Date.now() - day * 24 * 60 * 60 * 1000)
+            });
+        }
+
+        // 4. Create dummy entries for other modules
+        await Finance.create({ userId, type: 'income', amount: 5000, category: 'Salary', description: 'Monthly' });
+        await Habit.create({ userId, name: 'Morning Routine', streak: 12, lastCompleted: new Date() });
+        await Habit.create({ userId, name: 'Deep Work', streak: 8, lastCompleted: new Date() });
+        await Goal.create({ userId, title: 'Learn React', progress: 76, category: 'Intellectual' });
+        await Relationship.create({ userId, name: 'Family', healthScore: 90 });
+
+        console.log('Clean demo user created with mockup-aligned data:', user.email);
+        console.log('Comprehensive seeding complete (Premium Initial State)!');
         process.exit(0);
     } catch (error) {
         console.error('Seeding error:', error);

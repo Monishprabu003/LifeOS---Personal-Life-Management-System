@@ -6,158 +6,33 @@
   :root {
     --background: 255, 255, 255;
     --surface: 255, 255, 255;
-    --primary: 99, 102, 241;
+    --primary: 16, 185, 129;
     --secondary: 14, 165, 233;
-    --health: 16, 185, 129;
-    --wealth: 37, 99, 235;
-    --habits: 245, 158, 11;
-    --goals: 139, 92, 246;
-    --relationships: 244, 63, 94;
-    --accent: 219, 39, 119;
     --text-main: 15, 23, 42;
     --text-muted: 100, 116, 139;
-    --border: 226, 232, 240;
-
-    /* Enhanced Glassmorphism Tokens */
-    --glass-background: 255, 255, 255;
-    --glass-opacity: 0.6;
-    --glass-blur: 24px;
-    --glass-border: 255, 255, 255;
-    --glass-border-opacity: 0.8;
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    --border: 241, 245, 249;
   }
-
-  .dark {
-    --background: 13, 14, 27;
-    --surface: 21, 22, 36;
-    --text-main: 248, 250, 252;
-    --text-muted: 148, 163, 184;
-    --border: 30, 41, 59;
-
-    --glass-background: 26, 31, 52;
-    --glass-opacity: 0.7;
-    --glass-blur: 40px;
-    --glass-border: 255, 255, 255;
-    --glass-border-opacity: 0.05;
-    --glass-shadow: 0 25px 60px rgba(0,0,0,0.5);
-  }
-
-
-
-
-
 
   body {
-    @apply bg-background text-main font-sans antialiased transition-colors duration-300;
-  }
-
-  .blob {
-    @apply absolute blur-[120px] rounded-full mix-blend-multiply filter opacity-20 animate-blob;
-  }
-
-  @keyframes blob {
-    0% {
-      transform: translate(0px, 0px) scale(1);
-    }
-
-    33% {
-      transform: translate(30px, -50px) scale(1.1);
-    }
-
-    66% {
-      transform: translate(-20px, 20px) scale(0.9);
-    }
-
-    100% {
-      transform: translate(0px, 0px) scale(1);
-    }
-  }
-
-  .animate-blob {
-    animation: blob 12s infinite ease-in-out;
-  }
-
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-
-  .animation-delay-4000 {
-    animation-delay: 4s;
-  }
-
-  /* Force high contrast for chart text in dark mode */
-  .dark .recharts-cartesian-axis-tick text {
-    fill: #94a3b8 !important;
-    opacity: 1 !important;
+    @apply bg-white text-[#0f172a] font-sans antialiased;
   }
 }
 
 @layer components {
-  .glass {
-    background: rgba(var(--glass-background), var(--glass-opacity));
-    backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid rgba(var(--glass-border), var(--glass-border-opacity));
-    @apply dark:border-transparent;
-    box-shadow: var(--glass-shadow);
-    @apply transition-all duration-500;
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
   }
 
-  .glass-card {
-    background: rgba(var(--glass-background), var(--glass-opacity));
-    backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid rgba(var(--glass-border), var(--glass-border-opacity));
-    @apply dark:border-transparent;
-    box-shadow: var(--glass-shadow);
-    @apply rounded-[2.5rem] transition-all duration-500;
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
   }
 
-  .interactive-hover {
-    @apply transition-all duration-500 hover:translate-y-[-8px] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] hover:bg-white/80 dark:hover:bg-white/[0.05] active:scale-[0.97];
-  }
-
-  .nav-active {
-    @apply bg-primary/15 text-primary dark:text-white shadow-lg glass border-primary/30 dark:border-transparent;
-  }
-
-  .nav-hover {
-    @apply hover:bg-white/40 dark:hover:bg-white/5 hover:translate-x-2 transition-all duration-300;
-  }
-
-  .card-hover {
-    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:bg-surface/70 border border-border/10;
-  }
-
-  .text-glow-primary {
-    text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
-  }
-
-  .text-glow-health {
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-  }
-
-  .text-glow-wealth {
-    text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-100 rounded-full hover:bg-slate-200 transition-colors;
   }
 }
 
-/* Custom Smooth Scroll */
+/* Custom Smooth Scroll Disabled */
 html {
-  scroll-behavior: smooth;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-border rounded-full transition-colors;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted;
+  scroll-behavior: auto;
 }

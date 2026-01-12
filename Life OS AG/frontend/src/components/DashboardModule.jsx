@@ -2,30 +2,28 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
     TrendingUp,
-    CheckCircle2,
-    Trash2,
-    Activity,
     Heart,
     Wallet,
     Users,
     CheckSquare,
-    Target
+    Target,
+    RefreshCw,
+    ExternalLink,
+    Activity,
+    CheckCircle2
 } from 'lucide-react';
 import {
     XAxis,
-    YAxis,
-    CartesianGrid,
     Tooltip,
     ResponsiveContainer,
     AreaChart,
     Area
 } from 'recharts';
-import { kernelAPI, tasksAPI } from '../api';
-
+import { kernelAPI } from '../api';
 
 const CircularProgress = ({ value, color, size = 180 }) => {
     return (
-        <div className="relative flex items-center justify-center font-display" style={{ width: size, height: size }}>
+        <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
             <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
                 <circle
                     cx="50"
@@ -34,14 +32,13 @@ const CircularProgress = ({ value, color, size = 180 }) => {
                     stroke="#f1f5f9"
                     strokeWidth="3"
                     fill="transparent"
-                    className="dark:stroke-slate-800/50"
                 />
                 <motion.circle
                     cx="50"
                     cy="50"
                     r="44"
                     stroke={color}
-                    strokeWidth="7"
+                    strokeWidth="8"
                     fill="transparent"
                     strokeDasharray="276"
                     initial={{ strokeDashoffset: 276 }}
@@ -51,7 +48,7 @@ const CircularProgress = ({ value, color, size = 180 }) => {
                 />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-5xl font-bold text-slate-800 dark:text-white leading-none">
+                <span className="text-[3.5rem] font-bold text-[#0f172a] leading-none tracking-tighter">
                     {Math.round(value)}
                 </span>
             </div>
@@ -59,53 +56,94 @@ const CircularProgress = ({ value, color, size = 180 }) => {
     );
 };
 
-export function DashboardModule({ user, setActiveTab, isDarkMode }) {
+export function DashboardModule({ setActiveTab }) {
+    const [dashboardData, setDashboardData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'short',
         day: 'numeric'
     });
 
-    const trendData = [
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                setLoading(true);
+                const res = await kernelAPI.getStatus();
+                setDashboardData(res.data);
+            } catch (err) {
+                console.error("Failed to fetch dashboard status", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchDashboardData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <RefreshCw className="w-8 h-8 animate-spin text-[#10b981] opacity-20" />
+            </div>
+        );
+    }
+
+    const trendData = dashboardData?.trend || [
         { name: 'Tue', performance: 65 },
         { name: 'Wed', performance: 72 },
         { name: 'Thu', performance: 68 },
         { name: 'Fri', performance: 75 },
         { name: 'Sat', performance: 82 },
-        { name: 'Sun', performance: 88 },
+        { name: 'Sun', performance: 88 }
+    ];
+
+    const modules = [
+        { name: 'Health', score: dashboardData?.healthScore || 85, color: '#10b981', bgColor: '#f0fdf4', icon: Heart, tab: 'health' },
+        { name: 'Wealth', score: dashboardData?.wealthScore || 72, color: '#3b82f6', bgColor: '#eff6ff', icon: Wallet, tab: 'wealth' },
+        { name: 'Relationships', score: dashboardData?.relationshipScore || 88, color: '#f43f5e', bgColor: '#fff1f2', icon: Users, tab: 'relationships' },
+        { name: 'Habits', score: dashboardData?.habitScore || 91, color: '#f59e0b', bgColor: '#fffbeb', icon: CheckSquare, tab: 'habits' },
+        { name: 'Purpose', score: dashboardData?.goalScore || 76, color: '#8b5cf6', bgColor: '#faf5ff', icon: Target, tab: 'goals' },
+    ];
+
+    const todayFocus = [
+        { title: 'Morning meditation', color: '#10b981', completed: true },
+        { title: 'Review monthly budget', color: '#3b82f6', completed: false },
+        { title: 'Call mom', color: '#f43f5e', completed: true },
+        { title: 'Complete online course', color: '#8b5cf6', completed: false },
     ];
 
     return (
-        <div className="space-y-12">
+        <div className="space-y-12 pb-10">
             {/* Main Hero Card */}
-            <div className="bg-[#f8fafc] dark:bg-slate-900/40 rounded-[3rem] p-12 relative overflow-hidden border border-slate-50 dark:border-transparent">
+            <div className="bg-[#f8fafc] rounded-[3rem] p-12 relative overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     {/* Gauge Section */}
                     <div className="lg:col-span-4 flex flex-col items-center text-center">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-[#94a3b8] mb-12 self-start opacity-70">Life Performance Index</h3>
+                        <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-12 self-start">LIFE PERFORMANCE INDEX</h3>
                         <div className="relative">
-                            <CircularProgress value={78} color="#10b981" />
-                            <div className="absolute top-2 -right-10 bg-[#e3fff2] dark:bg-emerald-500/10 text-[#059669] px-3.5 py-1.5 rounded-full text-[10px] font-black flex items-center gap-1 shadow-sm border border-emerald-100 transition-all hover:scale-110">
+                            <CircularProgress value={dashboardData?.lifeScore || 78} color="#10b981" />
+                            <div className="absolute top-2 -right-10 bg-[#e3fff2] text-[#059669] px-3 py-1 rounded-full text-[10px] font-black flex items-center gap-1 shadow-sm border border-emerald-100/50">
                                 <TrendingUp size={12} strokeWidth={3} /> +5%
                             </div>
                         </div>
                         <div className="mt-12 text-left w-full">
-                            <h4 className="text-3xl font-bold text-[#0f172a] dark:text-white mb-2 tracking-tight">You're doing great!</h4>
-                            <p className="text-sm font-semibold text-[#64748b]">{today}</p>
+                            <h4 className="text-3xl font-bold text-[#0f172a] mb-2 tracking-tight">You're doing great!</h4>
+                            <p className="text-sm font-semibold text-slate-400">{today}</p>
                         </div>
                     </div>
 
                     {/* Trend Section */}
                     <div className="lg:col-span-8 flex flex-col h-full justify-between">
                         <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#64748b] opacity-70">7-Day Trend</h3>
+                            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">7-DAY TREND</h3>
                         </div>
                         <div className="h-[200px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={trendData}>
                                     <defs>
                                         <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.2} />
+                                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.15} />
                                             <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
@@ -113,17 +151,17 @@ export function DashboardModule({ user, setActiveTab, isDarkMode }) {
                                         dataKey="name"
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fill: '#64748b', fontSize: 11, fontWeight: 700 }}
+                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
                                         dy={15}
                                     />
                                     <Tooltip
-                                        contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                                        contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}
                                     />
                                     <Area
                                         type="monotone"
                                         dataKey="performance"
                                         stroke="#10b981"
-                                        strokeWidth={4}
+                                        strokeWidth={3}
                                         fill="url(#trendGradient)"
                                         dot={false}
                                     />
@@ -134,58 +172,64 @@ export function DashboardModule({ user, setActiveTab, isDarkMode }) {
                 </div>
             </div>
 
-            {/* Quick Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {[
-                    { label: 'Sleep', value: '7.5h', icon: '🌙', trend: '+8%' },
-                    { label: 'Water', value: '2.1L', icon: '💧', trend: '+12%' },
-                    { label: 'Mood', value: '8/10', icon: '😊', trend: '+5%' },
-                    { label: 'Streak', value: '12d', icon: '⚡', trend: '+20%' }
-                ].map((stat) => (
-                    <div key={stat.label} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[2.5rem] p-8 transition-all hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none group cursor-pointer active:scale-95 shadow-sm">
-                        <div className="flex justify-between items-start mb-6">
-                            <span className="text-2xl opacity-80 transition-transform group-hover:scale-125 duration-300">{stat.icon}</span>
-                            <span className="text-[10px] font-black text-[#10b981] bg-[#f0fdf4] px-2.5 py-1 rounded-full">{stat.trend}</span>
-                        </div>
-                        <div>
-                            <p className="text-3xl font-bold text-[#0f172a] dark:text-white leading-none tracking-tight">{stat.value}</p>
-                            <p className="text-xs font-bold text-slate-400 mt-2">{stat.label}</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
             {/* Modules Section */}
             <div className="space-y-8">
                 <div className="flex items-center justify-between px-2">
-                    <h3 className="text-2xl font-bold text-[#0f172a] dark:text-white tracking-tight">Your Modules</h3>
-                    <button className="text-xs font-bold text-[#64748b] hover:text-indigo-600 transition-colors flex items-center gap-1">
-                        View all <span className="text-lg leading-none">↗</span>
+                    <h3 className="text-xl font-bold text-[#0f172a] tracking-tight">Your Modules</h3>
+                    <button className="text-xs font-bold text-slate-400 hover:text-indigo-600 transition-colors flex items-center gap-1 group">
+                        View all <ExternalLink size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </button>
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
-                    {[
-                        { name: 'Health', score: 85, color: '#10b981', icon: Heart, tab: 'health' },
-                        { name: 'Wealth', score: 72, color: '#3b82f6', icon: Wallet, tab: 'wealth' },
-                        { name: 'Relationships', score: 88, color: '#f43f5e', icon: Users, tab: 'relationships' },
-                        { name: 'Habits', score: 91, color: '#f59e0b', icon: CheckSquare, tab: 'habits' },
-                        { name: 'Purpose', score: 76, color: '#8b5cf6', icon: Target, tab: 'goals' },
-                    ].map((mod) => (
+                    {modules.map((mod) => (
                         <div
                             key={mod.name}
                             onClick={() => setActiveTab && setActiveTab(mod.tab)}
-                            className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[2rem] p-8 relative overflow-hidden group cursor-pointer hover:shadow-xl hover:shadow-slate-200/40 transition-all active:scale-95 shadow-sm"
+                            className="rounded-[2.5rem] p-8 relative overflow-hidden group cursor-pointer hover:shadow-xl transition-all active:scale-95 shadow-sm border border-transparent"
+                            style={{ backgroundColor: mod.bgColor }}
                         >
                             {/* Color Accent Bar */}
                             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-12 rounded-l-full" style={{ backgroundColor: mod.color }} />
 
-                            <div className="p-4 rounded-2xl mb-8 inline-flex transition-colors group-hover:bg-slate-50 dark:group-hover:bg-white/5" style={{ backgroundColor: `${mod.color}10`, color: mod.color }}>
-                                <mod.icon size={26} strokeWidth={2.5} />
+                            <div className="p-3 rounded-2xl mb-8 inline-flex transition-colors bg-white/60 shadow-sm" style={{ color: mod.color }}>
+                                <mod.icon size={22} strokeWidth={2.5} />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-4xl font-bold text-[#0f172a] dark:text-white tracking-tight leading-none">{mod.score}</span>
-                                <span className="text-[10px] font-black text-slate-400 mt-4 uppercase tracking-[0.2em] opacity-80">{mod.name}</span>
+                                <span className="text-4xl font-bold text-[#0f172a] tracking-tight leading-none">{mod.score}</span>
+                                <span className="text-xs font-bold text-slate-400 mt-4 opacity-80 uppercase tracking-widest">{mod.name}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Today's Focus Section */}
+            <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+                <div className="flex items-center justify-between mb-8 px-2">
+                    <div className="flex items-center gap-3">
+                        <Activity className="text-[#10b981]" size={24} />
+                        <h3 className="text-xl font-bold text-[#0f172a] tracking-tight">Today's Focus</h3>
+                    </div>
+                    <div className="bg-[#f0fdf4] text-[#10b981] px-4 py-1.5 rounded-full text-[13px] font-bold">
+                        2/4
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                    {todayFocus.map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between p-6 bg-slate-50/50 rounded-[2rem] transition-all hover:bg-slate-100/50 group cursor-pointer relative overflow-hidden">
+                            {/* Accent Bar */}
+                            <div className="absolute left-6 top-1/2 -translate-y-1/2 w-1.5 h-10 rounded-full" style={{ backgroundColor: item.color }} />
+
+                            <div className="pl-10">
+                                <p className={`text-[17px] font-bold tracking-tight transition-all ${item.completed ? 'text-slate-400 line-through' : 'text-[#0f172a]'}`}>
+                                    {item.title}
+                                </p>
+                            </div>
+
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${item.completed ? 'bg-[#f0fdf4] text-[#10b981]' : 'bg-white border-2 border-slate-100 text-transparent shadow-sm'}`}>
+                                {item.completed ? <CheckCircle2 size={18} strokeWidth={2.5} /> : <div className="w-4 h-4 rounded-full border-2 border-slate-200" />}
                             </div>
                         </div>
                     ))}
@@ -194,4 +238,3 @@ export function DashboardModule({ user, setActiveTab, isDarkMode }) {
         </div>
     );
 }
-
