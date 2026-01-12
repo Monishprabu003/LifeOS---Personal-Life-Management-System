@@ -13,7 +13,8 @@ import {
   Activity,
   Mail,
   Lock,
-  RefreshCw
+  RefreshCw,
+  Plus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authAPI, habitsAPI, goalsAPI, kernelAPI } from './api';
@@ -306,6 +307,15 @@ function App() {
             <h2 className="text-2xl font-bold text-[#0f172a] tracking-tight">{user?.name || 'John Doe'}</h2>
           </div>
           <div className="flex items-center space-x-4">
+            {activeTab === 'dashboard' && (
+              <button
+                onClick={() => setIsLogModalOpen(true)}
+                className="bg-[#10b981] hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-all active:scale-95 shadow-lg shadow-emerald-50"
+              >
+                <Plus size={18} strokeWidth={3} />
+                <span>Log Event</span>
+              </button>
+            )}
             <button onClick={() => setIsNotificationOpen(true)} className="p-2 text-slate-400 hover:text-[#0f172a] transition-all relative">
               <Bell size={22} className="stroke-[2px]" />
               {notifications.length > 0 && (
