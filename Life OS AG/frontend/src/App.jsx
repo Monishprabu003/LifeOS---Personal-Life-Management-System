@@ -9,7 +9,6 @@ import {
   Bell,
   CheckSquare,
   Target,
-  Sparkles,
   User as ProfileIcon,
   Activity,
   Mail,
@@ -219,7 +218,6 @@ function App() {
     { id: 'relationships', name: 'Relationships', icon: Users },
     { id: 'habits', name: 'Habits', icon: CheckSquare },
     { id: 'goals', name: 'Purpose', icon: Target },
-    { id: 'ai', name: 'AI Insights', icon: Sparkles },
   ];
 
   const accountItems = [
