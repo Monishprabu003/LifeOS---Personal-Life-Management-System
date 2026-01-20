@@ -22,34 +22,34 @@ import {
 } from 'recharts';
 import { kernelAPI, tasksAPI } from '../api';
 
-const CircularProgress = ({ value, color, size = 180 }) => {
+const CircularProgress = ({ value, color, size = 200 }) => {
     return (
         <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
             <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
                 <circle
                     cx="50"
                     cy="50"
-                    r="44"
-                    stroke="#f1f5f9"
-                    strokeWidth="3"
+                    r="46"
+                    stroke="#eefdf6"
+                    strokeWidth="4"
                     fill="transparent"
                 />
                 <motion.circle
                     cx="50"
                     cy="50"
-                    r="44"
+                    r="46"
                     stroke={color}
-                    strokeWidth="8"
+                    strokeWidth="4"
                     fill="transparent"
-                    strokeDasharray="276"
-                    initial={{ strokeDashoffset: 276 }}
-                    animate={{ strokeDashoffset: 276 - (276 * value) / 100 }}
+                    strokeDasharray="289"
+                    initial={{ strokeDashoffset: 289 }}
+                    animate={{ strokeDashoffset: 289 - (289 * value) / 100 }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
                     strokeLinecap="round"
                 />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[3.5rem] font-bold text-[#0f172a] leading-none tracking-tighter">
+                <span className="text-[3.8rem] font-bold text-[#0f172a] leading-none tracking-tight">
                     {Math.round(value)}
                 </span>
             </div>
@@ -71,6 +71,18 @@ export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs,
             if (onUpdate) onUpdate();
         } catch (err) {
             console.error('Delete failed', err);
+        }
+    };
+
+    const handleClearAll = async () => {
+        if (!window.confirm('WARNING: This will permanently delete ALL logs across ALL modules. Are you absolutely sure?')) return;
+        try {
+            await kernelAPI.deleteAllLogs();
+            if (onUpdate) onUpdate();
+            alert('All logs cleared successfully.');
+        } catch (err) {
+            console.error('Failed to clear logs', err);
+            alert('Failed to clear logs. Please try again.');
         }
     };
 
@@ -99,11 +111,11 @@ export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs,
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     {/* Gauge Section */}
                     <div className="lg:col-span-4 flex flex-col items-center text-center">
-                        <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-12 self-start">LIFE PERFORMANCE INDEX</h3>
-                        <div className="relative">
+                        <h3 className="text-[12px] font-bold uppercase tracking-[0.3em] text-slate-400 mb-14">LIFE PERFORMANCE INDEX</h3>
+                        <div className="relative group">
                             <CircularProgress value={dashboardData?.lifeScore || 0} color="#10b981" />
-                            <div className="absolute top-2 -right-10 bg-[#e3fff2] text-[#059669] px-3 py-1 rounded-full text-[10px] font-black flex items-center gap-1 shadow-sm border border-emerald-100/50">
-                                <TrendingUp size={12} strokeWidth={3} /> {dashboardData?.trendValue || '+0%'}
+                            <div className="absolute -top-2 -right-6 bg-[#e3fff2] text-[#059669] px-4 py-1.5 rounded-full text-[12px] font-bold flex items-center gap-1.5 shadow-sm border border-emerald-100/80 backdrop-blur-sm z-20">
+                                <TrendingUp size={14} strokeWidth={3} /> {dashboardData?.trendValue || '+0%'}
                             </div>
                         </div>
                         <div className="mt-12 text-left w-full">
@@ -192,6 +204,15 @@ export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs,
                         <Activity className="text-[#10b981]" size={24} />
                         <h3 className="text-xl font-bold text-[#0f172a] tracking-tight">All Logs</h3>
                     </div>
+                    {allLogs && allLogs.length > 0 && (
+                        <button
+                            onClick={handleClearAll}
+                            className="bg-rose-50 hover:bg-rose-100 text-rose-500 px-5 py-2 rounded-2xl text-xs font-bold transition-all active:scale-95 flex items-center gap-2"
+                        >
+                            <Trash2 size={14} />
+                            <span>Clear All Logs</span>
+                        </button>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">

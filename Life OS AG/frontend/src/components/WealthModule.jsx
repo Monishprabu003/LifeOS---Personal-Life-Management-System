@@ -28,7 +28,7 @@ import {
 import { AddTransactionModal } from './AddTransactionModal';
 import { financeAPI } from '../api';
 
-const CircularProgress = ({ value }) => {
+const CircularProgress = ({ value, score }) => {
     return (
         <div className="flex flex-col items-center">
             <div className="relative w-44 h-44 flex items-center justify-center">
@@ -50,13 +50,13 @@ const CircularProgress = ({ value }) => {
                         fill="transparent"
                         strokeDasharray="264"
                         initial={{ strokeDashoffset: 264 }}
-                        animate={{ strokeDashoffset: 264 - (264 * 100) / 100 }}
+                        animate={{ strokeDashoffset: 264 - (264 * Math.min(100, Math.max(0, score || value))) / 100 }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
                         strokeLinecap="round"
                     />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-[3.5rem] font-bold text-[#0f172a] leading-none tracking-tighter">100</span>
+                    <span className="text-[3.5rem] font-bold text-[#0f172a] leading-none tracking-tighter">{score || 0}</span>
                 </div>
             </div>
             <p className="mt-8 text-[13px] font-bold text-slate-400 tracking-tight">{value}% savings rate</p>
@@ -171,7 +171,10 @@ export function WealthModule({ onUpdate, user }) {
                 <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[17px] font-bold text-[#0f172a] mb-8 self-start ml-2">Financial Health</h3>
                     <div className="relative mb-4">
-                        <CircularProgress value={savingsRate || 44} />
+                        <CircularProgress
+                            value={savingsRate}
+                            score={user?.wealthScore || 0}
+                        />
                     </div>
                 </div>
 
