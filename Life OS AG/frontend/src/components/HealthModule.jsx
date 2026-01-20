@@ -11,7 +11,8 @@ import {
     Brain,
     Footprints,
     TrendingUp,
-    TrendingDown
+    TrendingDown,
+    Trash2
 } from 'lucide-react';
 import {
     BarChart,
@@ -76,6 +77,17 @@ export function HealthModule({ onUpdate, user, dashboardData }) {
             console.error('Failed to fetch health logs', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteLog = async (id) => {
+        if (!window.confirm('Delete this health log?')) return;
+        try {
+            await healthAPI.deleteLog(id);
+            fetchLogs();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Delete failed', err);
         }
     };
 
@@ -284,6 +296,38 @@ export function HealthModule({ onUpdate, user, dashboardData }) {
                             </div>
                         </div>
                     ))}
+                </div>
+            </div>
+
+            {/* Recent Logs Section */}
+            <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
+                <h3 className="text-[17px] font-bold text-[#0f172a] mb-8">Recent Health Logs</h3>
+                <div className="space-y-4">
+                    {logs.length > 0 ? logs.slice(0, 5).map((log) => (
+                        <div key={log._id} className="flex items-center justify-between p-6 bg-slate-50/50 rounded-2xl transition-all hover:bg-slate-100/50 group">
+                            <div className="flex items-center gap-6">
+                                <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-[#10b981] shadow-sm">
+                                    <Smile size={18} />
+                                </div>
+                                <div>
+                                    <p className="text-[15px] font-bold text-[#0f172a] tracking-tight">
+                                        Mood: {log.mood}/10 • Sleep: {log.sleepHours}h • Water: {log.waterIntake}L
+                                    </p>
+                                    <p className="text-[12px] font-medium text-slate-400 mt-0.5">
+                                        {new Date(log.timestamp).toLocaleDateString()} at {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => handleDeleteLog(log._id)}
+                                className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+                    )) : (
+                        <p className="text-center py-10 text-slate-400 font-bold uppercase tracking-widest text-xs">No logs recorded yet</p>
+                    )}
                 </div>
             </div>
 

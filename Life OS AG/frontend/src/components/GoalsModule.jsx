@@ -80,6 +80,17 @@ export function GoalsModule({ onUpdate, user }) {
         return Math.round((completed / goal.tasks.length) * 100);
     };
 
+    const handleDeleteGoal = async (id) => {
+        if (!window.confirm('Delete this mission?')) return;
+        try {
+            await goalsAPI.deleteGoal(id);
+            fetchGoals();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Delete failed', err);
+        }
+    };
+
     // Dynamic data derivation
     const activeGoals = goals.filter(g => g.status !== 'completed');
     const purposeScore = goals.length > 0
@@ -164,7 +175,7 @@ export function GoalsModule({ onUpdate, user }) {
                 <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Your Goals</h3>
                 <div className="space-y-10">
                     {goals.length > 0 ? goals.map((goal) => (
-                        <div key={goal._id} className="p-10 border border-slate-50 rounded-[2.5rem] bg-white shadow-sm hover:shadow-md transition-all">
+                        <div key={goal._id} className="p-10 border border-slate-50 rounded-[2.5rem] bg-white shadow-sm hover:shadow-md transition-all group">
                             <div className="flex justify-between items-start mb-8">
                                 <div>
                                     <h4 className="text-2xl font-bold text-[#0f172a] tracking-tight mb-2">{goal.title}</h4>
@@ -173,7 +184,15 @@ export function GoalsModule({ onUpdate, user }) {
                                         <span className="text-slate-400 text-xs font-bold">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString() : 'No deadline'}</span>
                                     </div>
                                 </div>
-                                <span className="text-3xl font-black text-violet-600">{calculateProgress(goal)}%</span>
+                                <div className="flex items-center gap-6">
+                                    <button
+                                        onClick={() => handleDeleteGoal(goal._id)}
+                                        className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                                    >
+                                        <Trash2 size={24} />
+                                    </button>
+                                    <span className="text-3xl font-black text-violet-600">{calculateProgress(goal)}%</span>
+                                </div>
                             </div>
 
                             <div className="relative h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-10">

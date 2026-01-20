@@ -7,12 +7,11 @@ import {
     Target,
     TrendingUp,
     ClipboardList,
-    Trash2,
-    Layout
+    Trash2
 } from 'lucide-react';
-import api, { habitsAPI } from '../api';
+import { habitsAPI } from '../api';
 
-const CircularProgress = ({ value, label, sublabel }) => {
+const CircularProgress = ({ value, sublabel }) => {
     return (
         <div className="flex flex-col items-center">
             <div className="relative w-40 h-40 flex items-center justify-center">
@@ -84,43 +83,46 @@ export function HabitsModule({ onUpdate, user }) {
         }
     };
 
-    // Dynamic stats calculation
+    const handleDeleteHabit = async (id, e) => {
+        e.stopPropagation();
+        if (!window.confirm('Delete this habit?')) return;
+        try {
+            await habitsAPI.deleteHabit(id);
+            fetchHabits();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Delete failed', err);
+        }
+    };
+
     const activeHabitsCount = habits.length;
     const completedTodayCount = habits.filter(h => h.completedToday).length;
     const longestStreak = habits.length > 0 ? Math.max(...habits.map(h => h.streak || 0)) : 0;
     const todayProgress = habits.length > 0 ? Math.round((completedTodayCount / activeHabitsCount) * 100) : 0;
 
     const stats = [
-        { label: 'Active Habits', value: activeHabitsCount.toString(), icon: ClipboardList, bgColor: '#fffbeb', iconColor: '#f59e0b' },
-        { label: 'Completed Today', value: completedTodayCount.toString(), icon: Target, bgColor: '#fffbeb', iconColor: '#f59e0b' },
-        { label: 'Longest Streak', value: `${longestStreak} days`, icon: Flame, bgColor: '#fffbeb', iconColor: '#f59e0b' },
-        { label: 'Success Rate', value: `${todayProgress}%`, trend: '0%', trendText: 'no data', icon: TrendingUp, bgColor: '#fffbeb', iconColor: '#f59e0b' },
+        { label: 'Active Habits', value: activeHabitsCount.toString(), icon: ClipboardList, bgColor: '#fffbeb' },
+        { label: 'Completed Today', value: completedTodayCount.toString(), icon: Target, bgColor: '#fffbeb' },
+        { label: 'Longest Streak', value: `${longestStreak} days`, icon: Flame, bgColor: '#fffbeb' },
+        { label: 'Success Rate', value: `${todayProgress}%`, trend: '0%', trendText: 'no data', icon: TrendingUp, bgColor: '#fffbeb' },
     ];
 
-    // Calculate weekly completion scores
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const todayIndex = new Date().getDay();
     const weeklyData = days.map((day, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (todayIndex - i));
         date.setHours(0, 0, 0, 0);
-
         const completions = habits.filter(h => h.history && h.history.some(log => {
             const logDate = new Date(log.date || log.timestamp);
             logDate.setHours(0, 0, 0, 0);
             return logDate.getTime() === date.getTime();
         })).length;
-
-        return {
-            day,
-            score: `${completions}/${activeHabitsCount || 0}`,
-            active: i === todayIndex
-        };
+        return { day, score: `${completions}/${activeHabitsCount || 0}`, active: i === todayIndex };
     });
 
     return (
         <div className="space-y-10 pb-20">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-5">
                     <div className="w-12 h-12 rounded-xl bg-[#f59e0b] text-white flex items-center justify-center shadow-lg shadow-orange-100">
@@ -140,17 +142,13 @@ export function HabitsModule({ onUpdate, user }) {
                 </button>
             </div>
 
-            {/* Top Cards Section */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                {/* Today's Progress Score */}
                 <div className="bg-white rounded-[2.5rem] p-8 border border-slate-50 shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 self-start">Today's Progress</h3>
                     <div className="relative mb-4">
                         <CircularProgress value={todayProgress} sublabel={`${completedTodayCount}/${activeHabitsCount} habits completed`} />
                     </div>
                 </div>
-
-                {/* Metric Cards */}
                 {stats.map((stat) => (
                     <div key={stat.label} className="rounded-[2.5rem] p-8 flex flex-col justify-between relative overflow-hidden border border-slate-50/50 shadow-sm transition-all hover:shadow-md cursor-default" style={{ backgroundColor: stat.bgColor }}>
                         <div className="flex justify-between items-start">
@@ -161,18 +159,11 @@ export function HabitsModule({ onUpdate, user }) {
                         </div>
                         <div className="mt-10">
                             <p className="text-[3rem] font-bold text-[#0f172a] tracking-tight leading-none">{stat.value}</p>
-                            {stat.trend && (
-                                <div className="flex items-center gap-1.5 mt-2">
-                                    <span className="text-[11px] font-black text-emerald-500">{stat.trend}</span>
-                                    <span className="text-[11px] font-bold text-slate-400">{stat.trendText}</span>
-                                </div>
-                            )}
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Weekly Overview Section */}
             <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
                 <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Weekly Overview</h3>
                 <div className="grid grid-cols-7 gap-5">
@@ -187,12 +178,11 @@ export function HabitsModule({ onUpdate, user }) {
                 </div>
             </div>
 
-            {/* Your Habits Section */}
             <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
                 <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Your Habits</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {habits.length > 0 ? habits.map((habit, idx) => (
-                        <div key={idx} onClick={() => !habit.completedToday && completeHabit(habit._id)} className={`p-8 rounded-[2rem] border transition-all cursor-pointer ${habit.completedToday ? 'border-[#f59e0b] bg-white shadow-md' : 'border-slate-50 bg-[#f8fafc]/50 hover:bg-slate-100/50'}`}>
+                        <div key={idx} onClick={() => !habit.completedToday && completeHabit(habit._id)} className={`p-8 rounded-[2rem] border transition-all cursor-pointer group ${habit.completedToday ? 'border-[#f59e0b] bg-white shadow-md' : 'border-slate-50 bg-[#f8fafc]/50 hover:bg-slate-100/50'}`}>
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center gap-5">
                                     <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-50 flex items-center justify-center text-3xl">
@@ -208,15 +198,22 @@ export function HabitsModule({ onUpdate, user }) {
                                         </div>
                                     </div>
                                 </div>
-                                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${habit.completedToday ? 'bg-[#f59e0b] border-[#f59e0b]' : 'border-slate-200'}`}>
-                                    {habit.completedToday && (
-                                        <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M1 5L4.5 8.5L11 1.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    )}
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={(e) => handleDeleteHabit(habit._id, e)}
+                                        className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${habit.completedToday ? 'bg-[#f59e0b] border-[#f59e0b]' : 'border-slate-200'}`}>
+                                        {habit.completedToday && (
+                                            <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M1 5L4.5 8.5L11 1.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-
                             <div className="space-y-3">
                                 <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-tight">
                                     <span className="text-slate-400">Streak Progress</span>
@@ -240,7 +237,6 @@ export function HabitsModule({ onUpdate, user }) {
                 </div>
             </div>
 
-            {/* Habit Form Modal */}
             {showForm && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-lg rounded-[2.5rem] p-10 shadow-2xl relative">

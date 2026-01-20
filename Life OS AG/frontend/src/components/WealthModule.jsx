@@ -8,9 +8,9 @@ import {
     PiggyBank,
     ArrowUpRight,
     ArrowDownLeft,
-    TrendingDown,
     DollarSign,
-    MoreVertical
+    MoreVertical,
+    Trash2
 } from 'lucide-react';
 import {
     Tooltip,
@@ -78,6 +78,17 @@ export function WealthModule({ onUpdate, user }) {
             console.error('Failed to fetch transactions', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteTransaction = async (id) => {
+        if (!window.confirm('Delete this transaction?')) return;
+        try {
+            await financeAPI.deleteTransaction(id);
+            fetchTransactions();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Delete failed', err);
         }
     };
 
@@ -316,6 +327,14 @@ export function WealthModule({ onUpdate, user }) {
                                     {typeof tx.date === 'string' ? tx.date.split('-').reverse().join(' ').replace(' 2025', '') : 'Today'}
                                 </p>
                             </div>
+                            <div className="ml-4 transition-opacity">
+                                <button
+                                    onClick={() => handleDeleteTransaction(tx._id)}
+                                    className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -331,6 +350,6 @@ export function WealthModule({ onUpdate, user }) {
                     setIsModalOpen(false);
                 }}
             />
-        </div>
+        </div >
     );
 }

@@ -10,7 +10,8 @@ import {
     RefreshCw,
     ExternalLink,
     Activity,
-    CheckCircle2
+    CheckCircle2,
+    Trash2
 } from 'lucide-react';
 import {
     XAxis,
@@ -19,7 +20,7 @@ import {
     AreaChart,
     Area
 } from 'recharts';
-import { kernelAPI } from '../api';
+import { kernelAPI, tasksAPI } from '../api';
 
 const CircularProgress = ({ value, color, size = 180 }) => {
     return (
@@ -62,6 +63,21 @@ export function DashboardModule({ dashboardData, loading, setActiveTab }) {
         month: 'short',
         day: 'numeric'
     });
+
+    const deleteTask = async (id, e) => {
+        e.stopPropagation();
+        if (!window.confirm('Are you sure you want to delete this task?')) return;
+        try {
+            await tasksAPI.deleteTask(id);
+            if (setActiveTab) {
+                // Trigger global refresh via App.jsx mechanism if possible
+                // or just rely on the next poll/update
+            }
+            window.location.reload(); // Quickest way to refresh shared dashboard state
+        } catch (err) {
+            console.error('Delete failed', err);
+        }
+    };
 
     if (loading || !dashboardData) {
         return (
@@ -202,8 +218,16 @@ export function DashboardModule({ dashboardData, loading, setActiveTab }) {
                                 </p>
                             </div>
 
-                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${item.completed ? 'bg-[#f0fdf4] text-[#10b981]' : 'bg-white border-2 border-slate-100 text-transparent shadow-sm'}`}>
-                                {item.completed ? <CheckCircle2 size={18} strokeWidth={2.5} /> : <div className="w-4 h-4 rounded-full border-2 border-slate-200" />}
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={(e) => deleteTask(item._id, e)}
+                                    className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${item.completed ? 'bg-[#f0fdf4] text-[#10b981]' : 'bg-white border-2 border-slate-100 text-transparent shadow-sm'}`}>
+                                    {item.completed ? <CheckCircle2 size={18} strokeWidth={2.5} /> : <div className="w-4 h-4 rounded-full border-2 border-slate-200" />}
+                                </div>
                             </div>
                         </div>
                     ))}

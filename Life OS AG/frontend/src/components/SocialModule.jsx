@@ -7,7 +7,8 @@ import {
     MessageCircle,
     Heart,
     MessageSquare,
-    MoreVertical
+    MoreVertical,
+    Trash2
 } from 'lucide-react';
 import { AddConnectionModal } from './AddConnectionModal';
 import { socialAPI, kernelAPI } from '../api';
@@ -63,6 +64,17 @@ export function SocialModule({ onUpdate, user }) {
             console.error('Failed to fetch connections', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const deleteRelationship = async (id) => {
+        if (!window.confirm('Remove this connection?')) return;
+        try {
+            await socialAPI.deleteRelationship(id);
+            fetchConnections();
+            if (onUpdate) onUpdate();
+        } catch (err) {
+            console.error('Delete failed', err);
         }
     };
 
@@ -178,6 +190,12 @@ export function SocialModule({ onUpdate, user }) {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => deleteRelationship(conn._id)}
+                                        className="p-2.5 text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
                                     <button className="p-2.5 text-[#e11d48] hover:bg-white hover:shadow-sm rounded-xl transition-all active:scale-95">
                                         <Phone size={18} strokeWidth={2.5} />
                                     </button>
