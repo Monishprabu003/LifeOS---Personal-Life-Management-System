@@ -80,25 +80,29 @@ export function GoalsModule({ onUpdate, user }) {
         return Math.round((completed / goal.tasks.length) * 100);
     };
 
-    // Mock data for skills and learning path to match mockup perfectly
-    const skills = [
-        { name: 'JavaScript', progress: 85 },
-        { name: 'React', progress: 80 },
-        { name: 'Leadership', progress: 65 },
-        { name: 'Communication', progress: 75 },
-        { name: 'Python', progress: 45 },
-    ];
+    // Dynamic data derivation
+    const activeGoals = goals.filter(g => g.status !== 'completed');
+    const purposeScore = goals.length > 0
+        ? Math.round(goals.reduce((acc, g) => acc + calculateProgress(g), 0) / goals.length)
+        : 0;
 
-    const learningPath = [
-        { title: 'Advanced React Patterns', type: 'Course', status: 'done' },
-        { title: 'System Design Fundamentals', type: 'Course', status: 'in-progress', progress: 65 },
-        { title: 'Machine Learning Basics', type: 'Course', status: 'todo' },
-    ];
+    const skills = goals
+        .filter(g => g.category?.toLowerCase() === 'skills' || g.category?.toLowerCase() === 'career')
+        .map(g => ({ name: g.title, progress: calculateProgress(g) }));
+
+    const learningPath = goals
+        .filter(g => g.category?.toLowerCase() === 'learning' || g.category?.toLowerCase() === 'personal')
+        .map(g => ({
+            title: g.title,
+            type: g.category,
+            status: calculateProgress(g) === 100 ? 'done' : calculateProgress(g) > 0 ? 'in-progress' : 'todo',
+            progress: calculateProgress(g)
+        }));
 
     const stats = [
-        { label: 'Active Goals', value: '3', icon: Flag, bgColor: '#faf5ff' },
-        { label: 'Skills Tracked', value: '5', icon: Award, bgColor: '#faf5ff' },
-        { label: 'Learning Items', value: '4', trend: '+25%', trendText: 'vs last week', icon: BookOpen, bgColor: '#faf5ff' },
+        { label: 'Active Goals', value: activeGoals.length.toString(), icon: Flag, bgColor: '#faf5ff' },
+        { label: 'Skills Tracked', value: skills.length.toString(), icon: Award, bgColor: '#faf5ff' },
+        { label: 'Learning Items', value: learningPath.length.toString(), trend: '0%', trendText: 'no data', icon: BookOpen, bgColor: '#faf5ff' },
     ];
 
     return (
@@ -129,7 +133,7 @@ export function GoalsModule({ onUpdate, user }) {
                 <div className="bg-white rounded-[2.5rem] p-8 border border-slate-50 shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 self-start">Purpose Score</h3>
                     <div className="relative mb-4">
-                        <CircularProgress value={76} label="Strong progress on goals" />
+                        <CircularProgress value={purposeScore} label="Overall purpose alignment score" />
                     </div>
                 </div>
 
@@ -159,14 +163,14 @@ export function GoalsModule({ onUpdate, user }) {
             <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
                 <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Your Goals</h3>
                 <div className="space-y-10">
-                    {goals.length > 0 ? goals.slice(0, 3).map((goal) => (
+                    {goals.length > 0 ? goals.map((goal) => (
                         <div key={goal._id} className="p-10 border border-slate-50 rounded-[2.5rem] bg-white shadow-sm hover:shadow-md transition-all">
                             <div className="flex justify-between items-start mb-8">
                                 <div>
                                     <h4 className="text-2xl font-bold text-[#0f172a] tracking-tight mb-2">{goal.title}</h4>
                                     <div className="flex items-center gap-3">
                                         <span className="bg-violet-50 text-violet-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">{goal.category}</span>
-                                        <span className="text-slate-400 text-xs font-bold">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Mar 2025'}</span>
+                                        <span className="text-slate-400 text-xs font-bold">Due {goal.deadline ? new Date(goal.deadline).toLocaleDateString() : 'No deadline'}</span>
                                     </div>
                                 </div>
                                 <span className="text-3xl font-black text-violet-600">{calculateProgress(goal)}%</span>
@@ -191,58 +195,13 @@ export function GoalsModule({ onUpdate, user }) {
                                     </div>
                                 ))}
                                 {(!goal.tasks || goal.tasks.length === 0) && (
-                                    <>
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-5 h-5 rounded-full border-2 bg-violet-600 border-violet-600 text-white flex items-center justify-center">
-                                                <CheckCircle2 size={12} strokeWidth={3} />
-                                            </div>
-                                            <span className="text-[15px] font-bold text-slate-400 line-through">Complete initial setup</span>
-                                        </div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-5 h-5 rounded-full border-2 border-slate-200" />
-                                            <span className="text-[15px] font-bold text-slate-600">Start core development</span>
-                                        </div>
-                                    </>
+                                    <p className="text-slate-400 text-sm font-bold opacity-60">No sub-tasks defined</p>
                                 )}
                             </div>
                         </div>
                     )) : (
-                        <div className="p-10 border border-slate-50 rounded-[2.5rem] bg-white shadow-sm">
-                            <div className="flex justify-between items-start mb-8">
-                                <div>
-                                    <h4 className="text-2xl font-bold text-[#0f172a] tracking-tight mb-2">Launch Side Project</h4>
-                                    <div className="flex items-center gap-3">
-                                        <span className="bg-violet-50 text-violet-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Career</span>
-                                        <span className="text-slate-400 text-xs font-bold">Due Mar 2025</span>
-                                    </div>
-                                </div>
-                                <span className="text-3xl font-black text-violet-600">65%</span>
-                            </div>
-
-                            <div className="relative h-2.5 w-full bg-slate-100 rounded-full overflow-hidden mb-10">
-                                <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{ width: '65%' }}
-                                    transition={{ duration: 1.5, ease: "easeOut" }}
-                                    className="h-full bg-emerald-500 rounded-full"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12">
-                                {[
-                                    { title: 'Complete MVP design', done: true },
-                                    { title: 'Build core features', done: true },
-                                    { title: 'Beta testing', done: false },
-                                    { title: 'Marketing launch', done: false },
-                                ].map((step, i) => (
-                                    <div key={i} className="flex items-center gap-4">
-                                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${step.done ? 'bg-violet-600 border-violet-600 text-white' : 'border-slate-200'}`}>
-                                            {step.done && <CheckCircle2 size={12} strokeWidth={3} />}
-                                        </div>
-                                        <span className={`text-[15px] font-bold ${step.done ? 'text-slate-400 line-through' : 'text-slate-600'}`}>{step.title}</span>
-                                    </div>
-                                ))}
-                            </div>
+                        <div className="py-20 text-center bg-slate-50/30 rounded-[2.5rem] border border-dashed border-slate-200">
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No active missions. Dream big and start one!</p>
                         </div>
                     )}
                 </div>
@@ -254,7 +213,7 @@ export function GoalsModule({ onUpdate, user }) {
                 <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm flex flex-col">
                     <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Skills Progress</h3>
                     <div className="space-y-8">
-                        {skills.map((skill) => (
+                        {skills.length > 0 ? skills.map((skill) => (
                             <div key={skill.name} className="space-y-3">
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
                                     <span className="text-slate-600">{skill.name}</span>
@@ -269,7 +228,11 @@ export function GoalsModule({ onUpdate, user }) {
                                     />
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <div className="py-10 text-center bg-slate-50/30 rounded-[2rem] border border-dashed border-slate-200">
+                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">No skills being tracked</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -277,7 +240,7 @@ export function GoalsModule({ onUpdate, user }) {
                 <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm flex flex-col">
                     <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Learning Path</h3>
                     <div className="space-y-4">
-                        {learningPath.map((item, idx) => (
+                        {learningPath.length > 0 ? learningPath.map((item, idx) => (
                             <div key={idx} className="flex items-center justify-between p-6 bg-slate-50/50 rounded-[2rem] transition-all hover:bg-slate-100/50 group cursor-pointer">
                                 <div className="flex items-center gap-5">
                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm bg-white ${item.status === 'done' ? 'text-violet-600' : 'text-slate-400'}`}>
@@ -301,7 +264,11 @@ export function GoalsModule({ onUpdate, user }) {
                                 </div>
                                 <ChevronRight size={18} className="text-slate-300 group-hover:text-slate-400 transition-colors" />
                             </div>
-                        ))}
+                        )) : (
+                            <div className="py-10 text-center bg-slate-50/30 rounded-[2rem] border border-dashed border-slate-200">
+                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Learning path empty</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

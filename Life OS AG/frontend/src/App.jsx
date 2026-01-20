@@ -39,8 +39,9 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('lifeos_token'));
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [dashboardData, setDashboardData] = useState(null);
   const [totalEvents, setTotalEvents] = useState(0);
-  const [isDarkMode] = useState(false); // Locked to light mode
+  const [isDarkMode] = useState(false);
 
   // Auth Flow State
   const [authMode, setAuthMode] = useState('signin');
@@ -55,17 +56,19 @@ function App() {
   const fetchAppData = useCallback(async () => {
     try {
       setLoading(true);
-      const [userRes, habitsRes, goalsRes, eventsRes] = await Promise.all([
+      const [userRes, habitsRes, goalsRes, eventsRes, statusRes] = await Promise.all([
         authAPI.getMe(),
         habitsAPI.getHabits(),
         goalsAPI.getGoals(),
-        kernelAPI.getEvents()
+        kernelAPI.getEvents(),
+        kernelAPI.getStatus()
       ]);
       setUser(userRes.data);
       setHabits(habitsRes.data);
       setGoals(goalsRes.data);
       setNotifications(eventsRes.data.slice(0, 10));
       setTotalEvents(eventsRes.data.length);
+      setDashboardData(statusRes.data);
     } catch (err) {
       console.error('Failed to fetch data', err);
       if (err.response?.status === 401) {
@@ -287,11 +290,11 @@ function App() {
         <div className="p-6 mt-auto border-t border-[#f1f5f9]">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 min-w-[40px] rounded-full bg-[#14b8a6] flex items-center justify-center text-white font-bold text-sm">
-              NI
+              {user?.name?.substring(0, 2).toUpperCase() || 'JD'}
             </div>
             <div className="flex-1 overflow-hidden">
-              <p className="text-[13px] font-bold text-[#0f172a] truncate leading-none mb-1">nitin</p>
-              <p className="text-[11px] font-medium text-slate-400 truncate leading-none">monishprabu39200...</p>
+              <p className="text-[13px] font-bold text-[#0f172a] truncate leading-none mb-1">{user?.name || 'User'}</p>
+              <p className="text-[11px] font-medium text-slate-400 truncate leading-none">{user?.email || 'email@example.com'}</p>
             </div>
             <button onClick={handleLogout} className="p-2 text-slate-300 hover:text-[#0f172a] transition-all">
               <LogOut size={16} />
@@ -300,7 +303,13 @@ function App() {
         </div>
       </aside>
 
-      <main className="flex-1 relative overflow-y-auto bg-white">
+      <main className={`flex-1 relative overflow-y-auto transition-all duration-700 ease-in-out ${activeTab === 'health' ? 'bg-[#dcfce7]' :
+        activeTab === 'wealth' ? 'bg-[#dbeafe]' :
+          activeTab === 'relationships' ? 'bg-[#ffe4e6]' :
+            activeTab === 'habits' ? 'bg-[#fef3c7]' :
+              activeTab === 'goals' ? 'bg-[#ede9fe]' :
+                activeTab === 'dashboard' ? 'bg-[#f1f5f9]' : 'bg-white'
+        }`}>
         <header className="px-10 py-8 flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-slate-400 mb-1">Welcome back,</p>
@@ -334,8 +343,8 @@ function App() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'dashboard' && <DashboardModule user={user} habits={habits} goals={goals} onUpdate={fetchAppData} setActiveTab={setActiveTab} />}
-              {activeTab === 'health' && <HealthModule onUpdate={fetchAppData} user={user} />}
+              {activeTab === 'dashboard' && <DashboardModule user={user} habits={habits} goals={goals} onUpdate={fetchAppData} setActiveTab={setActiveTab} dashboardData={dashboardData} loading={loading} />}
+              {activeTab === 'health' && <HealthModule onUpdate={fetchAppData} user={user} dashboardData={dashboardData} />}
               {activeTab === 'wealth' && <WealthModule onUpdate={fetchAppData} user={user} />}
               {activeTab === 'habits' && <HabitsModule onUpdate={fetchAppData} user={user} />}
               {activeTab === 'goals' && <GoalsModule onUpdate={fetchAppData} user={user} />}

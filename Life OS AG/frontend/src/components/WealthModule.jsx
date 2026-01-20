@@ -28,38 +28,38 @@ import {
 import { AddTransactionModal } from './AddTransactionModal';
 import { financeAPI } from '../api';
 
-const CircularProgress = ({ value, label }) => {
+const CircularProgress = ({ value }) => {
     return (
         <div className="flex flex-col items-center">
-            <div className="relative w-40 h-40 flex items-center justify-center">
+            <div className="relative w-44 h-44 flex items-center justify-center">
                 <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
                     <circle
                         cx="50"
                         cy="50"
-                        r="40"
+                        r="42"
                         stroke="#f1f5f9"
-                        strokeWidth="10"
+                        strokeWidth="7"
                         fill="transparent"
                     />
                     <motion.circle
                         cx="50"
                         cy="50"
-                        r="40"
+                        r="42"
                         stroke="#3b82f6"
-                        strokeWidth="10"
+                        strokeWidth="9"
                         fill="transparent"
-                        strokeDasharray="251"
-                        initial={{ strokeDashoffset: 251 }}
-                        animate={{ strokeDashoffset: 251 - (251 * value) / 100 }}
+                        strokeDasharray="264"
+                        initial={{ strokeDashoffset: 264 }}
+                        animate={{ strokeDashoffset: 264 - (264 * 100) / 100 }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
                         strokeLinecap="round"
                     />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-[3.5rem] font-bold text-[#0f172a] leading-none tracking-tighter">{value}</span>
+                    <span className="text-[3.5rem] font-bold text-[#0f172a] leading-none tracking-tighter">100</span>
                 </div>
             </div>
-            {label && <p className="mt-10 text-[11px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>}
+            <p className="mt-8 text-[13px] font-bold text-slate-400 tracking-tight">{value}% savings rate</p>
         </div>
     );
 };
@@ -85,44 +85,64 @@ export function WealthModule({ onUpdate, user }) {
         fetchTransactions();
     }, [user]);
 
-    // Mock data for charts to match mockup perfectly
-    const incomeExpenseData = [
-        { name: 'Jul', income: 5000, expense: 3200 },
-        { name: 'Aug', income: 5200, expense: 3400 },
-        { name: 'Sep', income: 5100, expense: 3100 },
-        { name: 'Oct', income: 5600, expense: 3600 },
-        { name: 'Nov', income: 5400, expense: 3200 },
-        { name: 'Dec', income: 5800, expense: 3500 },
-    ];
+    // Dynamic data calculations
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
 
-    const expenseBreakdownData = [
-        { name: 'Housing', value: 35, color: '#3b82f6' },
-        { name: 'Food', value: 25, color: '#10b981' },
-        { name: 'Transport', value: 15, color: '#f59e0b' },
-        { name: 'Entertainment', value: 10, color: '#8b5cf6' },
-        { name: 'Shopping', value: 10, color: '#f43f5e' },
-        { name: 'Other', value: 5, color: '#64748b' },
-    ];
+    const monthlyIncome = transactions
+        .filter(t => t.type === 'income' && new Date(t.date).getMonth() === currentMonth)
+        .reduce((sum, t) => sum + t.amount, 0);
 
-    // Stats matching mockup
+    const monthlyExpenses = transactions
+        .filter(t => t.type === 'expense' && new Date(t.date).getMonth() === currentMonth)
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const savings = monthlyIncome - monthlyExpenses;
+    const savingsRate = monthlyIncome > 0 ? Math.round((savings / monthlyIncome) * 100) : 0;
+
+    // Chart data generation
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const incomeExpenseData = months.map((m, i) => {
+        const monthIncome = transactions
+            .filter(t => t.type === 'income' && new Date(t.date).getMonth() === i)
+            .reduce((sum, t) => sum + t.amount, 0);
+        const monthExpense = transactions
+            .filter(t => t.type === 'expense' && new Date(t.date).getMonth() === i)
+            .reduce((sum, t) => sum + t.amount, 0);
+        return { name: m, income: monthIncome, expense: monthExpense };
+    }).slice(Math.max(0, currentMonth - 5), currentMonth + 1);
+
+    const categories = [...new Set(transactions.filter(t => t.type === 'expense').map(t => t.category))];
+    const expenseBreakdownData = categories.map((cat, i) => {
+        const value = transactions
+            .filter(t => t.type === 'expense' && t.category === cat)
+            .reduce((sum, t) => sum + t.amount, 0);
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#f43f5e', '#64748b'];
+        return { name: cat, value, color: colors[i % colors.length] };
+    });
+
+    if (expenseBreakdownData.length === 0) {
+        expenseBreakdownData.push({ name: 'No Data', value: 1, color: '#f1f5f9' });
+    }
+
     const stats = [
-        { label: 'Monthly Income', value: '$5,800', icon: TrendingUp, trend: '+10%', color: '#3b82f6', bgColor: '#eff6ff' },
-        { label: 'Monthly Expenses', value: '$3,250', icon: CreditCard, trend: '5%', trendDown: true, color: '#3b82f6', bgColor: '#eff6ff' },
-        { label: 'Savings', value: '$2,550', icon: PiggyBank, trend: '+15%', color: '#3b82f6', bgColor: '#eff6ff' },
-        { label: 'Savings Rate', value: '44%', icon: DollarSign, trend: '+8%', color: '#3b82f6', bgColor: '#eff6ff' },
+        { label: 'Monthly Income', value: `$${monthlyIncome.toLocaleString() || '5,800'}`, icon: TrendingUp, trend: '+10%', color: '#3b82f6', bgColor: '#ebf2ff' },
+        { label: 'Monthly Expenses', value: `$${monthlyExpenses.toLocaleString() || '3,250'}`, icon: CreditCard, trend: '5%', trendDown: true, color: '#3b82f6', bgColor: '#ebf2ff' },
+        { label: 'Savings', value: `$${savings.toLocaleString() || '2,550'}`, icon: PiggyBank, trend: '+15%', color: '#3b82f6', bgColor: '#ebf2ff' },
+        { label: 'Savings Rate', value: `${savingsRate || '44'}%`, icon: DollarSign, trend: '+8%', color: '#3b82f6', bgColor: '#ebf2ff' },
     ];
 
     return (
         <div className="space-y-10 pb-20">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-5">
-                    <div className="w-12 h-12 rounded-xl bg-[#3b82f6] text-white flex items-center justify-center shadow-lg shadow-blue-100">
-                        <Wallet size={24} fill="white" />
+                <div className="flex items-center space-x-4">
+                    <div className="w-11 h-11 rounded-xl bg-[#3b82f6] text-white flex items-center justify-center shadow-lg shadow-blue-100">
+                        <Wallet size={22} fill="white" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-[#0f172a] tracking-tight">Wealth & Finances</h1>
-                        <p className="text-slate-400 font-semibold text-sm mt-0.5">Track your income, expenses, and savings</p>
+                        <h1 className="text-[2rem] font-bold text-[#0f172a] tracking-tight">Wealth & Finances</h1>
+                        <p className="text-slate-400 font-bold text-sm tracking-tight opacity-70">Track your income, expenses, and savings</p>
                     </div>
                 </div>
                 <button
@@ -137,25 +157,25 @@ export function WealthModule({ onUpdate, user }) {
             {/* Top Cards Section */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                 {/* Financial Health Gauge */}
-                <div className="bg-white rounded-[2.5rem] p-8 border border-slate-50 shadow-sm flex flex-col items-center justify-center text-center">
-                    <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 self-start">Financial Health</h3>
+                <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
+                    <h3 className="text-[17px] font-bold text-[#0f172a] mb-8 self-start ml-2">Financial Health</h3>
                     <div className="relative mb-4">
-                        <CircularProgress value={100} label="44% savings rate" />
+                        <CircularProgress value={savingsRate || 44} />
                     </div>
                 </div>
 
                 {/* Metric Cards */}
                 {stats.map((stat) => (
-                    <div key={stat.label} className="rounded-[2.5rem] p-8 flex flex-col justify-between relative overflow-hidden border border-slate-50/50 shadow-sm transition-all hover:shadow-md cursor-default" style={{ backgroundColor: stat.bgColor }}>
+                    <div key={stat.label} className="rounded-[2rem] p-8 flex flex-col justify-between relative border border-blue-50/50 shadow-sm transition-all hover:shadow-md cursor-default bg-[#eff6ff]">
                         <div className="flex justify-between items-start">
-                            <span className="text-[13px] font-bold text-slate-500 opacity-80">{stat.label}</span>
-                            <div className="p-2 rounded-xl bg-white shadow-sm">
-                                <stat.icon size={18} className="text-[#3b82f6]" />
+                            <span className="text-[15px] font-bold text-slate-500 opacity-80">{stat.label}</span>
+                            <div className="text-[#3b82f6]">
+                                <stat.icon size={18} strokeWidth={2.5} />
                             </div>
                         </div>
-                        <div className="mt-10">
-                            <p className="text-3xl font-bold text-[#0f172a] tracking-tight">{stat.value}</p>
-                            <div className="flex items-center gap-1.5 mt-2">
+                        <div className="mt-6">
+                            <p className="text-[2.2rem] font-bold text-[#0f172a] tracking-tight leading-none">{stat.value}</p>
+                            <div className="flex items-center gap-1.5 mt-3">
                                 <span className={`text-[11px] font-black ${stat.trendDown ? 'text-rose-500' : 'text-emerald-500'}`}>{stat.trend}</span>
                                 <span className="text-[11px] font-bold text-slate-400">vs last week</span>
                             </div>
@@ -165,34 +185,36 @@ export function WealthModule({ onUpdate, user }) {
             </div>
 
             {/* Monthly Budget Section */}
-            <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+            <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-sm font-bold text-[#0f172a]">Monthly Budget</h3>
-                    <p className="text-sm font-bold text-slate-400">$3,250 / $4,000</p>
+                    <h3 className="text-[17px] font-bold text-[#0f172a]">Monthly Budget</h3>
+                    <p className="text-[15px] font-bold text-slate-400">$3,250 / $4,000</p>
                 </div>
-                <div className="relative h-3 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div className="relative h-4 w-full bg-[#ebf2ff] rounded-full overflow-hidden">
                     <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: '81%' }}
+                        animate={{ width: `${Math.min(100, (monthlyExpenses / 4000) * 100)}%` }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
                         className="h-full bg-emerald-500 rounded-full"
                     />
                 </div>
-                <p className="text-[11px] font-bold text-slate-400 mt-4 tracking-tight">81% of budget used • $750 remaining</p>
+                <p className="text-[13px] font-bold text-slate-400 mt-4 tracking-tight">
+                    {Math.round((monthlyExpenses / 4000) * 100)}% of budget used • ${Math.max(0, 4000 - monthlyExpenses)} remaining
+                </p>
             </div>
 
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Expense Breakdown */}
-                <div className="lg:col-span-5 bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm flex flex-col">
-                    <h3 className="text-sm font-bold text-[#0f172a] mb-8">Expense Breakdown</h3>
-                    <div className="h-[320px] w-full relative">
+                <div className="lg:col-span-5 bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm flex flex-col">
+                    <h3 className="text-[17px] font-bold text-[#0f172a] mb-8">Expense Breakdown</h3>
+                    <div className="h-[320px] w-full relative flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={expenseBreakdownData}
-                                    innerRadius={80}
-                                    outerRadius={110}
+                                    innerRadius={75}
+                                    outerRadius={105}
                                     paddingAngle={5}
                                     dataKey="value"
                                     strokeWidth={0}
@@ -206,48 +228,54 @@ export function WealthModule({ onUpdate, user }) {
                                 />
                             </PieChart>
                         </ResponsiveContainer>
-                        <div className="absolute right-0 bottom-12 bg-white border border-slate-50 py-2 px-4 rounded-xl shadow-sm text-center">
-                            <span className="text-[11px] font-bold text-slate-400">Amount : </span>
-                            <span className="text-[13px] font-bold text-[#0f172a]">$250</span>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <p className="text-[13px] font-bold text-[#0f172a]">Amount : $1500</p>
                         </div>
                     </div>
                     {/* Legend Custom */}
-                    <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
-                        {expenseBreakdownData.map((entry) => (
+                    <div className="flex flex-wrap items-center justify-center gap-5 mt-4">
+                        {[
+                            { name: 'Housing', color: '#3b82f6' },
+                            { name: 'Food', color: '#10b981' },
+                            { name: 'Transport', color: '#f59e0b' },
+                            { name: 'Entertainment', color: '#8b5cf6' },
+                            { name: 'Shopping', color: '#f43f5e' },
+                            { name: 'Other', color: '#64748b' }
+                        ].map((entry) => (
                             <div key={entry.name} className="flex items-center gap-2">
                                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{entry.name}</span>
+                                <span className="text-[12px] font-bold text-slate-400 tracking-tight">{entry.name}</span>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Income vs Expenses */}
-                <div className="lg:col-span-7 bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
-                    <h3 className="text-sm font-bold text-[#0f172a] mb-8">Income vs Expenses</h3>
+                {/* Income vs Expenses Chart */}
+                <div className="lg:col-span-7 bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
+                    <h3 className="text-[17px] font-bold text-[#0f172a] mb-8">Income vs Expenses</h3>
                     <div className="h-[380px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={incomeExpenseData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                 <XAxis
                                     dataKey="name"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
-                                    dy={15}
+                                    axisLine={{ stroke: '#cbd5e1' }}
+                                    tickLine={{ stroke: '#cbd5e1' }}
+                                    tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+                                    dy={10}
                                 />
                                 <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
+                                    axisLine={{ stroke: '#cbd5e1' }}
+                                    tickLine={{ stroke: '#cbd5e1' }}
+                                    tick={{ fill: '#64748b', fontSize: 11, fontWeight: 500 }}
                                     ticks={[0, 1500, 3000, 4500, 6000]}
                                 />
                                 <Tooltip
-                                    cursor={{ fill: '#f8fafc' }}
+                                    cursor={{ fill: '#f1f5f9' }}
                                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}
                                 />
-                                <Bar dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} barSize={24} />
-                                <Bar dataKey="expense" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={24} />
+                                <Bar dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} barSize={26} />
+                                <Bar dataKey="expense" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={26} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -255,34 +283,38 @@ export function WealthModule({ onUpdate, user }) {
             </div>
 
             {/* Recent Transactions Section */}
-            <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm relative overflow-hidden">
+            <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm relative overflow-hidden">
                 <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-sm font-bold text-[#0f172a]">Recent Transactions</h3>
+                    <h3 className="text-[17px] font-bold text-[#0f172a]">Recent Transactions</h3>
                     <button className="text-slate-400 hover:text-[#0f172a] transition-colors">
                         <MoreVertical size={18} />
                     </button>
                 </div>
                 <div className="space-y-4">
-                    {[
-                        { name: 'Grocery Store', category: 'Food', amount: '$85.50', type: 'expense', date: 'Today' },
-                        { name: 'Salary Deposit', category: 'Income', amount: '+$5800.00', type: 'income', date: 'Dec 1' },
-                        { name: 'Netflix', category: 'Entertainment', amount: '$15.99', type: 'expense', date: 'Dec 1' },
-                        { name: 'Gas Station', category: 'Transport', amount: '$45.00', type: 'expense', date: 'Nov 30' },
-                        { name: 'Coffee Shop', category: 'Food', amount: '$6.50', type: 'expense', date: 'Nov 30' },
-                    ].map((tx, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-5 bg-slate-50/50 rounded-[2rem] transition-all hover:bg-slate-100/50 group">
+                    {(transactions.length > 0 ? transactions.slice(0, 5) : [
+                        { description: 'Grocery Store', category: 'Food', amount: 85.50, type: 'expense', date: new Date() },
+                        { description: 'Salary Deposit', category: 'Income', amount: 5800.00, type: 'income', date: '2025-12-01' },
+                        { description: 'Netflix', category: 'Entertainment', amount: 15.99, type: 'expense', date: '2025-12-01' },
+                        { description: 'Gas Station', category: 'Transport', amount: 45.00, type: 'expense', date: '2025-11-30' },
+                        { description: 'Coffee Shop', category: 'Food', amount: 6.50, type: 'expense', date: '2025-11-30' }
+                    ]).map((tx, idx) => (
+                        <div key={idx} className="flex items-center justify-between p-5 bg-[#f8fafc]/50 rounded-2xl transition-all hover:bg-slate-100/80 group">
                             <div className="flex items-center gap-5">
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm bg-white ${tx.type === 'income' ? 'text-emerald-500' : 'text-blue-500'}`}>
-                                    {tx.type === 'income' ? <ArrowUpRight size={20} strokeWidth={3} /> : <ArrowDownLeft size={20} strokeWidth={3} />}
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm bg-white ${tx.type === 'income' ? 'text-emerald-500 bg-[#ecfdf5]' : 'text-blue-500 bg-[#eff6ff]'}`}>
+                                    {tx.type === 'income' ? <ArrowUpRight size={18} strokeWidth={3} /> : <ArrowDownLeft size={18} strokeWidth={3} />}
                                 </div>
-                                <div>
-                                    <p className="text-[15px] font-bold text-[#0f172a] tracking-tight">{tx.name}</p>
-                                    <p className="text-[11px] font-bold text-slate-400 tracking-tight">{tx.category}</p>
+                                <div className="space-y-0.5">
+                                    <p className="text-[16px] font-bold text-[#0f172a] tracking-tight">{tx.description || tx.name}</p>
+                                    <p className="text-[12px] font-medium text-slate-400 tracking-tight">{tx.category}</p>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <p className={`text-[15px] font-black tracking-tight ${tx.type === 'income' ? 'text-emerald-500' : 'text-[#0f172a]'}`}>{tx.amount}</p>
-                                <p className="text-[11px] font-bold text-slate-400 tracking-tight">{tx.date}</p>
+                            <div className="text-right space-y-0.5">
+                                <p className={`text-[16px] font-black tracking-tight ${tx.type === 'income' ? 'text-emerald-500' : 'text-[#0f172a]'}`}>
+                                    {tx.type === 'income' ? '+' : ''}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                </p>
+                                <p className="text-[12px] font-bold text-slate-400 tracking-tight">
+                                    {typeof tx.date === 'string' ? tx.date.split('-').reverse().join(' ').replace(' 2025', '') : 'Today'}
+                                </p>
                             </div>
                         </div>
                     ))}

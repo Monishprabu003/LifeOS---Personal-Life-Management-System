@@ -56,32 +56,14 @@ const CircularProgress = ({ value, color, size = 180 }) => {
     );
 };
 
-export function DashboardModule({ setActiveTab }) {
-    const [dashboardData, setDashboardData] = useState(null);
-    const [loading, setLoading] = useState(true);
-
+export function DashboardModule({ dashboardData, loading, setActiveTab }) {
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'short',
         day: 'numeric'
     });
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                setLoading(true);
-                const res = await kernelAPI.getStatus();
-                setDashboardData(res.data);
-            } catch (err) {
-                console.error("Failed to fetch dashboard status", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchDashboardData();
-    }, []);
-
-    if (loading) {
+    if (loading || !dashboardData) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
                 <RefreshCw className="w-8 h-8 animate-spin text-[#10b981] opacity-20" />
@@ -89,29 +71,19 @@ export function DashboardModule({ setActiveTab }) {
         );
     }
 
-    const trendData = dashboardData?.trend || [
-        { name: 'Tue', performance: 65 },
-        { name: 'Wed', performance: 72 },
-        { name: 'Thu', performance: 68 },
-        { name: 'Fri', performance: 75 },
-        { name: 'Sat', performance: 82 },
-        { name: 'Sun', performance: 88 }
-    ];
+    const trendData = dashboardData?.trend || [{ name: 'N/A', performance: 0 }];
 
     const modules = [
-        { name: 'Health', score: dashboardData?.healthScore || 85, color: '#10b981', bgColor: '#f0fdf4', icon: Heart, tab: 'health' },
-        { name: 'Wealth', score: dashboardData?.wealthScore || 72, color: '#3b82f6', bgColor: '#eff6ff', icon: Wallet, tab: 'wealth' },
-        { name: 'Relationships', score: dashboardData?.relationshipScore || 88, color: '#f43f5e', bgColor: '#fff1f2', icon: Users, tab: 'relationships' },
-        { name: 'Habits', score: dashboardData?.habitScore || 91, color: '#f59e0b', bgColor: '#fffbeb', icon: CheckSquare, tab: 'habits' },
-        { name: 'Purpose', score: dashboardData?.goalScore || 76, color: '#8b5cf6', bgColor: '#faf5ff', icon: Target, tab: 'goals' },
+        { name: 'Health', score: dashboardData?.healthScore || 0, color: '#10b981', bgColor: '#f0fdf4', icon: Heart, tab: 'health' },
+        { name: 'Wealth', score: dashboardData?.wealthScore || 0, color: '#3b82f6', bgColor: '#eff6ff', icon: Wallet, tab: 'wealth' },
+        { name: 'Relationships', score: dashboardData?.relationshipScore || 0, color: '#f43f5e', bgColor: '#fff1f2', icon: Users, tab: 'relationships' },
+        { name: 'Habits', score: dashboardData?.habitScore || 0, color: '#f59e0b', bgColor: '#fffbeb', icon: CheckSquare, tab: 'habits' },
+        { name: 'Purpose', score: dashboardData?.goalScore || 0, color: '#8b5cf6', bgColor: '#faf5ff', icon: Target, tab: 'goals' },
     ];
 
-    const todayFocus = [
-        { title: 'Morning meditation', color: '#10b981', completed: true },
-        { title: 'Review monthly budget', color: '#3b82f6', completed: false },
-        { title: 'Call mom', color: '#f43f5e', completed: true },
-        { title: 'Complete online course', color: '#8b5cf6', completed: false },
-    ];
+    const todayFocus = dashboardData?.dailyStats?.tasks || [];
+    const completedTasks = todayFocus.filter(t => t.completed).length;
+    const totalTasks = todayFocus.length;
 
     return (
         <div className="space-y-12 pb-10">
@@ -122,13 +94,15 @@ export function DashboardModule({ setActiveTab }) {
                     <div className="lg:col-span-4 flex flex-col items-center text-center">
                         <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-12 self-start">LIFE PERFORMANCE INDEX</h3>
                         <div className="relative">
-                            <CircularProgress value={dashboardData?.lifeScore || 78} color="#10b981" />
+                            <CircularProgress value={dashboardData?.lifeScore || 0} color="#10b981" />
                             <div className="absolute top-2 -right-10 bg-[#e3fff2] text-[#059669] px-3 py-1 rounded-full text-[10px] font-black flex items-center gap-1 shadow-sm border border-emerald-100/50">
-                                <TrendingUp size={12} strokeWidth={3} /> +5%
+                                <TrendingUp size={12} strokeWidth={3} /> {dashboardData?.trendValue || '+0%'}
                             </div>
                         </div>
                         <div className="mt-12 text-left w-full">
-                            <h4 className="text-3xl font-bold text-[#0f172a] mb-2 tracking-tight">You're doing great!</h4>
+                            <h4 className="text-3xl font-bold text-[#0f172a] mb-2 tracking-tight">
+                                {dashboardData?.lifeScore > 80 ? "You're doing great!" : dashboardData?.lifeScore > 50 ? "Keep it up!" : "Let's get started!"}
+                            </h4>
                             <p className="text-sm font-semibold text-slate-400">{today}</p>
                         </div>
                     </div>
@@ -212,7 +186,7 @@ export function DashboardModule({ setActiveTab }) {
                         <h3 className="text-xl font-bold text-[#0f172a] tracking-tight">Today's Focus</h3>
                     </div>
                     <div className="bg-[#f0fdf4] text-[#10b981] px-4 py-1.5 rounded-full text-[13px] font-bold">
-                        2/4
+                        {completedTasks}/{totalTasks}
                     </div>
                 </div>
 

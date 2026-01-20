@@ -84,32 +84,39 @@ export function HabitsModule({ onUpdate, user }) {
         }
     };
 
-    // Stats matching mockup
+    // Dynamic stats calculation
+    const activeHabitsCount = habits.length;
+    const completedTodayCount = habits.filter(h => h.completedToday).length;
+    const longestStreak = habits.length > 0 ? Math.max(...habits.map(h => h.streak || 0)) : 0;
+    const todayProgress = habits.length > 0 ? Math.round((completedTodayCount / activeHabitsCount) * 100) : 0;
+
     const stats = [
-        { label: 'Active Habits', value: '6', icon: ClipboardList, bgColor: '#fffbeb', iconColor: '#f59e0b' },
-        { label: 'Completed Today', value: '3', icon: Target, bgColor: '#fffbeb', iconColor: '#f59e0b' },
-        { label: 'Longest Streak', value: '15 days', icon: Flame, bgColor: '#fffbeb', iconColor: '#f59e0b' },
-        { label: 'Weekly Score', value: '91%', trend: '+5%', trendText: 'vs last week', icon: TrendingUp, bgColor: '#fffbeb', iconColor: '#f59e0b' },
+        { label: 'Active Habits', value: activeHabitsCount.toString(), icon: ClipboardList, bgColor: '#fffbeb', iconColor: '#f59e0b' },
+        { label: 'Completed Today', value: completedTodayCount.toString(), icon: Target, bgColor: '#fffbeb', iconColor: '#f59e0b' },
+        { label: 'Longest Streak', value: `${longestStreak} days`, icon: Flame, bgColor: '#fffbeb', iconColor: '#f59e0b' },
+        { label: 'Success Rate', value: `${todayProgress}%`, trend: '0%', trendText: 'no data', icon: TrendingUp, bgColor: '#fffbeb', iconColor: '#f59e0b' },
     ];
 
-    const weeklyData = [
-        { day: 'Mon', score: '5/6', active: false },
-        { day: 'Tue', score: '4/6', active: false },
-        { day: 'Wed', score: '6/6', active: true },
-        { day: 'Thu', score: '5/6', active: false },
-        { day: 'Fri', score: '3/6', active: false },
-        { day: 'Sat', score: '6/6', active: true },
-        { day: 'Sun', score: '4/6', active: false },
-    ];
+    // Calculate weekly completion scores
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const todayIndex = new Date().getDay();
+    const weeklyData = days.map((day, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (todayIndex - i));
+        date.setHours(0, 0, 0, 0);
 
-    const mockHabits = [
-        { name: 'Morning Meditation', emoji: '🧘', streak: 12, current: 12, total: 30, color: '#10b981', completed: true },
-        { name: 'Read 30 minutes', emoji: '📚', streak: 8, current: 8, total: 21, color: '#8b5cf6', completed: true },
-        { name: 'Drink 2L water', emoji: '💧', streak: 15, current: 15, total: 30, color: '#10b981', completed: false },
-        { name: 'Daily journaling', emoji: '📝', streak: 5, current: 5, total: 14, color: '#f43f5e', completed: false },
-        { name: 'No social media before noon', emoji: '📵', streak: 3, current: 3, total: 7, color: '#f59e0b', completed: true },
-        { name: 'Track expenses', emoji: '💰', streak: 10, current: 10, total: 30, color: '#3b82f6', completed: false },
-    ];
+        const completions = habits.filter(h => h.history && h.history.some(log => {
+            const logDate = new Date(log.date || log.timestamp);
+            logDate.setHours(0, 0, 0, 0);
+            return logDate.getTime() === date.getTime();
+        })).length;
+
+        return {
+            day,
+            score: `${completions}/${activeHabitsCount || 0}`,
+            active: i === todayIndex
+        };
+    });
 
     return (
         <div className="space-y-10 pb-20">
@@ -139,7 +146,7 @@ export function HabitsModule({ onUpdate, user }) {
                 <div className="bg-white rounded-[2.5rem] p-8 border border-slate-50 shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 self-start">Today's Progress</h3>
                     <div className="relative mb-4">
-                        <CircularProgress value={50} sublabel="3/6 habits completed" />
+                        <CircularProgress value={todayProgress} sublabel={`${completedTodayCount}/${activeHabitsCount} habits completed`} />
                     </div>
                 </div>
 
@@ -184,25 +191,25 @@ export function HabitsModule({ onUpdate, user }) {
             <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
                 <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Your Habits</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {mockHabits.map((habit, idx) => (
-                        <div key={idx} className={`p-8 rounded-[2rem] border transition-all ${habit.completed ? 'border-[#f59e0b] bg-white shadow-md' : 'border-slate-50 bg-[#f8fafc]/50'}`}>
+                    {habits.length > 0 ? habits.map((habit, idx) => (
+                        <div key={idx} onClick={() => !habit.completedToday && completeHabit(habit._id)} className={`p-8 rounded-[2rem] border transition-all cursor-pointer ${habit.completedToday ? 'border-[#f59e0b] bg-white shadow-md' : 'border-slate-50 bg-[#f8fafc]/50 hover:bg-slate-100/50'}`}>
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center gap-5">
                                     <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-50 flex items-center justify-center text-3xl">
-                                        {habit.emoji}
+                                        {habit.emoji || '✨'}
                                     </div>
                                     <div>
                                         <h4 className="text-[18px] font-bold text-[#0f172a] tracking-tight">{habit.name}</h4>
                                         <div className="flex items-center gap-3 mt-1">
                                             <span className="text-[13px] font-bold text-slate-400 flex items-center gap-1.5">
-                                                <Flame size={14} className="text-[#f59e0b] fill-[#f59e0b]" /> {habit.streak} day streak
+                                                <Flame size={14} className="text-[#f59e0b] fill-[#f59e0b]" /> {habit.streak || 0} day streak
                                             </span>
-                                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: habit.color }} />
+                                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#f59e0b' }} />
                                         </div>
                                     </div>
                                 </div>
-                                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${habit.completed ? 'bg-[#f59e0b] border-[#f59e0b]' : 'border-slate-200'}`}>
-                                    {habit.completed && (
+                                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${habit.completedToday ? 'bg-[#f59e0b] border-[#f59e0b]' : 'border-slate-200'}`}>
+                                    {habit.completedToday && (
                                         <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M1 5L4.5 8.5L11 1.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                         </svg>
@@ -212,20 +219,24 @@ export function HabitsModule({ onUpdate, user }) {
 
                             <div className="space-y-3">
                                 <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-tight">
-                                    <span className="text-slate-400">Progress to goal</span>
-                                    <span className="text-slate-400">{habit.current}/{habit.total} days</span>
+                                    <span className="text-slate-400">Streak Progress</span>
+                                    <span className="text-slate-400">Current: {habit.streak || 0}</span>
                                 </div>
                                 <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
-                                        animate={{ width: `${(habit.current / habit.total) * 100}%` }}
+                                        animate={{ width: `${Math.min(100, (habit.streak / 30) * 100)}%` }}
                                         transition={{ duration: 1, delay: 0.1 * idx }}
                                         className="h-full bg-[#10b981] rounded-full"
                                     />
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="col-span-2 py-20 text-center bg-slate-50/30 rounded-[2.5rem] border border-dashed border-slate-200">
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No habits tracked yet. Start one today!</p>
+                        </div>
+                    )}
                 </div>
             </div>
 

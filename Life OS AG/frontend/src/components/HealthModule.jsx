@@ -62,7 +62,7 @@ const CircularProgress = ({ value, color, size = 160 }) => {
     );
 };
 
-export function HealthModule({ onUpdate, user }) {
+export function HealthModule({ onUpdate, user, dashboardData }) {
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -92,8 +92,7 @@ export function HealthModule({ onUpdate, user }) {
 
     if (sleepData.length === 0) {
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const values = [7, 6.5, 8, 7.5, 7, 9, 8];
-        days.forEach((day, i) => sleepData.push({ name: day, hours: values[i] }));
+        days.forEach((day, i) => sleepData.push({ name: day, hours: 0 }));
     }
 
     const trendData = logs.slice(0, 7).reverse().map(log => ({
@@ -104,20 +103,18 @@ export function HealthModule({ onUpdate, user }) {
 
     if (trendData.length === 0) {
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const moodVals = [7, 6, 8, 7, 8, 9, 8];
-        const stressVals = [4, 5, 3, 4, 3, 2, 3];
-        days.forEach((day, i) => trendData.push({ name: day, mood: moodVals[i], stress: stressVals[i] }));
+        days.forEach((day, i) => trendData.push({ name: day, mood: 0, stress: 0 }));
     }
 
     const dailyScore = latestLog
         ? Math.round(((latestLog.mood * 10) + (latestLog.sleepHours * 10) + (100 - (latestLog.stress * 10)) + (Math.min(latestLog.waterIntake, 2.5) * 40)) / 4)
-        : 76;
+        : 0;
 
     const stats = [
-        { label: 'Sleep', value: '7.5 hrs', icon: Moon, trend: '+8%', trendText: 'vs last week', color: '#10b981' },
-        { label: 'Water', value: '2.1 L', icon: Droplets, trend: '+12%', trendText: 'vs last week', color: '#10b981' },
-        { label: 'Mood', value: '8/10', icon: Smile, trend: '+5%', trendText: 'vs last week', color: '#10b981' },
-        { label: 'Stress', value: '3/10', icon: Activity, trend: '15%', trendText: 'vs last week', color: '#ef4444' },
+        { label: 'Sleep', value: latestLog ? `${latestLog.sleepHours} hrs` : '0 hrs', icon: Moon, trend: '0%', trendText: 'no data', color: '#10b981' },
+        { label: 'Water', value: latestLog ? `${latestLog.waterIntake} L` : '0 L', icon: Droplets, trend: '0%', trendText: 'no data', color: '#10b981' },
+        { label: 'Mood', value: latestLog ? `${latestLog.mood}/10` : '0/10', icon: Smile, trend: '0%', trendText: 'no data', color: '#10b981' },
+        { label: 'Stress', value: latestLog ? `${latestLog.stress}/10` : '0/10', icon: Activity, trend: '0%', trendText: 'no data', color: '#ef4444' },
     ];
 
     return (
@@ -179,56 +176,56 @@ export function HealthModule({ onUpdate, user }) {
             </div>
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Sleep Chart */}
-                <div className="lg:col-span-6 bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
-                    <h3 className="text-sm font-bold text-[#0f172a] mb-10 opacity-70 uppercase tracking-widest">Sleep Tracking (7 Days)</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Sleep Tracking Chart */}
+                <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
+                    <h3 className="text-[17px] font-bold text-[#0f172a] mb-10">Sleep Tracking</h3>
                     <div className="h-[280px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={sleepData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                 <XAxis
                                     dataKey="name"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
-                                    dy={15}
+                                    axisLine={{ stroke: '#cbd5e1' }}
+                                    tickLine={{ stroke: '#cbd5e1' }}
+                                    tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+                                    dy={10}
                                 />
                                 <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
+                                    axisLine={{ stroke: '#cbd5e1' }}
+                                    tickLine={{ stroke: '#cbd5e1' }}
+                                    tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
                                     domain={[0, 12]}
                                     ticks={[0, 3, 6, 9, 12]}
                                 />
                                 <Tooltip
-                                    cursor={{ fill: '#f8fafc' }}
+                                    cursor={{ fill: '#f1f5f9' }}
                                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}
                                 />
-                                <Bar dataKey="hours" fill="#10b981" radius={[6, 6, 0, 0]} barSize={45} />
+                                <Bar dataKey="hours" fill="#10b981" radius={[4, 4, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
                 {/* Mood & Stress Chart */}
-                <div className="lg:col-span-6 bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
-                    <h3 className="text-sm font-bold text-[#0f172a] mb-10 opacity-70 uppercase tracking-widest">Mood & Stress Trends</h3>
+                <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
+                    <h3 className="text-[17px] font-bold text-[#0f172a] mb-10">Mood & Stress Trends</h3>
                     <div className="h-[280px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={trendData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                 <XAxis
                                     dataKey="name"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
-                                    dy={15}
+                                    axisLine={{ stroke: '#cbd5e1' }}
+                                    tickLine={{ stroke: '#cbd5e1' }}
+                                    tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+                                    dy={10}
                                 />
                                 <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
+                                    axisLine={{ stroke: '#cbd5e1' }}
+                                    tickLine={{ stroke: '#cbd5e1' }}
+                                    tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
                                     domain={[0, 12]}
                                     ticks={[0, 3, 6, 9, 12]}
                                 />
@@ -239,7 +236,7 @@ export function HealthModule({ onUpdate, user }) {
                                     type="monotone"
                                     dataKey="mood"
                                     stroke="#10b981"
-                                    strokeWidth={3}
+                                    strokeWidth={2}
                                     dot={{ r: 4, fill: '#10b981', strokeWidth: 0 }}
                                     activeDot={{ r: 6, strokeWidth: 0 }}
                                 />
@@ -247,7 +244,7 @@ export function HealthModule({ onUpdate, user }) {
                                     type="monotone"
                                     dataKey="stress"
                                     stroke="#ef4444"
-                                    strokeWidth={3}
+                                    strokeWidth={2}
                                     dot={{ r: 4, fill: '#ef4444', strokeWidth: 0 }}
                                     activeDot={{ r: 6, strokeWidth: 0 }}
                                 />
@@ -258,27 +255,27 @@ export function HealthModule({ onUpdate, user }) {
             </div>
 
             {/* Health Habits Section */}
-            <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+            <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-xl font-bold text-[#0f172a] tracking-tight">Health Habits</h3>
+                    <h3 className="text-[17px] font-bold text-[#0f172a]">Health Habits</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[
-                        { name: 'Morning Meditation', streak: '12 day streak 🔥', done: true, icon: Brain, color: '#10b981' },
-                        { name: '30 Min Workout', streak: '8 day streak 🔥', done: false, icon: Activity, color: '#3b82f6' },
-                        { name: '10K Steps', streak: '5 day streak 🔥', done: false, icon: Footprints, color: '#8b5cf6' }
-                    ].map((habit) => (
-                        <div key={habit.name} className={`p-6 rounded-[2rem] border transition-all cursor-pointer flex items-center justify-between ${habit.done ? 'bg-[#f0fdf4] border-[#10b981]/10 shadow-sm' : 'bg-slate-50/50 border-transparent hover:bg-slate-100/50'}`}>
-                            <div className="flex items-center gap-5">
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${habit.done ? 'bg-white text-[#10b981] shadow-md shadow-emerald-100/50' : 'bg-white text-slate-300 shadow-sm'}`}>
+                    {(dashboardData?.healthHabits?.length > 0 ? dashboardData.healthHabits : [
+                        { name: 'Morning Meditation', streak: '12 day streak', done: true, icon: Brain },
+                        { name: '30 Min Workout', streak: '8 day streak', done: false, icon: Activity },
+                        { name: '10K Steps', streak: '5 day streak', done: false, icon: Footprints }
+                    ]).map((habit) => (
+                        <div key={habit.name} className={`p-6 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${habit.done ? 'bg-[#f0fdf4] border-[#10b981]/60' : 'bg-white border-slate-100'}`}>
+                            <div className="flex items-center gap-4">
+                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${habit.done ? 'bg-[#10b981] text-white' : 'bg-slate-100 text-slate-400'}`}>
                                     <habit.icon size={22} strokeWidth={2.5} />
                                 </div>
                                 <div>
-                                    <p className={`text-[15px] font-bold tracking-tight ${habit.done ? 'text-[#0f172a]' : 'text-slate-500'}`}>{habit.name}</p>
-                                    <p className="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-tight">{habit.streak}</p>
+                                    <p className={`text-[15px] font-bold tracking-tight text-[#0f172a]`}>{habit.name}</p>
+                                    <p className="text-[12px] font-medium text-slate-400 mt-0.5">{habit.streak || '0 day streak'} 🔥</p>
                                 </div>
                             </div>
-                            <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${habit.done ? 'bg-[#10b981] border-[#10b981]' : 'border-slate-200'}`}>
+                            <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${habit.done ? 'bg-[#10b981] border-[#10b981]' : 'border-slate-300'}`}>
                                 {habit.done && (
                                     <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M1 5L4.5 8.5L11 1.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
