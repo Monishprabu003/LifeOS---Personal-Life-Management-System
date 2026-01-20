@@ -66,7 +66,7 @@ function App() {
       setUser(userRes.data);
       setHabits(habitsRes.data);
       setGoals(goalsRes.data);
-      setNotifications(eventsRes.data.slice(0, 10));
+      setNotifications(eventsRes.data);
       setTotalEvents(eventsRes.data.length);
       setDashboardData(statusRes.data);
     } catch (err) {
@@ -343,7 +343,7 @@ function App() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'dashboard' && <DashboardModule user={user} habits={habits} goals={goals} onUpdate={fetchAppData} setActiveTab={setActiveTab} dashboardData={dashboardData} loading={loading} />}
+              {activeTab === 'dashboard' && <DashboardModule user={user} habits={habits} goals={goals} onUpdate={fetchAppData} setActiveTab={setActiveTab} dashboardData={dashboardData} loading={loading} allLogs={notifications} />}
               {activeTab === 'health' && <HealthModule onUpdate={fetchAppData} user={user} dashboardData={dashboardData} />}
               {activeTab === 'wealth' && <WealthModule onUpdate={fetchAppData} user={user} />}
               {activeTab === 'habits' && <HabitsModule onUpdate={fetchAppData} user={user} />}

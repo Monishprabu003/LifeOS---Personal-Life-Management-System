@@ -57,23 +57,18 @@ const CircularProgress = ({ value, color, size = 180 }) => {
     );
 };
 
-export function DashboardModule({ dashboardData, loading, setActiveTab }) {
+export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs, onUpdate }) {
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'short',
         day: 'numeric'
     });
 
-    const deleteTask = async (id, e) => {
-        e.stopPropagation();
-        if (!window.confirm('Are you sure you want to delete this task?')) return;
+    const handleDeleteLog = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this log?')) return;
         try {
-            await tasksAPI.deleteTask(id);
-            if (setActiveTab) {
-                // Trigger global refresh via App.jsx mechanism if possible
-                // or just rely on the next poll/update
-            }
-            window.location.reload(); // Quickest way to refresh shared dashboard state
+            await kernelAPI.deleteEvent(id);
+            if (onUpdate) onUpdate();
         } catch (err) {
             console.error('Delete failed', err);
         }
@@ -96,10 +91,6 @@ export function DashboardModule({ dashboardData, loading, setActiveTab }) {
         { name: 'Habits', score: dashboardData?.habitScore || 0, color: '#f59e0b', bgColor: '#fffbeb', icon: CheckSquare, tab: 'habits' },
         { name: 'Purpose', score: dashboardData?.goalScore || 0, color: '#8b5cf6', bgColor: '#faf5ff', icon: Target, tab: 'goals' },
     ];
-
-    const todayFocus = dashboardData?.dailyStats?.tasks || [];
-    const completedTasks = todayFocus.filter(t => t.completed).length;
-    const totalTasks = todayFocus.length;
 
     return (
         <div className="space-y-12 pb-10">
@@ -194,43 +185,42 @@ export function DashboardModule({ dashboardData, loading, setActiveTab }) {
                 </div>
             </div>
 
-            {/* Today's Focus Section */}
+            {/* All Logs Section */}
             <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
                 <div className="flex items-center justify-between mb-8 px-2">
                     <div className="flex items-center gap-3">
                         <Activity className="text-[#10b981]" size={24} />
-                        <h3 className="text-xl font-bold text-[#0f172a] tracking-tight">Today's Focus</h3>
-                    </div>
-                    <div className="bg-[#f0fdf4] text-[#10b981] px-4 py-1.5 rounded-full text-[13px] font-bold">
-                        {completedTasks}/{totalTasks}
+                        <h3 className="text-xl font-bold text-[#0f172a] tracking-tight">All Logs</h3>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                    {todayFocus.map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-6 bg-slate-50/50 rounded-[2rem] transition-all hover:bg-slate-100/50 group cursor-pointer relative overflow-hidden">
-                            {/* Accent Bar */}
-                            <div className="absolute left-6 top-1/2 -translate-y-1/2 w-1.5 h-10 rounded-full" style={{ backgroundColor: item.color }} />
-
-                            <div className="pl-10">
-                                <p className={`text-[17px] font-bold tracking-tight transition-all ${item.completed ? 'text-slate-400 line-through' : 'text-[#0f172a]'}`}>
-                                    {item.title}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={(e) => deleteTask(item._id, e)}
-                                    className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${item.completed ? 'bg-[#f0fdf4] text-[#10b981]' : 'bg-white border-2 border-slate-100 text-transparent shadow-sm'}`}>
-                                    {item.completed ? <CheckCircle2 size={18} strokeWidth={2.5} /> : <div className="w-4 h-4 rounded-full border-2 border-slate-200" />}
+                    {allLogs && allLogs.length > 0 ? allLogs.map((log) => (
+                        <div key={log._id} className="flex items-center justify-between p-6 bg-slate-50/50 rounded-[2rem] transition-all hover:bg-slate-100/50 group relative overflow-hidden">
+                            <div className="flex items-center gap-5">
+                                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#10b981] shadow-sm">
+                                    <Activity size={18} />
+                                </div>
+                                <div>
+                                    <p className="text-[16px] font-bold text-[#0f172a] tracking-tight">{log.description}</p>
+                                    <p className="text-[12px] font-medium text-slate-400 mt-0.5">
+                                        {new Date(log.timestamp).toLocaleDateString()} at {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
                                 </div>
                             </div>
+
+                            <button
+                                onClick={() => handleDeleteLog(log._id)}
+                                className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                            >
+                                <Trash2 size={18} />
+                            </button>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="py-12 text-center bg-slate-50/30 rounded-[2rem] border border-dashed border-slate-200">
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No logs recorded yet</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
