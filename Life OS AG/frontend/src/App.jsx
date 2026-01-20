@@ -28,6 +28,7 @@ import { DashboardModule } from './components/DashboardModule';
 import { ProfileModule } from './components/ProfileModule';
 import { SettingsModule } from './components/SettingsModule';
 import { NotificationPanel } from './components/NotificationPanel';
+import { NexusAnimation } from './components/NexusAnimation';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -230,9 +231,10 @@ function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden text-[#0f172a]">
+    <div className="flex h-screen bg-slate-50/50 overflow-hidden text-[#0f172a] relative">
+      <NexusAnimation activeTab={activeTab} />
       {/* Sidebar */}
-      <aside className="w-72 bg-white border-r border-[#f1f5f9] flex flex-col z-50">
+      <aside className="w-72 bg-white/80 backdrop-blur-md border-r border-[#f1f5f9] flex flex-col z-50">
         <div className="p-8">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-[#3b82f6] rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
@@ -303,12 +305,12 @@ function App() {
         </div>
       </aside>
 
-      <main className={`flex-1 relative overflow-y-auto transition-all duration-700 ease-in-out ${activeTab === 'health' ? 'bg-[#dcfce7]' :
-        activeTab === 'wealth' ? 'bg-[#dbeafe]' :
-          activeTab === 'relationships' ? 'bg-[#ffe4e6]' :
-            activeTab === 'habits' ? 'bg-[#fef3c7]' :
-              activeTab === 'goals' ? 'bg-[#ede9fe]' :
-                activeTab === 'dashboard' ? 'bg-[#f1f5f9]' : 'bg-white'
+      <main className={`flex-1 relative overflow-y-auto transition-all duration-700 ease-in-out z-10 ${activeTab === 'health' ? 'bg-emerald-50/15' :
+        activeTab === 'wealth' ? 'bg-blue-50/15' :
+          activeTab === 'relationships' ? 'bg-rose-50/15' :
+            activeTab === 'habits' ? 'bg-amber-50/15' :
+              activeTab === 'goals' ? 'bg-violet-50/15' :
+                activeTab === 'dashboard' ? 'bg-slate-50/15' : 'bg-white/15'
         }`}>
         <header className="px-10 py-8 flex items-center justify-between">
           <div>

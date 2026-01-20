@@ -84,6 +84,15 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess, isDarkMode }) {
     };
 
     const handleSave = async () => {
+        if (activeTab === 'wealth' && (!amount || isNaN(parseFloat(amount)))) {
+            alert('Please enter a valid amount');
+            return;
+        }
+        if (activeTab === 'tasks' && !taskTitle) {
+            alert('Please enter a task description');
+            return;
+        }
+
         setLoading(true);
         try {
             if (activeTab === 'health') {
@@ -100,11 +109,15 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess, isDarkMode }) {
                     type: transactionType,
                     amount: parseFloat(amount),
                     category: category || 'General',
-                    description: description
+                    description: description || 'No description'
                 });
             } else if (activeTab === 'habits') {
                 if (selectedHabitId) {
                     await habitsAPI.completeHabit(selectedHabitId);
+                } else {
+                    alert('Please select a habit');
+                    setLoading(false);
+                    return;
                 }
             } else if (activeTab === 'relationships') {
                 if (selectedRelationshipId) {
@@ -112,26 +125,34 @@ export function UnifiedLogModal({ isOpen, onClose, onSuccess, isDarkMode }) {
                         type: interactionType,
                         description: description || 'Had a great interaction!'
                     });
+                } else {
+                    alert('Please select a connection');
+                    setLoading(false);
+                    return;
                 }
             } else if (activeTab === 'goals') {
                 if (selectedGoalId) {
                     await goalsAPI.updateProgress(selectedGoalId, goalProgress);
+                } else {
+                    alert('Please select a goal');
+                    setLoading(false);
+                    return;
                 }
             } else if (activeTab === 'tasks') {
-                if (taskTitle) {
-                    await tasksAPI.createTask({
-                        title: taskTitle,
-                        priority: taskPriority,
-                        goalId: selectedGoalId || undefined
-                    });
-                }
+                await tasksAPI.createTask({
+                    title: taskTitle,
+                    priority: taskPriority,
+                    goalId: selectedGoalId || undefined
+                });
             }
 
             onSuccess();
             onClose();
             resetForm();
+            alert('Event logged successfully!');
         } catch (error) {
             console.error('Failed to log event:', error);
+            alert(`Failed to log event: ${error.response?.data?.message || error.message}`);
         } finally {
             setLoading(false);
         }

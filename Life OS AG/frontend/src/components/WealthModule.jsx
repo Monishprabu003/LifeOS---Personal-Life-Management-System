@@ -137,10 +137,10 @@ export function WealthModule({ onUpdate, user }) {
     }
 
     const stats = [
-        { label: 'Monthly Income', value: `$${monthlyIncome.toLocaleString() || '5,800'}`, icon: TrendingUp, trend: '+10%', color: '#3b82f6', bgColor: '#ebf2ff' },
-        { label: 'Monthly Expenses', value: `$${monthlyExpenses.toLocaleString() || '3,250'}`, icon: CreditCard, trend: '5%', trendDown: true, color: '#3b82f6', bgColor: '#ebf2ff' },
-        { label: 'Savings', value: `$${savings.toLocaleString() || '2,550'}`, icon: PiggyBank, trend: '+15%', color: '#3b82f6', bgColor: '#ebf2ff' },
-        { label: 'Savings Rate', value: `${savingsRate || '44'}%`, icon: DollarSign, trend: '+8%', color: '#3b82f6', bgColor: '#ebf2ff' },
+        { label: 'Monthly Income', value: `₹${monthlyIncome.toLocaleString()}`, icon: TrendingUp, trend: '+0%', color: '#3b82f6', bgColor: '#ebf2ff' },
+        { label: 'Monthly Expenses', value: `₹${monthlyExpenses.toLocaleString()}`, icon: CreditCard, trend: '0%', trendDown: true, color: '#3b82f6', bgColor: '#ebf2ff' },
+        { label: 'Savings', value: `₹${savings.toLocaleString()}`, icon: PiggyBank, trend: '+0%', color: '#3b82f6', bgColor: '#ebf2ff' },
+        { label: 'Savings Rate', value: `${savingsRate}%`, icon: DollarSign, trend: '+0%', color: '#3b82f6', bgColor: '#ebf2ff' },
     ];
 
     return (
@@ -302,13 +302,7 @@ export function WealthModule({ onUpdate, user }) {
                     </button>
                 </div>
                 <div className="space-y-4">
-                    {(transactions.length > 0 ? transactions.slice(0, 5) : [
-                        { description: 'Grocery Store', category: 'Food', amount: 85.50, type: 'expense', date: new Date() },
-                        { description: 'Salary Deposit', category: 'Income', amount: 5800.00, type: 'income', date: '2025-12-01' },
-                        { description: 'Netflix', category: 'Entertainment', amount: 15.99, type: 'expense', date: '2025-12-01' },
-                        { description: 'Gas Station', category: 'Transport', amount: 45.00, type: 'expense', date: '2025-11-30' },
-                        { description: 'Coffee Shop', category: 'Food', amount: 6.50, type: 'expense', date: '2025-11-30' }
-                    ]).map((tx, idx) => (
+                    {transactions.length > 0 ? transactions.slice(0, 10).map((tx, idx) => (
                         <div key={idx} className="flex items-center justify-between p-5 bg-[#f8fafc]/50 rounded-2xl transition-all hover:bg-slate-100/80 group">
                             <div className="flex items-center gap-5">
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm bg-white ${tx.type === 'income' ? 'text-emerald-500 bg-[#ecfdf5]' : 'text-blue-500 bg-[#eff6ff]'}`}>
@@ -336,7 +330,11 @@ export function WealthModule({ onUpdate, user }) {
                                 </button>
                             </div>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="py-12 text-center bg-slate-50/30 rounded-[2rem] border border-dashed border-slate-200">
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No transactions recorded yet</p>
+                        </div>
+                    )}
                 </div>
             </div>
 

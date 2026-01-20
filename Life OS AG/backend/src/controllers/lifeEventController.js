@@ -107,7 +107,7 @@ export const deleteEvent = async (req, res) => {
                 });
             }
 
-            // Handle Habit Rollback
+            // Handle Habid Rollback
             const habitId = getMeta('habitId');
             if (habitId) {
                 const habit = await Habit.findById(habitId);
@@ -117,6 +117,23 @@ export const deleteEvent = async (req, res) => {
                     const lastComp = habit.history[habit.history.length - 1];
                     habit.lastCompleted = lastComp ? lastComp.date : null;
                     await habit.save();
+                }
+            }
+
+            // Handle Relationship Rollback
+            const relationshipId = getMeta('relationshipId');
+            if (relationshipId) {
+                const relationship = await Relationship.findById(relationshipId);
+                if (relationship) {
+                    // If it was just an interaction, remove the last one
+                    if (event.title.includes('Interaction')) {
+                        relationship.interactionHistory.pop();
+                        const lastInt = relationship.interactionHistory[relationship.interactionHistory.length - 1];
+                        relationship.lastInteraction = lastInt ? lastInt.date : null;
+                        await relationship.save();
+                    }
+                    // Note: We don't delete the whole relationship here as that might be too destructive
+                    // for a dashboard log deletion, but we could if title was 'Added relationship'
                 }
             }
         }

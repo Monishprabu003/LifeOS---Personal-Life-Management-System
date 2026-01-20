@@ -1,9 +1,12 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import app from './app.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import connectDB from './config/db.js';
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -11,6 +14,8 @@ const io = new Server(server, {
         origin: '*',
     },
 });
+
+console.log('Backend process starting...');
 
 // Socket.io integration placeholder
 io.on('connection', (socket) => {
@@ -22,7 +27,9 @@ io.on('connection', (socket) => {
 
 const startServer = async () => {
     try {
+        console.log('Connecting to MongoDB...');
         await connectDB();
+        console.log('MongoDB connection call finished.');
         server.listen(PORT, () => {
             console.log(`LifeOS Kernel running on port ${PORT}`);
         });

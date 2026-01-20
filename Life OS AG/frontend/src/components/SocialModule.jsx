@@ -88,6 +88,20 @@ export function SocialModule({ onUpdate, user }) {
         }
     };
 
+    const handleQuickInteract = async (id, type) => {
+        try {
+            await socialAPI.logInteraction(id, {
+                type: type,
+                description: `Quick ${type} logged via connection shortcut.`
+            });
+            await fetchConnections();
+            if (onUpdate) onUpdate();
+            // Optional: You can add an alert here but it might be too intrusive
+        } catch (err) {
+            console.error('Interaction failed', err);
+        }
+    };
+
     useEffect(() => {
         fetchConnections();
         fetchGratitude();
@@ -99,9 +113,9 @@ export function SocialModule({ onUpdate, user }) {
         : 0;
 
     const stats = [
-        { label: 'Connections', value: connections.length.toString() || '24', icon: Users, bgColor: '#fff1f2', iconColor: '#e11d48' },
-        { label: 'Interactions This Week', value: (connections.filter(c => c.lastInteraction && new Date(c.lastInteraction) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length || 12).toString(), trend: '+20%', trendText: 'vs last week', icon: MessageSquare, bgColor: '#fff1f2', iconColor: '#e11d48' },
-        { label: 'Gratitude Entries', value: (gratitudeEntries.length || 8).toString(), trend: '+15%', trendText: 'vs last week', icon: Heart, bgColor: '#fff1f2', iconColor: '#e11d48' },
+        { label: 'Connections', value: connections.length.toString(), icon: Users, bgColor: '#fff1f2', iconColor: '#e11d48' },
+        { label: 'Interactions This Week', value: (connections.filter(c => c.lastInteraction && new Date(c.lastInteraction) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length).toString(), trend: '+0%', trendText: 'vs last week', icon: MessageSquare, bgColor: '#fff1f2', iconColor: '#e11d48' },
+        { label: 'Gratitude Entries', value: gratitudeEntries.length.toString(), trend: '+0%', trendText: 'vs last week', icon: Heart, bgColor: '#fff1f2', iconColor: '#e11d48' },
     ];
 
     return (
@@ -132,7 +146,7 @@ export function SocialModule({ onUpdate, user }) {
                 <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[17px] font-bold text-[#0f172a] mb-8 self-start ml-2">Relationship Wellness</h3>
                     <div className="relative mb-4">
-                        <CircularProgress value={Math.round(wellnessScore) || 88} />
+                        <CircularProgress value={Math.round(wellnessScore)} />
                     </div>
                 </div>
 
@@ -166,12 +180,7 @@ export function SocialModule({ onUpdate, user }) {
                         <h3 className="text-[17px] font-bold text-[#0f172a]">Your Connections</h3>
                     </div>
                     <div className="space-y-4">
-                        {(connections.length > 0 ? connections : [
-                            { name: 'Mom', lastInteraction: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), avatar: '👩' },
-                            { name: 'Best Friend - Sarah', lastInteraction: new Date(Date.now() - 24 * 60 * 60 * 1000), avatar: '👭' },
-                            { name: 'Dad', lastInteraction: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), avatar: '👨' },
-                            { name: 'Brother - Mike', lastInteraction: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), avatar: '👦' }
-                        ]).map((conn, idx) => (
+                        {connections.length > 0 ? connections.map((conn, idx) => (
                             <div key={idx} className="flex items-center justify-between p-5 bg-[#f8fafc]/50 rounded-2xl transition-all hover:bg-slate-100/80 group">
                                 <div className="flex items-center gap-5">
                                     <div className="w-12 h-12 rounded-full bg-[#fff1f2] flex items-center justify-center text-2xl">
@@ -196,15 +205,27 @@ export function SocialModule({ onUpdate, user }) {
                                     >
                                         <Trash2 size={18} />
                                     </button>
-                                    <button className="p-2.5 text-[#e11d48] hover:bg-white hover:shadow-sm rounded-xl transition-all active:scale-95">
+                                    <button
+                                        onClick={() => handleQuickInteract(conn._id, 'call')}
+                                        className="p-2.5 text-[#e11d48] hover:bg-white hover:shadow-sm rounded-xl transition-all active:scale-95"
+                                        title="Log Call"
+                                    >
                                         <Phone size={18} strokeWidth={2.5} />
                                     </button>
-                                    <button className="p-2.5 text-[#e11d48] hover:bg-white hover:shadow-sm rounded-xl transition-all active:scale-95">
+                                    <button
+                                        onClick={() => handleQuickInteract(conn._id, 'message')}
+                                        className="p-2.5 text-[#e11d48] hover:bg-white hover:shadow-sm rounded-xl transition-all active:scale-95"
+                                        title="Log Message"
+                                    >
                                         <MessageCircle size={18} strokeWidth={2.5} />
                                     </button>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <div className="py-12 text-center bg-slate-50/30 rounded-[2rem] border border-dashed border-slate-200">
+                                <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No connections found</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -214,20 +235,9 @@ export function SocialModule({ onUpdate, user }) {
                         <h3 className="text-[17px] font-bold text-[#0f172a]">Connection Tasks</h3>
                     </div>
                     <div className="space-y-4">
-                        {[
-                            { title: 'Call Mom', relative: 'Today' },
-                            { title: 'Text Dad about weekend plans', relative: 'Tomorrow' },
-                            { title: 'Send birthday wishes to colleague', relative: 'In 3 days' }
-                        ].map((task, idx) => (
-                            <div key={idx} className="flex items-center gap-5 p-5 bg-[#f8fafc]/50 rounded-2xl transition-all hover:bg-slate-100/80 group">
-                                <div className="w-6 h-6 rounded-lg border-2 border-slate-300 bg-white flex items-center justify-center transition-all cursor-pointer group-hover:border-[#e11d48] shadow-sm">
-                                </div>
-                                <div>
-                                    <p className="text-[16px] font-bold text-[#0f172a] tracking-tight leading-none">{task.title}</p>
-                                    <p className="text-[12px] font-medium text-slate-400 mt-2">{task.relative}</p>
-                                </div>
-                            </div>
-                        ))}
+                        <div className="py-12 text-center bg-slate-50/30 rounded-[2rem] border border-dashed border-slate-200">
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No tasks for today</p>
+                        </div>
                     </div>
                 </div>
             </div>

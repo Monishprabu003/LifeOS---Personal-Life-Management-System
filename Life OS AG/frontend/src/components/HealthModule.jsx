@@ -272,11 +272,7 @@ export function HealthModule({ onUpdate, user, dashboardData }) {
                     <h3 className="text-[17px] font-bold text-[#0f172a]">Health Habits</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {(dashboardData?.healthHabits?.length > 0 ? dashboardData.healthHabits : [
-                        { name: 'Morning Meditation', streak: '12 day streak', done: true, icon: Brain },
-                        { name: '30 Min Workout', streak: '8 day streak', done: false, icon: Activity },
-                        { name: '10K Steps', streak: '5 day streak', done: false, icon: Footprints }
-                    ]).map((habit) => (
+                    {dashboardData?.healthHabits?.length > 0 ? dashboardData.healthHabits.map((habit) => (
                         <div key={habit.name} className={`p-6 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${habit.done ? 'bg-[#f0fdf4] border-[#10b981]/60' : 'bg-white border-slate-100'}`}>
                             <div className="flex items-center gap-4">
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${habit.done ? 'bg-[#10b981] text-white' : 'bg-slate-100 text-slate-400'}`}>
@@ -295,7 +291,11 @@ export function HealthModule({ onUpdate, user, dashboardData }) {
                                 )}
                             </div>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="col-span-3 py-10 text-center bg-slate-50/30 rounded-[2rem] border border-dashed border-slate-200">
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No health habits defined</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
