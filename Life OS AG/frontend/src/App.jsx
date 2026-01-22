@@ -115,95 +115,114 @@ function App() {
 
   if (!token) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center p-6 bg-white text-[#1e293b]">
-        <div className="flex items-center space-x-3 mb-12">
-          <div className="w-12 h-12 rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-lg shadow-blue-200">
-            <span className="text-2xl font-black italic text-white">L</span>
-          </div>
-          <span className="text-3xl font-display font-bold tracking-tight text-[#0f172a]">LifeOS</span>
-        </div>
+      <div className="h-screen w-full flex flex-col items-center justify-center p-6 bg-[#020617] text-white relative overflow-hidden">
+        {/* Ambient Glows */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full pointer-events-none" />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-[440px] rounded-[2rem] p-10 bg-white border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)]"
-        >
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-display font-bold mb-3 text-[#0f172a]">Welcome</h1>
-            <p className="text-slate-500 text-sm">Sign in to your account or create a new one to get started</p>
-          </div>
+        <NexusAnimation activeTab="auth" />
 
-          <div className="flex p-1.5 rounded-2xl mb-8 bg-slate-100/80">
-            <button
-              onClick={() => setAuthMode('signin')}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${authMode === 'signin' ? 'bg-white text-[#0f172a] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => setAuthMode('signup')}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${authMode === 'signup' ? 'bg-white text-[#0f172a] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Sign Up
-            </button>
-          </div>
+        <div className="relative z-10 flex flex-col items-center w-full">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex items-center space-x-3 mb-10"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-500/30">
+              <span className="text-3xl font-black italic text-white">L</span>
+            </div>
+            <span className="text-4xl font-display font-bold tracking-tight text-white">LifeOS</span>
+          </motion.div>
 
-          <form onSubmit={handleAuth} className="space-y-6">
-            {authMode === 'signup' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="w-full max-w-[460px] rounded-[2.5rem] p-10 bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.4)]"
+          >
+            <div className="text-center mb-10">
+              <h1 className="text-3xl font-display font-bold mb-3 text-white">Welcome Back</h1>
+              <p className="text-slate-400 text-sm">Experience the next generation of life management</p>
+            </div>
+
+            <div className="flex p-1.5 rounded-2xl mb-8 bg-white/5 border border-white/5">
+              <button
+                onClick={() => setAuthMode('signin')}
+                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${authMode === 'signin' ? 'bg-white text-[#020617] shadow-lg' : 'text-slate-400 hover:text-white'}`}
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => setAuthMode('signup')}
+                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${authMode === 'signup' ? 'bg-white text-[#020617] shadow-lg' : 'text-slate-400 hover:text-white'}`}
+              >
+                Sign Up
+              </button>
+            </div>
+
+            <form onSubmit={handleAuth} className="space-y-6">
+              {authMode === 'signup' && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="space-y-2"
+                >
+                  <label className="text-[11px] font-bold ml-1 text-slate-400 uppercase tracking-widest">Full Name</label>
+                  <div className="relative group">
+                    <ProfileIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" size={18} />
+                    <input
+                      type="text"
+                      placeholder="Your name"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      required
+                      className="w-full border border-white/5 rounded-2xl p-4 pl-12 text-sm bg-white/5 focus:bg-white/10 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-600 text-white"
+                    />
+                  </div>
+                </motion.div>
+              )}
+
               <div className="space-y-2">
-                <label className="text-xs font-bold ml-1 text-[#1e293b]">Full Name</label>
-                <div className="relative">
-                  <ProfileIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <label className="text-[11px] font-bold ml-1 text-slate-400 uppercase tracking-widest">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" size={18} />
                   <input
-                    type="text"
-                    placeholder="Enter your name"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
                     required
-                    className="w-full border-none rounded-2xl p-4 pl-12 text-sm bg-slate-50 focus:ring-2 focus:ring-[#3b82f6]/20 outline-none transition-all placeholder:text-slate-400"
+                    className="w-full border border-white/5 rounded-2xl p-4 pl-12 text-sm bg-white/5 focus:bg-white/10 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-600 text-white"
                   />
                 </div>
               </div>
-            )}
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold ml-1 text-[#1e293b]">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                  className="w-full border-none rounded-2xl p-4 pl-12 text-sm bg-slate-50 focus:ring-2 focus:ring-[#3b82f6]/20 outline-none transition-all placeholder:text-slate-400"
-                />
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold ml-1 text-slate-400 uppercase tracking-widest">Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" size={18} />
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    className="w-full border border-white/5 rounded-2xl p-4 pl-12 text-sm bg-white/5 focus:bg-white/10 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-600 text-white"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold ml-1 text-[#1e293b]">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  className="w-full border-none rounded-2xl p-4 pl-12 text-sm bg-slate-50 focus:ring-2 focus:ring-[#3b82f6]/20 outline-none transition-all placeholder:text-slate-400"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-[#3b82f6] hover:bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-[0.99] shadow-blue-100"
-            >
-              {authMode === 'signin' ? 'Sign In' : 'Sign Up'}
-            </button>
-          </form>
-        </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl shadow-xl shadow-blue-500/20 transition-all border border-white/10"
+              >
+                {authMode === 'signin' ? 'Access System' : 'Create Account'}
+              </motion.button>
+            </form>
+          </motion.div>
+        </div>
       </div>
     )
   }
