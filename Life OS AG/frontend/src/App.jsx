@@ -126,12 +126,12 @@ function App() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center space-x-3 mb-10"
+            className="flex items-center space-x-4 mb-10"
           >
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-500/30">
-              <span className="text-3xl font-black italic text-white">L</span>
+            <div className="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-[#4ade80] to-[#2dd4bf] flex items-center justify-center shadow-2xl shadow-emerald-500/20">
+              <Activity className="text-white w-10 h-10" strokeWidth={2.5} />
             </div>
-            <span className="text-4xl font-display font-bold tracking-tight text-white">LifeOS</span>
+            <span className="text-5xl font-bold tracking-tight text-white font-sans">LifeOS</span>
           </motion.div>
 
           <motion.div
@@ -256,8 +256,8 @@ function App() {
       <aside className="w-72 bg-white/80 backdrop-blur-md border-r border-[#f1f5f9] flex flex-col z-50">
         <div className="p-8">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-[#3b82f6] rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-              <span className="text-xl font-black italic">L</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-[#4ade80] to-[#2dd4bf] rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/10">
+              <Activity size={22} strokeWidth={2.5} />
             </div>
             <div className="flex flex-col">
               <h1 className="font-bold text-xl tracking-tight leading-none text-[#0f172a]">LifeOS</h1>
