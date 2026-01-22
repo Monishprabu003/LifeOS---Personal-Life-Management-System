@@ -17,16 +17,22 @@ const seed = async () => {
         console.log('Connected to MongoDB for seeding...');
 
         // Clear existing data
-        await User.deleteMany({});
-        await Habit.deleteMany({});
-        await LifeEvent.deleteMany({});
-        await HealthLog.deleteMany({});
-        await Finance.deleteMany({});
-        await Goal.deleteMany({});
-        await Relationship.deleteMany({});
-        await Task.deleteMany({});
+        console.log('Cleaning existing data...');
+        const deleteUsers = await User.deleteMany({});
+        console.log(`Deleted ${deleteUsers.deletedCount} users.`);
 
-        // 1. Create a demo user with exact scores from mockup
+        await Promise.all([
+            Habit.deleteMany({}),
+            LifeEvent.deleteMany({}),
+            HealthLog.deleteMany({}),
+            Finance.deleteMany({}),
+            Goal.deleteMany({}),
+            Relationship.deleteMany({}),
+            Task.deleteMany({})
+        ]);
+        console.log('Other collections cleared.');
+
+        // 1. Create a demo user
         const user = await User.create({
             name: 'John Doe',
             email: 'demo@lifeos.com',
