@@ -66,15 +66,68 @@ const seed = async () => {
             });
         }
 
-        // 4. Create dummy entries for other modules
-        await Finance.create({ userId, type: 'income', amount: 5000, category: 'Salary', description: 'Monthly' });
+        // 4. Create entries for other modules and corresponding LifeEvents
+        await Finance.create({ userId, type: 'income', amount: 5000, category: 'Salary', description: 'Monthly Salary' });
+        await LifeEvent.create({
+            userId,
+            type: 'financial',
+            title: 'Income Logged',
+            description: 'Monthly Salary: +$5,000',
+            impact: 'positive',
+            value: 100,
+            timestamp: new Date()
+        });
+
         await Habit.create({ userId, name: 'Morning Routine', streak: 12, lastCompleted: new Date() });
+        await LifeEvent.create({
+            userId,
+            type: 'habit',
+            title: 'Habit Completed',
+            description: 'Morning Routine streak: 12 days',
+            impact: 'positive',
+            value: 91,
+            timestamp: new Date()
+        });
+
         await Habit.create({ userId, name: 'Deep Work', streak: 8, lastCompleted: new Date() });
         await Goal.create({ userId, title: 'Learn React', progress: 76, category: 'Intellectual' });
+        await LifeEvent.create({
+            userId,
+            type: 'productivity',
+            title: 'Goal Progress',
+            description: 'Learn React: 76% completed',
+            impact: 'positive',
+            value: 76,
+            timestamp: new Date()
+        });
+
         await Relationship.create({ userId, name: 'Family', healthScore: 90 });
+        await LifeEvent.create({
+            userId,
+            type: 'social',
+            title: 'Relationship Peak',
+            description: 'Strong connection with Family',
+            impact: 'positive',
+            value: 90,
+            timestamp: new Date()
+        });
+
+        // Create Health LifeEvents for the past logs
+        const logs = await HealthLog.find({ userId });
+        for (const log of logs) {
+            await LifeEvent.create({
+                userId,
+                type: 'health',
+                title: 'Health Sync',
+                description: `Mood: ${log.mood}/10 • Sleep: ${log.sleepHours}h • Water: ${log.waterIntake}L`,
+                impact: 'positive',
+                value: 85,
+                timestamp: log.timestamp
+            });
+        }
 
         console.log('Clean demo user created with mockup-aligned data:', user.email);
-        console.log('Comprehensive seeding complete (Premium Initial State)!');
+        console.log('Comprehensive seeding complete (Premium Initial State with Event History)!');
         process.exit(0);
     } catch (error) {
         console.error('Seeding error:', error);

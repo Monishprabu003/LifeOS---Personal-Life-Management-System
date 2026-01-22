@@ -219,12 +219,23 @@ export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs,
                     {allLogs && allLogs.length > 0 ? allLogs.map((log) => (
                         <div key={log._id} className="flex items-center justify-between p-6 bg-slate-50/50 rounded-[2rem] transition-all hover:bg-slate-100/50 group relative overflow-hidden">
                             <div className="flex items-center gap-5">
-                                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#10b981] shadow-sm">
-                                    <Activity size={18} />
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${log.type === 'health' ? 'bg-emerald-50 text-emerald-500' :
+                                    log.type === 'financial' ? 'bg-blue-50 text-blue-500' :
+                                        log.type === 'habit' ? 'bg-amber-50 text-amber-500' :
+                                            log.type === 'social' ? 'bg-rose-50 text-rose-500' :
+                                                'bg-slate-50 text-slate-500'
+                                    }`}>
+                                    {log.type === 'health' ? <Heart size={18} /> :
+                                        log.type === 'financial' ? <Wallet size={18} /> :
+                                            log.type === 'habit' ? <CheckSquare size={18} /> :
+                                                log.type === 'social' ? <Users size={18} /> :
+                                                    <Activity size={18} />
+                                    }
                                 </div>
                                 <div>
-                                    <p className="text-[16px] font-bold text-[#0f172a] tracking-tight">{log.description}</p>
+                                    <p className="text-[16px] font-bold text-[#0f172a] tracking-tight">{log.title}</p>
                                     <p className="text-[12px] font-medium text-slate-400 mt-0.5">
+                                        {log.description ? `${log.description} • ` : ''}
                                         {new Date(log.timestamp).toLocaleDateString()} at {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </p>
                                 </div>
