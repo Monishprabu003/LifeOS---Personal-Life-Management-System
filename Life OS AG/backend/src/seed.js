@@ -84,18 +84,43 @@ const seed = async () => {
             timestamp: new Date()
         });
 
-        await Habit.create({ userId, name: 'Morning Routine', streak: 12, lastCompleted: new Date() });
-        await LifeEvent.create({
-            userId,
-            type: 'habit',
-            title: 'Habit Completed',
-            description: 'Morning Routine streak: 12 days',
-            impact: 'positive',
-            value: 91,
-            timestamp: new Date()
-        });
+        const today = new Date();
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-        await Habit.create({ userId, name: 'Deep Work', streak: 8, lastCompleted: new Date() });
+        const habitData = [
+            { name: 'Morning Meditation', emoji: '🧘', streak: 12, targetDays: 30, color: '#10b981', completed: true },
+            { name: 'Read 30 minutes', emoji: '📚', streak: 8, targetDays: 21, color: '#8b5cf6', completed: true },
+            { name: 'Drink 2L water', emoji: '💧', streak: 15, targetDays: 30, color: '#10b981', completed: false },
+            { name: 'Daily journaling', emoji: '📝', streak: 5, targetDays: 14, color: '#f43f5e', completed: false },
+            { name: 'No social media before noon', emoji: '📵', streak: 3, targetDays: 7, color: '#f59e0b', completed: true },
+            { name: 'Track expenses', emoji: '💰', streak: 10, targetDays: 30, color: '#3b82f6', completed: false },
+        ];
+
+        for (const meta of habitData) {
+            const h = await Habit.create({
+                userId,
+                name: meta.name,
+                emoji: meta.emoji,
+                streak: meta.streak,
+                targetDays: meta.targetDays,
+                color: meta.color,
+                lastCompleted: meta.completed ? today : yesterday,
+                history: meta.completed ? [{ date: today, completed: true }] : []
+            });
+
+            if (meta.completed) {
+                await LifeEvent.create({
+                    userId,
+                    type: 'habit',
+                    title: 'Habit Completed',
+                    description: `${meta.name} streak: ${meta.streak} days`,
+                    impact: 'positive',
+                    value: 91,
+                    timestamp: today
+                });
+            }
+        }
+
         await Goal.create({ userId, title: 'Learn React', progress: 76, category: 'Intellectual' });
         await LifeEvent.create({
             userId,

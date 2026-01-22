@@ -179,51 +179,59 @@ export function HabitsModule({ onUpdate, user }) {
             </div>
 
             <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
-                <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Your Habits</h3>
+                <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-[0.01em]">Your Habits</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {habits.length > 0 ? habits.map((habit, idx) => (
-                        <div key={idx} onClick={() => !habit.completedToday && completeHabit(habit._id)} className={`p-8 rounded-[2rem] border transition-all cursor-pointer group ${habit.completedToday ? 'border-[#f59e0b] bg-white shadow-md' : 'border-slate-50 bg-[#f8fafc]/50 hover:bg-slate-100/50'}`}>
-                            <div className="flex justify-between items-start mb-6">
-                                <div className="flex items-center gap-5">
-                                    <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-50 flex items-center justify-center text-3xl">
+                        <div
+                            key={habit._id || idx}
+                            onClick={() => !habit.completedToday && completeHabit(habit._id)}
+                            className={`p-10 rounded-[2rem] border-2 transition-all cursor-pointer group relative ${habit.completedToday
+                                ? 'border-[#f59e0b] bg-[#fffcf5]'
+                                : 'border-[#e2e8f0] bg-white hover:border-[#cbd5e1]'
+                                }`}
+                        >
+                            <div className="flex justify-between items-start mb-8">
+                                <div className="flex items-center gap-6">
+                                    <div className="text-4xl">
                                         {habit.emoji || '✨'}
                                     </div>
                                     <div>
-                                        <h4 className="text-[18px] font-bold text-[#0f172a] tracking-tight">{habit.name}</h4>
-                                        <div className="flex items-center gap-3 mt-1">
-                                            <span className="text-[13px] font-bold text-slate-400 flex items-center gap-1.5">
-                                                <Flame size={14} className="text-[#f59e0b] fill-[#f59e0b]" /> {habit.streak || 0} day streak
+                                        <h4 className="text-[22px] font-bold text-[#0f172a] tracking-tight">{habit.name}</h4>
+                                        <div className="flex items-center gap-3 mt-1.5">
+                                            <span className="text-[15px] font-bold text-slate-400 flex items-center gap-2">
+                                                <Flame size={16} className="text-[#f59e0b] fill-[#f59e0b]" /> {habit.streak || 0} day streak
                                             </span>
-                                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#f59e0b' }} />
+                                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: habit.color || '#f59e0b' }} />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-4">
                                     <button
                                         onClick={(e) => handleDeleteHabit(habit._id, e)}
-                                        className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                        className="p-2 text-rose-500/40 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                     >
                                         <Trash2 size={18} />
                                     </button>
-                                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${habit.completedToday ? 'bg-[#f59e0b] border-[#f59e0b]' : 'border-slate-200'}`}>
+                                    <div className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all ${habit.completedToday ? 'bg-[#f59e0b] border-[#f59e0b]' : 'border-[#cbd5e1]'}`}>
                                         {habit.completedToday && (
-                                            <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M1 5L4.5 8.5L11 1.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <svg width="18" height="14" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M1 5L4.5 8.5L11 1.5" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         )}
                                     </div>
                                 </div>
                             </div>
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-tight">
-                                    <span className="text-slate-400">Streak Progress</span>
-                                    <span className="text-slate-400">Current: {habit.streak || 0}</span>
+
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center text-[13px] font-bold">
+                                    <span className="text-slate-400">Progress to goal</span>
+                                    <span className="text-slate-400">{habit.streak || 0}/{habit.targetDays || 30} days</span>
                                 </div>
-                                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div className="h-4 w-full bg-[#fceacc]/40 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
-                                        animate={{ width: `${Math.min(100, (habit.streak / 30) * 100)}%` }}
-                                        transition={{ duration: 1, delay: 0.1 * idx }}
+                                        animate={{ width: `${Math.min(100, ((habit.streak || 0) / (habit.targetDays || 30)) * 100)}%` }}
+                                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 * idx }}
                                         className="h-full bg-[#10b981] rounded-full"
                                     />
                                 </div>

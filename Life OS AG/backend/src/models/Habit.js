@@ -10,7 +10,9 @@ const HabitSchema = new mongoose.Schema(
             default: 'General'
         },
         frequency: { type: String, enum: ['daily', 'weekly', 'custom'], default: 'daily' },
-        targetDays: { type: Number, default: 7 },
+        targetDays: { type: Number, default: 30 },
+        emoji: { type: String, default: '✨' },
+        color: { type: String, default: '#10b981' },
         streak: { type: Number, default: 0 },
         bestStreak: { type: Number, default: 0 },
         lastCompleted: { type: Date },
