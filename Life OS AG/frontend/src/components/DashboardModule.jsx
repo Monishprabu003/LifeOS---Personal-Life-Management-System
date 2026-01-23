@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import {
     XAxis,
+    YAxis,
+    CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    AreaChart,
-    Area
+    LineChart,
+    Line
 } from 'recharts';
 import { kernelAPI, tasksAPI } from '../api';
 
@@ -133,32 +135,34 @@ export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs,
                         </div>
                         <div className="h-[200px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={trendData}>
-                                    <defs>
-                                        <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.15} />
-                                            <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
+                                <LineChart data={trendData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                     <XAxis
                                         dataKey="name"
-                                        axisLine={false}
-                                        tickLine={false}
+                                        axisLine={{ stroke: '#cbd5e1' }}
+                                        tickLine={{ stroke: '#cbd5e1' }}
                                         tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
                                         dy={15}
+                                    />
+                                    <YAxis
+                                        axisLine={{ stroke: '#cbd5e1' }}
+                                        tickLine={{ stroke: '#cbd5e1' }}
+                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
+                                        domain={[0, 100]}
+                                        ticks={[0, 25, 50, 75, 100]}
                                     />
                                     <Tooltip
                                         contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}
                                     />
-                                    <Area
+                                    <Line
                                         type="monotone"
                                         dataKey="performance"
                                         stroke="#10b981"
                                         strokeWidth={3}
-                                        fill="url(#trendGradient)"
-                                        dot={false}
+                                        dot={{ r: 5, fill: '#10b981', strokeWidth: 0 }}
+                                        activeDot={{ r: 7, strokeWidth: 0 }}
                                     />
-                                </AreaChart>
+                                </LineChart>
                             </ResponsiveContainer>
                         </div>
                     </div>
