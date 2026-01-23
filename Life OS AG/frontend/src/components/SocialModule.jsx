@@ -175,57 +175,100 @@ export function SocialModule({ onUpdate, user }) {
             {/* Bottom Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Connections List */}
-                <div className="lg:col-span-7 bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm">
-                    <div className="flex items-center justify-between mb-10">
-                        <h3 className="text-[17px] font-bold text-[#0f172a]">Your Connections</h3>
+                <div className="lg:col-span-12 space-y-8">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-bold text-[#0f172a] tracking-tight">Your Connections</h3>
+                        <div className="flex gap-2">
+                            <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Family
+                            </span>
+                            <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Friends
+                            </span>
+                            <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                <div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Work
+                            </span>
+                            <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                <div className="w-1.5 h-1.5 rounded-full bg-pink-500" /> Favourites
+                            </span>
+                        </div>
                     </div>
-                    <div className="space-y-4">
-                        {connections.length > 0 ? connections.map((conn, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-5 bg-[#f8fafc]/50 rounded-2xl transition-all hover:bg-slate-100/80 group">
-                                <div className="flex items-center gap-5">
-                                    <div className="w-12 h-12 rounded-full bg-[#fff1f2] flex items-center justify-center text-2xl">
-                                        {conn.avatar || '👤'}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            { id: 'family', label: 'Family', icon: Heart, color: '#f43f5e', lightColor: '#fff1f2' },
+                            { id: 'friend', label: 'Friends', icon: Users, color: '#3b82f6', lightColor: '#eff6ff' },
+                            { id: 'professional', label: 'Work', icon: MessageSquare, color: '#f59e0b', lightColor: '#fffbeb' },
+                            { id: 'favourite', label: 'Favourites', icon: Star, color: '#ec4899', lightColor: '#fdf2f8' }
+                        ].map((cat) => {
+                            const filtered = connections.filter(c => (c.type || 'friend').toLowerCase() === cat.id);
+                            const Icon = cat.icon;
+
+                            return (
+                                <div key={cat.id} className="bg-white rounded-[2.5rem] p-8 border border-black/[0.05] shadow-sm flex flex-col min-h-[500px] transition-all hover:shadow-md">
+                                    <div className="flex items-center justify-between mb-8">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white" style={{ backgroundColor: cat.color }}>
+                                                <Icon size={18} fill={cat.id === 'family' || cat.id === 'favourite' ? 'white' : 'none'} />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-[#0f172a] text-[15px]">{cat.label}</h4>
+                                                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-tighter opacity-70">
+                                                    {filtered.length} {filtered.length === 1 ? 'Person' : 'People'}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-[16px] font-bold text-[#0f172a] tracking-tight">{conn.name}</p>
-                                        <p className="text-[12px] font-medium text-slate-400 tracking-tight flex items-center gap-1">
-                                            <span>🕒</span> {
-                                                idx === 0 ? '2 days ago' :
-                                                    idx === 1 ? 'Yesterday' :
-                                                        idx === 2 ? '5 days ago' :
-                                                            '1 week ago'
-                                            }
-                                        </p>
+
+                                    <div className="flex-1 space-y-4 overflow-y-auto pr-1">
+                                        {filtered.length > 0 ? filtered.map((conn, idx) => (
+                                            <div key={idx} className="group p-4 rounded-2xl bg-slate-50/50 hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-100 transition-all relative">
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <div className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-lg border border-slate-50">
+                                                        {conn.avatar || (cat.id === 'family' ? '🏠' : cat.id === 'friend' ? '😊' : cat.id === 'professional' ? '💼' : '⭐')}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-[13px] font-bold text-[#0f172a] truncate">{conn.name}</p>
+                                                        <p className="text-[10px] font-medium text-slate-400 truncate">
+                                                            {conn.lastInteraction ? `Active ${new Date(conn.lastInteraction).toLocaleDateString()}` : 'New Connection'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center justify-between pt-2 border-t border-slate-100/50">
+                                                    <div className="flex gap-1">
+                                                        <button
+                                                            onClick={() => handleQuickInteract(conn._id, 'call')}
+                                                            className="p-1.5 text-[#0f172a]/60 hover:text-rose-500 hover:bg-rose-50 rounded-md transition-all"
+                                                        >
+                                                            <Phone size={13} strokeWidth={2.5} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleQuickInteract(conn._id, 'message')}
+                                                            className="p-1.5 text-[#0f172a]/60 hover:text-blue-500 hover:bg-blue-50 rounded-md transition-all"
+                                                        >
+                                                            <MessageSquare size={13} strokeWidth={2.5} />
+                                                        </button>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => deleteRelationship(conn._id)}
+                                                        className="p-1.5 text-slate-300 hover:text-rose-500 rounded-md transition-all opacity-0 group-hover:opacity-100"
+                                                    >
+                                                        <Trash2 size={13} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )) : (
+                                            <div className="h-full flex flex-col items-center justify-center py-10 opacity-30">
+                                                <div className="w-12 h-12 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center mb-3">
+                                                    <Plus size={20} className="text-slate-300" />
+                                                </div>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">No {cat.label} yet</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <button
-                                        onClick={() => deleteRelationship(conn._id)}
-                                        className="p-2.5 text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleQuickInteract(conn._id, 'call')}
-                                        className="p-2.5 text-[#e11d48] hover:bg-white hover:shadow-sm rounded-xl transition-all active:scale-95"
-                                        title="Log Call"
-                                    >
-                                        <Phone size={18} strokeWidth={2.5} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleQuickInteract(conn._id, 'message')}
-                                        className="p-2.5 text-[#e11d48] hover:bg-white hover:shadow-sm rounded-xl transition-all active:scale-95"
-                                        title="Log Message"
-                                    >
-                                        <MessageCircle size={18} strokeWidth={2.5} />
-                                    </button>
-                                </div>
-                            </div>
-                        )) : (
-                            <div className="py-12 text-center bg-slate-50/30 rounded-[2rem] border border-dashed border-slate-200">
-                                <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No connections found</p>
-                            </div>
-                        )}
+                            );
+                        })}
                     </div>
                 </div>
 

@@ -243,7 +243,7 @@ export function WealthModule({ onUpdate, user }) {
                             </PieChart>
                         </ResponsiveContainer>
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <p className="text-[13px] font-bold text-[#0f172a]">Amount : ₹{monthlyExpenses.toLocaleString()}</p>
+                            <p className="text-[13px] font-bold text-[#0f172a]">Amount : ₹0</p>
                         </div>
                     </div>
                     {/* Legend Custom */}
