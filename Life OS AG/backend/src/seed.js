@@ -78,7 +78,7 @@ const seed = async () => {
             userId,
             type: 'financial',
             title: 'Income Logged',
-            description: 'Monthly Salary: +$5,000',
+            description: 'Monthly Salary: +₹5,000',
             impact: 'positive',
             value: 100,
             timestamp: new Date()

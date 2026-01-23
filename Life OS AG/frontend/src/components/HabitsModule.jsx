@@ -164,7 +164,7 @@ export function HabitsModule({ onUpdate, user }) {
                 ))}
             </div>
 
-            <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+            <div className="bg-white rounded-[2.5rem] p-10 border border-black/[0.08] shadow-sm">
                 <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Weekly Overview</h3>
                 <div className="grid grid-cols-7 gap-5">
                     {weeklyData.map((item) => (
@@ -178,7 +178,7 @@ export function HabitsModule({ onUpdate, user }) {
                 </div>
             </div>
 
-            <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+            <div className="bg-white rounded-[2.5rem] p-10 border border-black/[0.08] shadow-sm">
                 <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-[0.01em]">Your Habits</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {habits.length > 0 ? habits.map((habit, idx) => (

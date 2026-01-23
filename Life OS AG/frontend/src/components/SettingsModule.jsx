@@ -56,7 +56,7 @@ export function SettingsModule() {
             {/* Header */}
             <div className="flex flex-col gap-6">
                 <div className="flex items-center gap-6">
-                    <div className="w-14 h-14 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-[#0f172a]">
+                    <div className="w-14 h-14 rounded-2xl bg-white border border-black/[0.08] shadow-sm flex items-center justify-center text-[#0f172a]">
                         <SettingsIcon size={28} />
                     </div>
                     <h1 className="text-[2.8rem] font-bold text-[#0f172a] tracking-tight leading-none">Settings</h1>
@@ -109,7 +109,7 @@ export function SettingsModule() {
                                 type="password"
                                 value={passwords.current}
                                 onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
-                                className="w-full bg-[#f8fafc] border border-slate-100 rounded-2xl p-6 text-[15px] focus:outline-none focus:ring-2 focus:ring-[#10b981]/10 transition-all font-bold text-slate-600"
+                                className="w-full bg-[#f8fafc] border border-black/[0.08] rounded-2xl p-6 text-[15px] focus:outline-none focus:ring-2 focus:ring-[#10b981]/10 transition-all font-bold text-slate-600"
                             />
                         </div>
                         <div className="space-y-4">
@@ -118,7 +118,7 @@ export function SettingsModule() {
                                 type="password"
                                 value={passwords.newPassword}
                                 onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
-                                className="w-full bg-[#f8fafc] border border-slate-100 rounded-2xl p-6 text-[15px] focus:outline-none focus:ring-2 focus:ring-[#10b981]/10 transition-all font-bold text-slate-600"
+                                className="w-full bg-[#f8fafc] border border-black/[0.08] rounded-2xl p-6 text-[15px] focus:outline-none focus:ring-2 focus:ring-[#10b981]/10 transition-all font-bold text-slate-600"
                             />
                         </div>
 

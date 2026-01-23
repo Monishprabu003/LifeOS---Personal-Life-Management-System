@@ -154,11 +154,11 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], 
                             <h2 className="text-3xl font-bold text-[#0f172a] tracking-tight">{user?.name || 'John Doe'}</h2>
                             <p className="text-slate-400 font-medium">{user?.email || 'john.doe@example.com'}</p>
                             <div className="flex items-center space-x-4 mt-2">
-                                <span className="flex items-center text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                                <span className="flex items-center text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-black/[0.08]">
                                     <Award size={14} className="text-amber-500 mr-1.5" />
                                     Level {level}
                                 </span>
-                                <span className="flex items-center text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                                <span className="flex items-center text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-black/[0.08]">
                                     <Calendar size={14} className="text-blue-500 mr-1.5" />
                                     Joined {joinedDate}
                                 </span>
@@ -167,7 +167,7 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], 
                     </div>
 
                     {/* XP Progress Section */}
-                    <div className="bg-[#fdf6e9]/50 border border-slate-50 p-8 rounded-3xl">
+                    <div className="bg-[#fdf6e9]/50 border border-black/[0.1] p-8 rounded-3xl">
                         <div className="flex justify-between items-center mb-4">
                             <h4 className="text-sm font-bold text-[#0f172a]">Experience Points</h4>
                             <span className="text-sm font-bold text-slate-400">{xp % 1000} / 1000 XP</span>
@@ -187,7 +187,7 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], 
 
             <div className="space-y-10">
                 {/* Edit Profile */}
-                <div className="bg-white rounded-3xl p-10 border border-slate-100 shadow-sm">
+                <div className="bg-white rounded-3xl p-10 border border-black/[0.08] shadow-sm">
                     <h3 className="text-[17px] font-bold text-[#0f172a] mb-10">Edit Profile</h3>
 
                     <form onSubmit={handleSave} className="space-y-8">
@@ -244,7 +244,7 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], 
                 </div>
 
                 {/* Achievements */}
-                <div className="bg-white rounded-3xl p-10 border border-slate-100 shadow-sm">
+                <div className="bg-white rounded-3xl p-10 border border-black/[0.08] shadow-sm">
                     <div className="flex items-center space-x-3 mb-10">
                         <Award className="text-amber-500" size={22} />
                         <h3 className="text-[17px] font-bold text-[#0f172a]">Achievements</h3>

@@ -8,9 +8,9 @@ import {
     PiggyBank,
     ArrowUpRight,
     ArrowDownLeft,
-    DollarSign,
     MoreVertical,
-    Trash2
+    Trash2,
+    IndianRupee
 } from 'lucide-react';
 import {
     Tooltip,
@@ -140,7 +140,7 @@ export function WealthModule({ onUpdate, user }) {
         { label: 'Monthly Income', value: `₹${monthlyIncome.toLocaleString()}`, icon: TrendingUp, trend: '+0%', color: '#3b82f6', bgColor: '#ebf2ff' },
         { label: 'Monthly Expenses', value: `₹${monthlyExpenses.toLocaleString()}`, icon: CreditCard, trend: '0%', trendDown: true, color: '#3b82f6', bgColor: '#ebf2ff' },
         { label: 'Savings', value: `₹${savings.toLocaleString()}`, icon: PiggyBank, trend: '+0%', color: '#3b82f6', bgColor: '#ebf2ff' },
-        { label: 'Savings Rate', value: `${savingsRate}%`, icon: DollarSign, trend: '+0%', color: '#3b82f6', bgColor: '#ebf2ff' },
+        { label: 'Savings Rate', value: `${savingsRate}%`, icon: IndianRupee, trend: '+0%', color: '#3b82f6', bgColor: '#ebf2ff' },
     ];
 
     return (
@@ -202,7 +202,7 @@ export function WealthModule({ onUpdate, user }) {
             <div className="bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-[17px] font-bold text-[#0f172a]">Monthly Budget</h3>
-                    <p className="text-[15px] font-bold text-slate-400">$3,250 / $4,000</p>
+                    <p className="text-[15px] font-bold text-slate-400">₹3,250 / ₹4,000</p>
                 </div>
                 <div className="relative h-4 w-full bg-[#ebf2ff] rounded-full overflow-hidden">
                     <motion.div
@@ -213,7 +213,7 @@ export function WealthModule({ onUpdate, user }) {
                     />
                 </div>
                 <p className="text-[13px] font-bold text-slate-400 mt-4 tracking-tight">
-                    {Math.round((monthlyExpenses / 4000) * 100)}% of budget used • ${Math.max(0, 4000 - monthlyExpenses)} remaining
+                    {Math.round((monthlyExpenses / 4000) * 100)}% of budget used • ₹{Math.max(0, 4000 - monthlyExpenses).toLocaleString()} remaining
                 </p>
             </div>
 
@@ -243,7 +243,7 @@ export function WealthModule({ onUpdate, user }) {
                             </PieChart>
                         </ResponsiveContainer>
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <p className="text-[13px] font-bold text-[#0f172a]">Amount : $1500</p>
+                            <p className="text-[13px] font-bold text-[#0f172a]">Amount : ₹{monthlyExpenses.toLocaleString()}</p>
                         </div>
                     </div>
                     {/* Legend Custom */}
@@ -318,7 +318,7 @@ export function WealthModule({ onUpdate, user }) {
                             </div>
                             <div className="text-right space-y-0.5">
                                 <p className={`text-[16px] font-black tracking-tight ${tx.type === 'income' ? 'text-emerald-500' : 'text-[#0f172a]'}`}>
-                                    {tx.type === 'income' ? '+' : ''}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                    {tx.type === 'income' ? '+' : ''}₹{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                 </p>
                                 <p className="text-[12px] font-bold text-slate-400 tracking-tight">
                                     {typeof tx.date === 'string' ? tx.date.split('-').reverse().join(' ').replace(' 2025', '') : 'Today'}

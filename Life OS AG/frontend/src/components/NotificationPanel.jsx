@@ -21,10 +21,10 @@ export function NotificationPanel({ isOpen, onClose, notifications, isDarkMode }
                         initial={{ opacity: 0, x: 100, scale: 0.95 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 100, scale: 0.95 }}
-                        className="fixed top-6 right-6 bottom-6 w-full max-w-md bg-white dark:bg-[#1a1c2e] shadow-2xl rounded-[2.5rem] z-[70] border border-slate-100 dark:border-[#222436] flex flex-col overflow-hidden"
+                        className="fixed top-6 right-6 bottom-6 w-full max-w-md bg-white dark:bg-[#1a1c2e] shadow-2xl rounded-[2.5rem] z-[70] border border-black/[0.08] dark:border-[#222436] flex flex-col overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="p-8 border-b border-slate-50 dark:border-[#222436] flex items-center justify-between">
+                        <div className="p-8 border-b border-black/[0.08] dark:border-[#222436] flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
                                     <Bell size={20} />
@@ -89,7 +89,7 @@ export function NotificationPanel({ isOpen, onClose, notifications, isDarkMode }
 
                         {/* Footer */}
                         {notifications.length > 0 && (
-                            <div className="p-6 border-t border-slate-50 dark:border-[#222436] bg-slate-50/50 dark:bg-[#0f111a]/30">
+                            <div className="p-6 border-t border-black/[0.08] dark:border-[#222436] bg-slate-50/50 dark:bg-[#0f111a]/30">
                                 <button className="w-full py-4 text-sm font-bold text-blue-500 hover:text-blue-600 transition-colors">
                                     Mark all as read
                                 </button>
