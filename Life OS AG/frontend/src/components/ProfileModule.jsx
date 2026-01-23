@@ -135,7 +135,7 @@ export function ProfileModule({ user, totalEvents = 0, habits = [], goals = [], 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden"
+                className="bg-white rounded-3xl border border-black/[0.08] shadow-sm overflow-hidden"
             >
                 {/* Gradient Banner */}
                 <div className="h-32 bg-gradient-to-r from-emerald-400 via-blue-500 to-violet-600" />

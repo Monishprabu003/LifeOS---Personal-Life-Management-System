@@ -66,7 +66,7 @@ export function SettingsModule() {
 
             <div className="space-y-8">
                 {/* Notifications Section */}
-                <div className="bg-white rounded-[2.5rem] p-12 border border-slate-100 shadow-sm transition-all duration-500">
+                <div className="bg-white rounded-[2.5rem] p-12 border border-black/[0.08] shadow-sm transition-all duration-500">
                     <div className="flex items-center gap-4 mb-12">
                         <Bell size={24} className="text-[#0f172a]" strokeWidth={2.5} />
                         <h3 className="text-[22px] font-bold text-[#0f172a]">Notifications</h3>
@@ -96,7 +96,7 @@ export function SettingsModule() {
                 </div>
 
                 {/* Security Section */}
-                <div className="bg-white rounded-[2.5rem] p-12 border border-slate-100 shadow-sm transition-all duration-500">
+                <div className="bg-white rounded-[2.5rem] p-12 border border-black/[0.08] shadow-sm transition-all duration-500">
                     <div className="flex items-center gap-4 mb-12">
                         <Lock size={24} className="text-[#0f172a]" strokeWidth={2.5} />
                         <h3 className="text-[22px] font-bold text-[#0f172a]">Security</h3>

@@ -168,7 +168,7 @@ export function WealthModule({ onUpdate, user }) {
             {/* Top Cards Section */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                 {/* Financial Health Gauge */}
-                <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
+                <div className="bg-white rounded-[2rem] p-8 border border-black/[0.08] shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[17px] font-bold text-[#0f172a] mb-8 self-start ml-2">Financial Health</h3>
                     <div className="relative mb-4">
                         <CircularProgress
@@ -180,7 +180,7 @@ export function WealthModule({ onUpdate, user }) {
 
                 {/* Metric Cards */}
                 {stats.map((stat) => (
-                    <div key={stat.label} className="rounded-[2rem] p-8 flex flex-col justify-between relative border border-blue-50/50 shadow-sm transition-all hover:shadow-md cursor-default bg-[#eff6ff]">
+                    <div key={stat.label} className="rounded-[2rem] p-8 flex flex-col justify-between relative border border-black/[0.08] shadow-sm transition-all hover:shadow-md cursor-default bg-[#eff6ff]">
                         <div className="flex justify-between items-start">
                             <span className="text-[15px] font-bold text-slate-500 opacity-80">{stat.label}</span>
                             <div className="text-[#3b82f6]">
@@ -199,7 +199,7 @@ export function WealthModule({ onUpdate, user }) {
             </div>
 
             {/* Monthly Budget Section */}
-            <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
+            <div className="bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-[17px] font-bold text-[#0f172a]">Monthly Budget</h3>
                     <p className="text-[15px] font-bold text-slate-400">$3,250 / $4,000</p>
@@ -220,7 +220,7 @@ export function WealthModule({ onUpdate, user }) {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Expense Breakdown */}
-                <div className="lg:col-span-5 bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm flex flex-col">
+                <div className="lg:col-span-5 bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm flex flex-col">
                     <h3 className="text-[17px] font-bold text-[#0f172a] mb-8">Expense Breakdown</h3>
                     <div className="h-[320px] w-full relative flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
@@ -265,7 +265,7 @@ export function WealthModule({ onUpdate, user }) {
                 </div>
 
                 {/* Income vs Expenses Chart */}
-                <div className="lg:col-span-7 bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
+                <div className="lg:col-span-7 bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm">
                     <h3 className="text-[17px] font-bold text-[#0f172a] mb-8">Income vs Expenses</h3>
                     <div className="h-[380px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -297,7 +297,7 @@ export function WealthModule({ onUpdate, user }) {
             </div>
 
             {/* Recent Transactions Section */}
-            <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm relative overflow-hidden">
+            <div className="bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm relative overflow-hidden">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-[17px] font-bold text-[#0f172a]">Recent Transactions</h3>
                     <button className="text-slate-400 hover:text-[#0f172a] transition-colors">

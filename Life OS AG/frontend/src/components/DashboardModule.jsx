@@ -107,7 +107,7 @@ export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs,
     return (
         <div className="space-y-12 pb-10">
             {/* Main Hero Card */}
-            <div className="bg-[#f8fafc] rounded-[3rem] p-12 relative overflow-hidden">
+            <div className="bg-[#f8fafc] rounded-[3rem] p-12 relative overflow-hidden border border-black/[0.08]">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     {/* Gauge Section */}
                     <div className="lg:col-span-4 flex flex-col items-center text-center">
@@ -179,7 +179,7 @@ export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs,
                         <div
                             key={mod.name}
                             onClick={() => setActiveTab && setActiveTab(mod.tab)}
-                            className="rounded-[2.5rem] p-8 relative overflow-hidden group cursor-pointer hover:shadow-xl transition-all active:scale-95 shadow-sm border border-transparent"
+                            className="rounded-[2.5rem] p-8 relative overflow-hidden group cursor-pointer hover:shadow-xl transition-all active:scale-95 shadow-sm border border-black/[0.08]"
                             style={{ backgroundColor: mod.bgColor }}
                         >
                             {/* Color Accent Bar */}
@@ -198,7 +198,7 @@ export function DashboardModule({ dashboardData, loading, setActiveTab, allLogs,
             </div>
 
             {/* All Logs Section */}
-            <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+            <div className="bg-white rounded-[2.5rem] p-10 border border-black/[0.08] shadow-sm">
                 <div className="flex items-center justify-between mb-8 px-2">
                     <div className="flex items-center gap-3">
                         <Activity className="text-[#10b981]" size={24} />

@@ -143,7 +143,7 @@ export function SocialModule({ onUpdate, user }) {
             {/* Top Cards Section */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Wellness Gauge */}
-                <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
+                <div className="bg-white rounded-[2rem] p-8 border border-black/[0.08] shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[17px] font-bold text-[#0f172a] mb-8 self-start ml-2">Relationship Wellness</h3>
                     <div className="relative mb-4">
                         <CircularProgress value={Math.round(wellnessScore)} />
@@ -152,7 +152,7 @@ export function SocialModule({ onUpdate, user }) {
 
                 {/* Metric Cards */}
                 {stats.map((stat) => (
-                    <div key={stat.label} className="rounded-[2rem] p-8 flex flex-col justify-between relative border border-rose-50/50 shadow-sm transition-all hover:shadow-md cursor-default bg-[#fff1f2]">
+                    <div key={stat.label} className="rounded-[2rem] p-8 flex flex-col justify-between relative border border-black/[0.08] shadow-sm transition-all hover:shadow-md cursor-default bg-[#fff1f2]">
                         <div className="flex justify-between items-start">
                             <span className="text-[15px] font-bold text-slate-500 opacity-80">{stat.label}</span>
                             <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-[#e11d48] shadow-sm">
@@ -175,7 +175,7 @@ export function SocialModule({ onUpdate, user }) {
             {/* Bottom Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Connections List */}
-                <div className="lg:col-span-7 bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
+                <div className="lg:col-span-7 bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm">
                     <div className="flex items-center justify-between mb-10">
                         <h3 className="text-[17px] font-bold text-[#0f172a]">Your Connections</h3>
                     </div>
@@ -230,7 +230,7 @@ export function SocialModule({ onUpdate, user }) {
                 </div>
 
                 {/* Connection Tasks */}
-                <div className="lg:col-span-5 bg-white rounded-[2rem] p-10 border border-slate-100 shadow-sm">
+                <div className="lg:col-span-5 bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm">
                     <div className="flex items-center justify-between mb-10">
                         <h3 className="text-[17px] font-bold text-[#0f172a]">Connection Tasks</h3>
                     </div>

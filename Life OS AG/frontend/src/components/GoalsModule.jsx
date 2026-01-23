@@ -141,7 +141,7 @@ export function GoalsModule({ onUpdate, user }) {
             {/* Top Cards Section */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Purpose Score Gauge */}
-                <div className="bg-white rounded-[2.5rem] p-8 border border-slate-50 shadow-sm flex flex-col items-center justify-center text-center">
+                <div className="bg-white rounded-[2.5rem] p-8 border border-black/[0.08] shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 self-start">Purpose Score</h3>
                     <div className="relative mb-4">
                         <CircularProgress value={purposeScore} label="Overall purpose alignment score" />
@@ -150,7 +150,7 @@ export function GoalsModule({ onUpdate, user }) {
 
                 {/* Metric Cards */}
                 {stats.map((stat) => (
-                    <div key={stat.label} className="rounded-[2.5rem] p-8 flex flex-col justify-between relative overflow-hidden border border-slate-50/50 shadow-sm transition-all hover:shadow-md cursor-default" style={{ backgroundColor: stat.bgColor }}>
+                    <div key={stat.label} className="rounded-[2.5rem] p-8 flex flex-col justify-between relative overflow-hidden border border-black/[0.08] shadow-sm transition-all hover:shadow-md cursor-default" style={{ backgroundColor: stat.bgColor }}>
                         <div className="flex justify-between items-start">
                             <span className="text-[14px] font-bold text-slate-500 opacity-80">{stat.label}</span>
                             <div className="p-2 rounded-xl bg-white shadow-sm">
@@ -171,11 +171,11 @@ export function GoalsModule({ onUpdate, user }) {
             </div>
 
             {/* Goals List Section */}
-            <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+            <div className="bg-white rounded-[2.5rem] p-10 border border-black/[0.08] shadow-sm">
                 <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Your Goals</h3>
                 <div className="space-y-10">
                     {goals.length > 0 ? goals.map((goal) => (
-                        <div key={goal._id} className="p-10 border border-slate-50 rounded-[2.5rem] bg-white shadow-sm hover:shadow-md transition-all group">
+                        <div key={goal._id} className="p-10 border border-black/[0.08] rounded-[2.5rem] bg-white shadow-sm hover:shadow-md transition-all group">
                             <div className="flex justify-between items-start mb-8">
                                 <div>
                                     <h4 className="text-2xl font-bold text-[#0f172a] tracking-tight mb-2">{goal.title}</h4>
@@ -229,7 +229,7 @@ export function GoalsModule({ onUpdate, user }) {
             {/* Skills & Learning Path Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Skills Progress */}
-                <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm flex flex-col">
+                <div className="bg-white rounded-[2.5rem] p-10 border border-black/[0.08] shadow-sm flex flex-col">
                     <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Skills Progress</h3>
                     <div className="space-y-8">
                         {skills.length > 0 ? skills.map((skill) => (
@@ -256,7 +256,7 @@ export function GoalsModule({ onUpdate, user }) {
                 </div>
 
                 {/* Learning Path */}
-                <div className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm flex flex-col">
+                <div className="bg-white rounded-[2.5rem] p-10 border border-black/[0.08] shadow-sm flex flex-col">
                     <h3 className="text-xl font-bold text-[#0f172a] mb-10 tracking-tight">Learning Path</h3>
                     <div className="space-y-4">
                         {learningPath.length > 0 ? learningPath.map((item, idx) => (

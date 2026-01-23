@@ -143,14 +143,14 @@ export function HabitsModule({ onUpdate, user }) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <div className="bg-white rounded-[2.5rem] p-8 border border-slate-50 shadow-sm flex flex-col items-center justify-center text-center">
+                <div className="bg-white rounded-[2.5rem] p-8 border border-black/[0.08] shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 self-start">Today's Progress</h3>
                     <div className="relative mb-4">
                         <CircularProgress value={todayProgress} sublabel={`${completedTodayCount}/${activeHabitsCount} habits completed`} />
                     </div>
                 </div>
                 {stats.map((stat) => (
-                    <div key={stat.label} className="rounded-[2.5rem] p-8 flex flex-col justify-between relative overflow-hidden border border-slate-50/50 shadow-sm transition-all hover:shadow-md cursor-default" style={{ backgroundColor: stat.bgColor }}>
+                    <div key={stat.label} className="rounded-[2.5rem] p-8 flex flex-col justify-between relative overflow-hidden border border-black/[0.08] shadow-sm transition-all hover:shadow-md cursor-default" style={{ backgroundColor: stat.bgColor }}>
                         <div className="flex justify-between items-start">
                             <span className="text-[14px] font-bold text-slate-500 opacity-80">{stat.label}</span>
                             <div className="p-2 rounded-xl bg-white shadow-sm">
@@ -187,7 +187,7 @@ export function HabitsModule({ onUpdate, user }) {
                             onClick={() => !habit.completedToday && completeHabit(habit._id)}
                             className={`p-10 rounded-[2rem] border-2 transition-all cursor-pointer group relative ${habit.completedToday
                                 ? 'border-[#f59e0b] bg-[#fffcf5]'
-                                : 'border-[#e2e8f0] bg-white hover:border-[#cbd5e1]'
+                                : 'border-black/[0.08] bg-white hover:border-black/[0.15]'
                                 }`}
                         >
                             <div className="flex justify-between items-start mb-8">

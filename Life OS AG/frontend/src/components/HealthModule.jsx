@@ -154,7 +154,7 @@ export function HealthModule({ onUpdate, user, dashboardData }) {
             {/* Top Cards Section */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                 {/* Score Card */}
-                <div className="bg-white rounded-[2rem] p-10 border border-[#e6f4f1] shadow-sm flex flex-col items-center justify-between text-center min-h-[380px]">
+                <div className="bg-white rounded-[2rem] p-10 border border-black/[0.08] shadow-sm flex flex-col items-center justify-between text-center min-h-[380px]">
                     <h3 className="text-[17px] font-bold text-[#0f172a] self-start ml-2">Daily Health Score</h3>
                     <div className="flex-1 flex items-center justify-center py-6">
                         <CircularProgress value={dailyScore} color="#10b981" />
@@ -166,7 +166,7 @@ export function HealthModule({ onUpdate, user, dashboardData }) {
                 {stats.map((stat) => (
                     <div
                         key={stat.label}
-                        className="bg-[#f0fdfa]/60 rounded-[2rem] p-10 flex flex-col justify-start relative overflow-hidden border border-[#ccfbf1] shadow-sm transition-all hover:shadow-lg hover:shadow-emerald-50/50 group cursor-pointer active:scale-[0.98] min-h-[380px]"
+                        className="bg-[#f0fdfa]/60 rounded-[2rem] p-10 flex flex-col justify-start relative overflow-hidden border border-black/[0.08] shadow-sm transition-all hover:shadow-lg hover:shadow-emerald-50/50 group cursor-pointer active:scale-[0.98] min-h-[380px]"
                     >
                         {/* Icon Container at Top Right */}
                         <div className="absolute top-10 right-10 w-12 h-12 rounded-full border border-[#10b981]/20 flex items-center justify-center text-[#10b981] group-hover:bg-[#10b981] group-hover:text-white transition-all duration-300">
