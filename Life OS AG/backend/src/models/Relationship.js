@@ -9,7 +9,7 @@ const RelationshipSchema = new mongoose.Schema(
             type: String,
             default: 'other'
         },
-        lastInteraction: { type: Date, default: Date.now },
+        lastInteraction: { type: Date },
         frequencyGoal: { type: Number, default: 7 }, // weekly by default
         healthScore: { type: Number, default: 100 },
         notes: { type: String },
