@@ -1,3 +1,4 @@
+// Version: 1.0.5 - Corrected Interaction Logic
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -116,7 +117,7 @@ export function SocialModule({ onUpdate, user }) {
 
     // Calculate Wellness Score based on interaction freshness and goals
     const calculateConnectionScore = (conn) => {
-        if (!conn.lastInteraction) return 10; // Base score for new connections
+        if (!conn.lastInteraction) return 0; // Base score for new connections is 0
 
         const lastDate = new Date(conn.lastInteraction);
         const now = new Date();
@@ -128,7 +129,7 @@ export function SocialModule({ onUpdate, user }) {
         // Decay score after goal is missed
         const overGoal = daysSinceLast - goal;
         const decayPerDay = 100 / (goal * 2); // Decay fully over 2x the goal period
-        return Math.max(10, Math.round(100 - (overGoal * decayPerDay)));
+        return Math.max(0, Math.round(100 - (overGoal * decayPerDay)));
     };
 
     const wellnessScore = safeConnections.length > 0
