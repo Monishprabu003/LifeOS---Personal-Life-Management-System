@@ -8,7 +8,8 @@ import {
     Heart,
     MessageSquare,
     MoreVertical,
-    Trash2
+    Trash2,
+    Star
 } from 'lucide-react';
 import { AddConnectionModal } from './AddConnectionModal';
 import { socialAPI, kernelAPI } from '../api';
