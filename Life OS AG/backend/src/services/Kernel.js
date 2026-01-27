@@ -71,13 +71,24 @@ class LifeKernelEngine {
             goalScore = Math.round(avgProgress);
         }
 
-        // 5. Relationship Score Calculation
+        // 5. Relationship Score Calculation (Interaction-driven)
         const relationships = await Relationship.find({ userId });
         let relationshipScore = 0;
         if (relationships.length > 0) {
-            relationshipScore = Math.min(100, relationships.length * 10); // Reward for quantity initially
-            const avgHealth = relationships.reduce((s, r) => s + (r.healthScore || 0), 0) / relationships.length;
-            relationshipScore = Math.round((relationshipScore + avgHealth) / 2);
+            const calculateSingleScore = (r) => {
+                if (!r.lastInteraction) return 0;
+                const lastDate = new Date(r.lastInteraction);
+                const now = new Date();
+                const daysSinceLast = (now - lastDate) / (1000 * 60 * 60 * 24);
+                const goal = r.frequencyGoal || 7;
+                if (daysSinceLast <= goal) return 100;
+                const overGoal = daysSinceLast - goal;
+                const decayPerDay = 100 / (goal * 2);
+                return Math.max(0, Math.round(100 - (overGoal * decayPerDay)));
+            };
+
+            const totalScore = relationships.reduce((s, r) => s + calculateSingleScore(r), 0);
+            relationshipScore = Math.round(totalScore / relationships.length);
         }
 
         // Update User Model

@@ -1,4 +1,4 @@
-// Version: 1.0.5 - Corrected Interaction Logic
+// Version: 1.0.6 - Forced Zero-Score Fix
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
